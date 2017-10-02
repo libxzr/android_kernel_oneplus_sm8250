@@ -75,25 +75,51 @@
 
 #ifdef __ASSEMBLY__
 
+/* SYM_T_FUNC -- type used by assembler to mark functions */
+#ifndef SYM_T_FUNC
+#define SYM_T_FUNC				STT_FUNC
+#endif
+
+/* SYM_T_OBJECT -- type used by assembler to mark data */
+#ifndef SYM_T_OBJECT
+#define SYM_T_OBJECT				STT_OBJECT
+#endif
+
+/* SYM_T_NONE -- type used by assembler to mark entries of unknown type */
+#ifndef SYM_T_NONE
+#define SYM_T_NONE				STT_NOTYPE
+#endif
+
+/* SYM_A_* -- align the symbol? */
+#define SYM_A_ALIGN				ALIGN
+#define SYM_A_NONE				/* nothing */
+
+/* SYM_V_* -- visibility of symbols */
+#define SYM_V_GLOBAL(name)			.globl name
+#define SYM_V_WEAK(name)			.weak name
+#define SYM_V_LOCAL(name)			/* nothing */
+
 #ifndef LINKER_SCRIPT
 #define ALIGN __ALIGN
 #define ALIGN_STR __ALIGN_STR
 
+/* === DEPRECATED annotations === */
+
 #ifndef ENTRY
+/* deprecated, use SYM_FUNC_START */
 #define ENTRY(name) \
-	.globl name ASM_NL \
-	ALIGN ASM_NL \
-	name:
+	SYM_FUNC_START(name)
 #endif
 #endif /* LINKER_SCRIPT */
 
 #ifndef WEAK
+/* deprecated, use SYM_FUNC_START_WEAK* */
 #define WEAK(name)	   \
-	.weak name ASM_NL   \
-	name:
+	SYM_FUNC_START_WEAK_NOALIGN(name)
 #endif
 
 #ifndef END
+/* deprecated, use SYM_FUNC_END, SYM_DATA_END, or SYM_END */
 #define END(name) \
 	.size name, .-name
 #endif
@@ -103,11 +129,228 @@
  * static analysis tools such as stack depth analyzer.
  */
 #ifndef ENDPROC
+/* deprecated, use SYM_FUNC_END */
 #define ENDPROC(name) \
-	.type name, @function ASM_NL \
-	END(name)
+	SYM_FUNC_END(name)
 #endif
 
+/* === generic annotations === */
+
+/* SYM_ENTRY -- use only if you have to for non-paired symbols */
+#ifndef SYM_ENTRY
+#define SYM_ENTRY(name, visibility, align...)		\
+	visibility(name) ASM_NL				\
+	align ASM_NL					\
+	name:
 #endif
 
+/* SYM_START -- use only if you have to */
+#ifndef SYM_START
+#define SYM_START(name, visibility, align...)		\
+	SYM_ENTRY(name, visibility, align)
 #endif
+
+/* SYM_END -- use only if you have to */
+#ifndef SYM_END
+#define SYM_END(name, sym_type)				\
+	.type name sym_type ASM_NL			\
+	.size name, .-name
+#endif
+
+/* === code annotations === */
+
+/*
+ * FUNC -- C-like functions (proper stack frame etc.)
+ * CODE -- non-C code (e.g. irq handlers with different, special stack etc.)
+ *
+ * Objtool validates stack for FUNC, but not for CODE.
+ * Objtool generates debug info for both FUNC & CODE, but needs special
+ * annotations for each CODE's start (to describe the actual stack frame).
+ *
+ * ALIAS -- does not generate debug info -- the aliased function will
+ */
+
+/*
+ * SYM_FUNC_START_LOCAL_ALIAS -- use where there are two local names for one
+ * function
+ */
+#ifndef SYM_FUNC_START_LOCAL_ALIAS
+#define SYM_FUNC_START_LOCAL_ALIAS(name)		\
+	SYM_START(name, SYM_V_LOCAL, SYM_A_ALIGN)
+#endif
+
+/*
+ * SYM_FUNC_START_ALIAS -- use where there are two global names for one
+ * function
+ */
+#ifndef SYM_FUNC_START_ALIAS
+#define SYM_FUNC_START_ALIAS(name)			\
+	SYM_START(name, SYM_V_GLOBAL, SYM_A_ALIGN)
+#endif
+
+/* SYM_FUNC_START -- use for global functions */
+#ifndef SYM_FUNC_START
+/*
+ * The same as SYM_FUNC_START_ALIAS, but we will need to distinguish these two
+ * later.
+ */
+#define SYM_FUNC_START(name)				\
+	SYM_START(name, SYM_V_GLOBAL, SYM_A_ALIGN)
+#endif
+
+/* SYM_FUNC_START_NOALIGN -- use for global functions, w/o alignment */
+#ifndef SYM_FUNC_START_NOALIGN
+#define SYM_FUNC_START_NOALIGN(name)			\
+	SYM_START(name, SYM_V_GLOBAL, SYM_A_NONE)
+#endif
+
+/* SYM_FUNC_START_LOCAL -- use for local functions */
+#ifndef SYM_FUNC_START_LOCAL
+/* the same as SYM_FUNC_START_LOCAL_ALIAS, see comment near SYM_FUNC_START */
+#define SYM_FUNC_START_LOCAL(name)			\
+	SYM_START(name, SYM_V_LOCAL, SYM_A_ALIGN)
+#endif
+
+/* SYM_FUNC_START_LOCAL_NOALIGN -- use for local functions, w/o alignment */
+#ifndef SYM_FUNC_START_LOCAL_NOALIGN
+#define SYM_FUNC_START_LOCAL_NOALIGN(name)		\
+	SYM_START(name, SYM_V_LOCAL, SYM_A_NONE)
+#endif
+
+/* SYM_FUNC_START_WEAK -- use for weak functions */
+#ifndef SYM_FUNC_START_WEAK
+#define SYM_FUNC_START_WEAK(name)			\
+	SYM_START(name, SYM_V_WEAK, SYM_A_ALIGN)
+#endif
+
+/* SYM_FUNC_START_WEAK_NOALIGN -- use for weak functions, w/o alignment */
+#ifndef SYM_FUNC_START_WEAK_NOALIGN
+#define SYM_FUNC_START_WEAK_NOALIGN(name)		\
+	SYM_START(name, SYM_V_WEAK, SYM_A_NONE)
+#endif
+
+/* SYM_FUNC_END_ALIAS -- the end of LOCAL_ALIASed or ALIASed function */
+#ifndef SYM_FUNC_END_ALIAS
+#define SYM_FUNC_END_ALIAS(name)			\
+	SYM_END(name, SYM_T_FUNC)
+#endif
+
+/*
+ * SYM_FUNC_END -- the end of SYM_FUNC_START_LOCAL, SYM_FUNC_START,
+ * SYM_FUNC_START_WEAK, ...
+ */
+#ifndef SYM_FUNC_END
+/* the same as SYM_FUNC_END_ALIAS, see comment near SYM_FUNC_START */
+#define SYM_FUNC_END(name)				\
+	SYM_END(name, SYM_T_FUNC)
+#endif
+
+/* SYM_FUNC_INNER_LABEL -- only for labels in the middle of functions */
+#ifndef SYM_FUNC_INNER_LABEL
+#define SYM_FUNC_INNER_LABEL(name, visibility)		\
+	.type name SYM_T_FUNC ASM_NL			\
+	SYM_ENTRY(name, visibility, SYM_A_ALIGN)
+#endif
+
+/* SYM_FUNC_INNER_LABEL_NOALIGN -- only for labels in the middle of functions */
+#ifndef SYM_FUNC_INNER_LABEL_NOALIGN
+#define SYM_FUNC_INNER_LABEL_NOALIGN(name, visibility)	\
+	.type name SYM_T_FUNC ASM_NL			\
+	SYM_ENTRY(name, visibility, SYM_A_NONE)
+#endif
+
+/* SYM_CODE_START -- use for non-C (special) functions */
+#ifndef SYM_CODE_START
+#define SYM_CODE_START(name)				\
+	SYM_START(name, SYM_V_GLOBAL, SYM_A_ALIGN)
+#endif
+
+/* SYM_CODE_START_NOALIGN -- use for non-C (special) functions, w/o alignment */
+#ifndef SYM_CODE_START_NOALIGN
+#define SYM_CODE_START_NOALIGN(name)			\
+	SYM_START(name, SYM_V_GLOBAL, SYM_A_NONE)
+#endif
+
+/* SYM_CODE_START_LOCAL -- use for local non-C (special) functions */
+#ifndef SYM_CODE_START_LOCAL
+#define SYM_CODE_START_LOCAL(name)			\
+	SYM_START(name, SYM_V_LOCAL, SYM_A_ALIGN)
+#endif
+
+/*
+ * SYM_CODE_START_LOCAL_NOALIGN -- use for local non-C (special) functions,
+ * w/o alignment
+ */
+#ifndef SYM_CODE_START_LOCAL_NOALIGN
+#define SYM_CODE_START_LOCAL_NOALIGN(name)		\
+	SYM_START(name, SYM_V_LOCAL, SYM_A_NONE)
+#endif
+
+/* SYM_CODE_END -- the end of SYM_CODE_START_LOCAL, SYM_CODE_START, ... */
+#ifndef SYM_CODE_END
+#define SYM_CODE_END(name)				\
+	SYM_END(name, SYM_T_NONE)
+#endif
+
+/* SYM_CODE_INNER_LABEL -- only for labels in the middle of code */
+#ifndef SYM_CODE_INNER_LABEL
+#define SYM_CODE_INNER_LABEL(name, visibility)		\
+	.type name SYM_T_NONE ASM_NL			\
+	SYM_ENTRY(name, visibility, SYM_A_ALIGN)
+#endif
+
+/* SYM_CODE_INNER_LABEL_NOALIGN -- only for labels in the middle of code */
+#ifndef SYM_CODE_INNER_LABEL_NOALIGN
+#define SYM_CODE_INNER_LABEL_NOALIGN(name, visibility)	\
+	.type name SYM_T_NONE ASM_NL			\
+	SYM_ENTRY(name, visibility, SYM_A_NONE)
+#endif
+
+/* === data annotations === */
+
+/* SYM_DATA_START -- global data symbol */
+#ifndef SYM_DATA_START
+#define SYM_DATA_START(name)				\
+	SYM_START(name, SYM_V_GLOBAL, SYM_A_NONE)
+#endif
+
+/* SYM_DATA_START -- local data symbol */
+#ifndef SYM_DATA_START_LOCAL
+#define SYM_DATA_START_LOCAL(name)			\
+	SYM_START(name, SYM_V_LOCAL, SYM_A_NONE)
+#endif
+
+/* SYM_DATA_END -- the end of SYM_DATA_START symbol */
+#ifndef SYM_DATA_END
+#define SYM_DATA_END(name)				\
+	SYM_END(name, SYM_T_OBJECT)
+#endif
+
+/* SYM_DATA_END_LABEL -- the labeled end of SYM_DATA_START symbol */
+#ifndef SYM_DATA_END_LABEL
+#define SYM_DATA_END_LABEL(name, visibility, label)	\
+	visibility(label) ASM_NL			\
+	.type label SYM_T_OBJECT ASM_NL			\
+	label:						\
+	SYM_END(name, SYM_T_OBJECT)
+#endif
+
+/* SYM_DATA_SIMPLE -- start+end wrapper around simple global data */
+#ifndef SYM_DATA_SIMPLE
+#define SYM_DATA_SIMPLE(name, data)				\
+	SYM_DATA_START(name) ASM_NL				\
+	data ASM_NL						\
+	SYM_DATA_END(name)
+#endif
+
+/* SYM_DATA_SIMPLE_LOCAL -- start+end wrapper around simple local data */
+#ifndef SYM_DATA_SIMPLE_LOCAL
+#define SYM_DATA_SIMPLE_LOCAL(name, data...)			\
+	SYM_DATA_START_LOCAL(name) ASM_NL			\
+	data ASM_NL						\
+	SYM_DATA_END(name)
+#endif
+
+#endif /* __ASSEMBLY__ */
+
+#endif /* _LINUX_LINKAGE_H */
