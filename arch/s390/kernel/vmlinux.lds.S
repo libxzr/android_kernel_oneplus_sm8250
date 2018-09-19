@@ -64,6 +64,7 @@ SECTIONS
 		 *(.data..ro_after_init)
 	}
 	EXCEPTION_TABLE(16)
+	JUMP_TABLE_DATA
 	. = ALIGN(PAGE_SIZE);
 	__end_ro_after_init = .;
 
