@@ -14,12 +14,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <linux/linkage.h>
 #include <linux/const.h>
-#include <asm/assembler.h>
-#include <asm/page.h>
-#include <asm/cpufeature.h>
+#include <linux/linkage.h>
+
 #include <asm/alternative.h>
+#include <asm/assembler.h>
+#include <asm/export.h>
+#include <asm/cpufeature.h>
+#include <asm/page.h>
 
 /*
  * Copy a page from src to dest (both are page aligned)
@@ -87,3 +89,4 @@ alternative_else_nop_endif
 
 	ret
 ENDPROC(copy_page)
+EXPORT_SYMBOL(copy_page)

@@ -14,9 +14,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <linux/linkage.h>
 #include <linux/const.h>
+#include <linux/linkage.h>
+
 #include <asm/assembler.h>
+#include <asm/export.h>
 #include <asm/page.h>
 
 /*
@@ -37,3 +39,4 @@ ENTRY(clear_page)
 	b.ne	1b
 	ret
 ENDPROC(clear_page)
+EXPORT_SYMBOL(clear_page)
