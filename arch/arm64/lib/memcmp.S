@@ -23,7 +23,9 @@
  */
 
 #include <linux/linkage.h>
+
 #include <asm/assembler.h>
+#include <asm/export.h>
 
 /*
 * compare memory areas(when two memory areas' offset are different,
@@ -256,3 +258,4 @@ CPU_LE( rev	data2, data2 )
 	mov	result, #0
 	ret
 ENDPIPROC(memcmp)
+EXPORT_SYMBOL_NOKASAN(memcmp)

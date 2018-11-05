@@ -23,8 +23,10 @@
  */
 
 #include <linux/linkage.h>
+
 #include <asm/assembler.h>
 #include <asm/cache.h>
+#include <asm/export.h>
 
 /*
  * Move a buffer from src to test (alignment handled by the hardware).
@@ -197,4 +199,6 @@ ENTRY(memmove)
 	b.ne	.Ltail63
 	ret
 ENDPIPROC(memmove)
+EXPORT_SYMBOL(memmove)
 ENDPROC(__memmove)
+EXPORT_SYMBOL(__memmove)

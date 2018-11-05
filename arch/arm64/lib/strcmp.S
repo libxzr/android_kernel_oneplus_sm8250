@@ -23,7 +23,9 @@
  */
 
 #include <linux/linkage.h>
+
 #include <asm/assembler.h>
+#include <asm/export.h>
 
 /*
  * compare two strings
@@ -232,3 +234,4 @@ CPU_BE(	orr	syndrome, diff, has_nul )
 	sub	result, data1, data2, lsr #56
 	ret
 ENDPIPROC(strcmp)
+EXPORT_SYMBOL_NOKASAN(strcmp)

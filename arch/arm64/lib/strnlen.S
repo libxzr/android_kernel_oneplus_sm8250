@@ -23,7 +23,9 @@
  */
 
 #include <linux/linkage.h>
+
 #include <asm/assembler.h>
+#include <asm/export.h>
 
 /*
  * determine the length of a fixed-size string
@@ -169,3 +171,4 @@ CPU_LE( lsr	tmp2, tmp2, tmp4 )	/* Shift (tmp1 & 63).  */
 	mov	len, limit
 	ret
 ENDPIPROC(strnlen)
+EXPORT_SYMBOL_NOKASAN(strnlen)

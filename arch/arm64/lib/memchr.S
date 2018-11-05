@@ -18,7 +18,9 @@
  */
 
 #include <linux/linkage.h>
+
 #include <asm/assembler.h>
+#include <asm/export.h>
 
 /*
  * Find a character in an area of memory.
@@ -42,3 +44,4 @@ WEAK(memchr)
 2:	mov	x0, #0
 	ret
 ENDPIPROC(memchr)
+EXPORT_SYMBOL_NOKASAN(memchr)

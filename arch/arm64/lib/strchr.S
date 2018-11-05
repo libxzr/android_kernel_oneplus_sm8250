@@ -18,7 +18,9 @@
  */
 
 #include <linux/linkage.h>
+
 #include <asm/assembler.h>
+#include <asm/export.h>
 
 /*
  * Find the first occurrence of a character in a string.
@@ -40,3 +42,4 @@ WEAK(strchr)
 	csel	x0, x0, xzr, eq
 	ret
 ENDPROC(strchr)
+EXPORT_SYMBOL_NOKASAN(strchr)

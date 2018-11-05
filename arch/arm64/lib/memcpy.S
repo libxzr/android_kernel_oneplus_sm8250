@@ -23,8 +23,10 @@
  */
 
 #include <linux/linkage.h>
+
 #include <asm/assembler.h>
 #include <asm/cache.h>
+#include <asm/export.h>
 
 /*
  * Copy a buffer from src to dest (alignment handled by the hardware)
@@ -74,4 +76,6 @@ ENTRY(memcpy)
 #include "copy_template.S"
 	ret
 ENDPIPROC(memcpy)
+EXPORT_SYMBOL(memcpy)
 ENDPROC(__memcpy)
+EXPORT_SYMBOL(__memcpy)
