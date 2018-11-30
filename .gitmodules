@@ -1,0 +1,3 @@
+[submodule "scripts/dtc-aosp/dtc"]
+	path = scripts/dtc-aosp/dtc
+	url = https://github.com/xzr467706992/dtc-aosp
