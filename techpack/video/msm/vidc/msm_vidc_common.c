@@ -5834,7 +5834,7 @@ static u32 msm_comm_get_memory_limit(struct msm_vidc_core *core)
 
 	memory_limits_tbl = core->resources.mem_limit_tbl;
 	memory_limits_tbl_size = core->resources.memory_limit_table_size;
-	memory_limit_mbytes = ((u64)totalram_pages * PAGE_SIZE) >> 20;
+	memory_limit_mbytes = ((u64)totalram_pages() * PAGE_SIZE) >> 20;
 	for (i = memory_limits_tbl_size - 1; i >= 0; i--) {
 		memory_size = memory_limits_tbl[i].ddr_size;
 		memory_limit = memory_limits_tbl[i].mem_limit;
