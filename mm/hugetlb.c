@@ -2212,7 +2212,7 @@ static void __init gather_bootmem_prealloc(void)
 
 		/*
 		 * If we had gigantic hugepages allocated at boot time, we need
-		 * to restore the 'stolen' pages to totalram_pages in order to
+		 * to restore the 'stolen' pages to totalram_pages() in order to
 		 * fix confusing memory reports from free(1) and another
 		 * side-effects, like CommitLimit going negative.
 		 */

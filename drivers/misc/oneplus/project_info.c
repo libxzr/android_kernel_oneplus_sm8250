@@ -698,7 +698,7 @@ int __init init_project_info(void)
     get_ddr_manufacture_name();
 
 	/* approximate as ceiling of total pages */
-	ddr_size = (totalram_pages + (1 << 18) - 1) >> 18;
+	ddr_size = (totalram_pages() + (1 << 18) - 1) >> 18;
 
     snprintf(ddr_version, sizeof(ddr_version), "size_%dG_r_%d_c_%d",
         ddr_size, project_info_desc->ddr_row,
