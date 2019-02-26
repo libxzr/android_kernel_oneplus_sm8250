@@ -975,9 +975,8 @@ static int bug_handler(struct pt_regs *regs, unsigned int esr)
 }
 
 static struct break_hook bug_break_hook = {
-	.esr_val = 0xf2000000 | BUG_BRK_IMM,
-	.esr_mask = 0xffffffff,
 	.fn = bug_handler,
+	.imm = BUG_BRK_IMM,
 };
 
 #ifdef CONFIG_KASAN_SW_TAGS
@@ -1026,9 +1025,9 @@ static int kasan_handler(struct pt_regs *regs, unsigned int esr)
 #define KASAN_ESR_MASK 0xffffff00
 
 static struct break_hook kasan_break_hook = {
-	.esr_val = KASAN_ESR_VAL,
-	.esr_mask = KASAN_ESR_MASK,
 	.fn = kasan_handler,
+	.imm = KASAN_BRK_IMM,
+	.mask = KASAN_BRK_MASK,
 };
 #endif
 
@@ -1049,8 +1048,8 @@ int __init early_brk64(unsigned long addr, unsigned int esr,
 /* This registration must happen early, before debug_traps_init(). */
 void __init trap_init(void)
 {
-	register_break_hook(&bug_break_hook);
+	register_kernel_break_hook(&bug_break_hook);
 #ifdef CONFIG_KASAN_SW_TAGS
-	register_break_hook(&kasan_break_hook);
+	register_kernel_break_hook(&kasan_break_hook);
 #endif
 }
