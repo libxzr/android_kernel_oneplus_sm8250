@@ -80,7 +80,7 @@ static int bq27541_read_i2c_block(u8 cmd, u8 length, u8 *returnData,
 static void bq28z610_modify_soc_smooth_parameter(struct bq27541_device_info *di);
 static int bq28z610_get_time_to_full(void);
 static int bq27541_get_batt_bq_soc(void);
-static bool get_dash_started(void);
+static inline bool is_dash_started(void);
 static int bq27541_set_allow_reading(int enable);
 
 static int bq27541_read(u8 reg, int *rt_value, int b_single,
@@ -406,7 +406,7 @@ static int bq27541_chip_config(struct bq27541_device_info *di)
 	return 0;
 }
 static bool bq27541_registered;
-struct bq27541_device_info *bq27541_di;
+static struct bq27541_device_info *bq27541_di;
 static struct i2c_client *new_client;
 
 #define TEN_PERCENT                            10
@@ -1036,14 +1036,14 @@ static int bq27541_get_batt_bq_soc(void)
 {
 	int soc;
 
-	if (!get_dash_started()) {
+	if (!is_dash_started()) {
 		if (!bq27541_di->allow_reading)
 			bq27541_set_allow_reading(true);
 	}
 	bq27541_di->disable_calib_soc = true;
 	soc = bq27541_battery_soc(bq27541_di, 0);
 	bq27541_di->disable_calib_soc = false;
-	if (!get_dash_started()) {
+	if (!is_dash_started()) {
 		if (!bq27541_di->allow_reading)
 			bq27541_set_allow_reading(false);
 	}
@@ -1211,7 +1211,7 @@ static struct external_battery_gauge bq27541_batt_gauge = {
 };
 
 
-static int is_usb_pluged(void)
+static inline int is_usb_plugged(void)
 {
 	static struct power_supply *psy;
 	union power_supply_propval ret = {0,};
@@ -1236,7 +1236,7 @@ static int is_usb_pluged(void)
 	return usb_present;
 }
 
-static bool get_dash_started(void)
+static inline bool is_dash_started(void)
 {
 	if (bq27541_di && bq27541_di->fastchg_started)
 		return bq27541_di->fastchg_started;
@@ -1271,21 +1271,23 @@ static void update_battery_soc_work(struct work_struct *work)
 	int schedule_time, vbat, temp, switch_flag = 0;
 	static int pre_plugin_status = 0;
 	static bool pre_dash_started = 0;
+	int plugged = is_usb_plugged();
+	bool dash_started = is_dash_started();
 
 	pr_info("plugin:%d,dash_start:%d:smooth:%d\n",
-				is_usb_pluged(), get_dash_started(),bq27541_di->set_smoothing);
+				plugged, dash_started,bq27541_di->set_smoothing);
 	switch_flag = REFRESH_TRUE;
-	if (pre_plugin_status != is_usb_pluged()
-		|| pre_dash_started != get_dash_started())
+	if (pre_plugin_status != plugged
+		|| pre_dash_started != dash_started)
 		pr_info("usb_plugin:%d,dash_started:%d:set_smooth:%d\n",
-				is_usb_pluged(), get_dash_started(),bq27541_di->set_smoothing);
-	pre_plugin_status = is_usb_pluged();
-	pre_dash_started = get_dash_started();
-	if (is_usb_pluged() || get_dash_started()) {
+				plugged, dash_started,bq27541_di->set_smoothing);
+	pre_plugin_status = plugged;
+	pre_dash_started = dash_started;
+	if (plugged || dash_started) {
 		schedule_delayed_work(
 				&bq27541_di->battery_soc_work,
 				msecs_to_jiffies(BATTERY_SOC_UPDATE_MS));
-		if (get_dash_started())
+		if (dash_started)
 			return;
 		if (bq27541_di->set_smoothing)
 			return;
@@ -1369,7 +1371,7 @@ static void bq_modify_soc_smooth_parameter(struct work_struct *work)
 
 	di = container_of(work, struct bq27541_device_info,
 			modify_soc_smooth_parameter.work);
-	if (get_dash_started())
+	if (is_dash_started())
 		return;
 	if (di->already_modify_smooth)
 		return;
@@ -2429,7 +2431,7 @@ static int bq28z610_get_time_to_full(void)
 	if (!bq27541_di->batt_bq28z610)
 		return -ENODATA;
 
-	if (get_dash_started())
+	if (is_dash_started())
 		return -ENODATA;
 
 	if (bq27541_di->allow_reading) {
