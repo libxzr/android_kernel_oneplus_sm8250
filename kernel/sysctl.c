@@ -1694,7 +1694,7 @@ static struct ctl_table vm_table[] = {
 		.extra1		= &zero,
 	},
 	{
-		.procname	= "dirty_background_ratio",
+		.procname	= "dirty_background_ratio_nosys",
 		.data		= &dirty_background_ratio,
 		.maxlen		= sizeof(dirty_background_ratio),
 		.mode		= 0644,
