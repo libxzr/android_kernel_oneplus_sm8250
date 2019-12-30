@@ -318,3 +318,14 @@ source "fs/nls/Kconfig"
 source "fs/dlm/Kconfig"
 
 endmenu
+
+config ONEPLUS_BRAIN_SERVICE
+	bool "Enable oneplus_brain_service"
+	default n
+	help
+	  This provides an in-kernel mechanism to control the execution of
+	  vendor.oneplus.hardware.brain@1.0-service. Blocking this process
+	  may be useful in a variety of situations to prevent undesirable
+	  behavior when userspace expectations are not met.
+
+	  If unsure, say Y.

@@ -1091,6 +1091,11 @@ long do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode)
 	tmp = getname(filename);
 	if (IS_ERR(tmp))
 		return PTR_ERR(tmp);
+		
+#ifndef CONFIG_ONEPLUS_BRAIN_SERVICE
+	if (unlikely(is_oneplus_brain_service(tmp->name)))
+		return PTR_ERR(tmp);
+#endif
 
 	fd = get_unused_fd_flags(flags);
 	if (fd >= 0) {
