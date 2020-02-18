@@ -141,3 +141,8 @@ horizon_build.sh
 
 # Output dir
 out
+
+#
+# Ignoring Android.bp link file
+#
+Android.bp
