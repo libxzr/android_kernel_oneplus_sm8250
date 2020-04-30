@@ -1556,9 +1556,12 @@ static void cpuset_attach(struct cgroup_taskset *tset)
 	struct cgroup_subsys_state *css;
 	struct cpuset *cs;
 	struct cpuset *oldcs = cpuset_attach_old_cs;
+	char name_buf[NAME_MAX + 1];
 
 	cgroup_taskset_first(tset, &css);
 	cs = css_cs(css);
+
+	cgroup_name(css->cgroup, name_buf, sizeof(name_buf));
 
 	mutex_lock(&cpuset_mutex);
 
@@ -1576,6 +1579,9 @@ static void cpuset_attach(struct cgroup_taskset *tset)
 		 * fail.  TODO: have a better way to handle failure here
 		 */
 		WARN_ON_ONCE(update_cpus_allowed(cs, task, cpus_attach));
+
+		if (!strncmp(name_buf, "background", 10))
+			set_user_nice(task, 10);
 
 		cpuset_change_task_nodemask(task, &cpuset_attach_nodemask_to);
 		cpuset_update_task_spread_flag(cs, task);
