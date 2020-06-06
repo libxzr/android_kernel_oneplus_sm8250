@@ -1082,6 +1082,7 @@ static int cnss_driver_recovery_hdlr(struct cnss_plat_data *plat_priv,
 
 	if (test_bit(CNSS_DRIVER_RECOVERY, &plat_priv->driver_state)) {
 		cnss_pr_err("Recovery is already in progress\n");
+		CNSS_ASSERT(0);
 		ret = -EINVAL;
 		goto out;
 	}
@@ -1134,7 +1135,8 @@ void cnss_schedule_recovery(struct device *dev,
 	struct cnss_recovery_data *data;
 	int gfp = GFP_KERNEL;
 
-	cnss_bus_update_status(plat_priv, CNSS_FW_DOWN);
+	if (!test_bit(CNSS_DEV_ERR_NOTIFY, &plat_priv->driver_state))
+		cnss_bus_update_status(plat_priv, CNSS_FW_DOWN);
 
 	if (test_bit(CNSS_DRIVER_UNLOADING, &plat_priv->driver_state) ||
 	    test_bit(CNSS_DRIVER_IDLE_SHUTDOWN, &plat_priv->driver_state)) {
@@ -1743,6 +1745,26 @@ static void cnss_unregister_ramdump_v1(struct cnss_plat_data *plat_priv)
 				  ramdump_info->ramdump_pa);
 }
 
+/**
+ * cnss_ignore_dump_data_reg_fail - Ignore Ramdump table register failure
+ * @ret: Error returned by msm_dump_data_register_nominidump
+ *
+ * If we dont have support for mem dump feature, ignore failure.
+ *
+ * Return: Same given error code if mem dump feature enabled, 0 otherwise
+ */
+#ifdef CONFIG_QCOM_MEMORY_DUMP_V2
+static int cnss_ignore_dump_data_reg_fail(int ret)
+{
+	return ret;
+}
+#else
+static int cnss_ignore_dump_data_reg_fail(int ret)
+{
+	return 0;
+}
+#endif
+
 static int cnss_register_ramdump_v2(struct cnss_plat_data *plat_priv)
 {
 	int ret = 0;
@@ -1779,7 +1801,9 @@ static int cnss_register_ramdump_v2(struct cnss_plat_data *plat_priv)
 	ret = msm_dump_data_register_nominidump(MSM_DUMP_TABLE_APPS,
 						&dump_entry);
 	if (ret) {
-		cnss_pr_err("Failed to setup dump table, err = %d\n", ret);
+		ret = cnss_ignore_dump_data_reg_fail(ret);
+		cnss_pr_err("Failed to setup dump table, %s (%d)\n",
+			    ret ? "Error" : "Ignoring", ret);
 		goto free_ramdump;
 	}
 
