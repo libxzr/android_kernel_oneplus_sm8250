@@ -801,7 +801,7 @@ static inline void dp_tx_ext_desc_free_multiple(struct dp_soc *soc,
 		struct dp_tx_ext_desc_elem_s *elem, uint8_t desc_pool_id,
 		uint8_t num_free)
 {
-	struct dp_tx_ext_desc_elem_s *head, *tail, *c_elem;
+	struct dp_tx_ext_desc_elem_s *head = NULL, *tail, *c_elem;
 	uint8_t freed = num_free;
 
 	/* caller should always guarantee atleast list of num_free nodes */
