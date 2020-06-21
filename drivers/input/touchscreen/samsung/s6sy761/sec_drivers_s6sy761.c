@@ -3297,6 +3297,7 @@ void sec_ts_run_rawdata_all(void *chip_data, bool full_read)
 out:
 	TPD_INFO("%s: done (noise:%d, wet:%d)##\n",
 			__func__, chip_info->touch_noise_status, chip_info->wet_mode);
+    kfree(chip_info->pFrame);
 
 	tp_touch_btnkey_release();
 
