@@ -280,4 +280,14 @@ struct chip_data_s6sy761 {
 	bool 							print_num;
 };
 
+struct dma_buf_s6sy761 {
+	u8 tBuff[SEC_EVENT_BUFF_SIZE];
+	u8 device_id[3];
+	unsigned char fw_data[5];
+	u8 fw_buf[4];
+	u8 event_buff[MAX_EVENT_COUNT * SEC_EVENT_BUFF_SIZE];
+	uint8_t coord[18];
+	u8 reg_buf[4];
+};
+
 #endif
