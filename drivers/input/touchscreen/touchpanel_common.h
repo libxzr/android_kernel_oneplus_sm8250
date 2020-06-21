@@ -394,7 +394,6 @@ struct black_gesture_test {
 struct debug_info_proc_operations;
 struct earsense_proc_operations;
 struct touchpanel_data {
-	bool register_is_16bit;                             /*register is 16bit*/
 	bool glove_mode_support;                            /*glove_mode support feature*/
 	bool black_gesture_support;                         /*black_gesture support feature*/
 	bool charger_pump_support;                          /*charger_pump support feature*/

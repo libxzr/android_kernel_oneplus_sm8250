@@ -4149,7 +4149,6 @@ static void init_parse_dts(struct device *dev, struct touchpanel_data *ts)
 
 	np = dev->of_node;
 
-	ts->register_is_16bit       = of_property_read_bool(np, "register-is-16bit");
 	ts->edge_limit_support      = of_property_read_bool(np, "edge_limit_support");
 	ts->glove_mode_support      = of_property_read_bool(np, "glove_mode_support");
 	ts->esd_handle_support      = of_property_read_bool(np, "esd_handle_support");
@@ -4848,9 +4847,6 @@ int register_common_touch_device(struct touchpanel_data *pdata)
 
 	//step1 : dts parse
 	init_parse_dts(ts->dev, ts);
-
-	//step2 : IIC interfaces init
-	init_touch_interfaces(ts->dev, ts->register_is_16bit);
 
 	//step3 : mutex init
 	mutex_init(&ts->mutex);
