@@ -57,7 +57,7 @@ static ssize_t sec_ts_regread_show(struct device *dev, struct device_attribute *
 	disable_irq_nosync(ts->irq);
 	mutex_lock(&ts->mutex);
 
-	read_lv1_buff = kzalloc(lv1_readsize, GFP_KERNEL);
+	read_lv1_buff = kzalloc(lv1_readsize, GFP_KERNEL | GFP_DMA);
 	if (!read_lv1_buff)
 		goto malloc_err;
 
