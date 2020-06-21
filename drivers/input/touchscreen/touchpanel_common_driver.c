@@ -591,7 +591,7 @@ static void tp_touch_handle(struct touchpanel_data *ts)
 	int i = 0;
 	uint8_t finger_num = 0, touch_near_edge = 0;
 	int obj_attention = 0;
-	struct point_info *points;
+	struct point_info points[10];
 	struct corner_info corner[4];
 	static bool up_status = false;
 	static struct point_info last_point = {.x = 0, .y = 0};
@@ -602,11 +602,7 @@ static void tp_touch_handle(struct touchpanel_data *ts)
 		return;
 	}
 
-	points= kzalloc(sizeof(struct point_info)*ts->max_num, GFP_KERNEL);
-	if (!points) {
-		TPD_INFO("points kzalloc failed\n");
-		return;
-	}
+    memset(points, 0, sizeof(points));
 	memset(corner, 0, sizeof(corner));
 	if (ts->reject_point) {		//sensor will reject point when call mode.
 		if (ts->touch_count) {
@@ -623,7 +619,6 @@ static void tp_touch_handle(struct touchpanel_data *ts)
 #endif
 			input_sync(ts->input_dev);
 		}
-		kfree(points);
 		return;
 	}
 	obj_attention = ts->ts_ops->get_touch_points(ts->chip_data, points, ts->max_num);
@@ -685,7 +680,6 @@ static void tp_touch_handle(struct touchpanel_data *ts)
 		if (up_status) {
 			tp_touch_up(ts);
 			mutex_unlock(&ts->report_mutex);
-			kfree(points);
 			return;
 		}
 		finger_num = 0;
@@ -708,7 +702,6 @@ static void tp_touch_handle(struct touchpanel_data *ts)
 	}
 	input_sync(ts->input_dev);
 	ts->touch_count = finger_num;
-	kfree(points);
 	mutex_unlock(&ts->report_mutex);
 }
 
