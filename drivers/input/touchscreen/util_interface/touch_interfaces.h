@@ -25,6 +25,12 @@ typedef enum {
 	SPIREAD  = 2
 } SPI_RW;
 
+struct touch_dma_buf {
+	unsigned char read_buf[1];
+	unsigned char read_byte_buf[2];
+	unsigned char read_word_buf[2];
+};
+
 int touch_i2c_read_byte(struct i2c_client* client, u16 addr);
 int touch_i2c_write_byte(struct i2c_client* client, u16 addr, unsigned char data);
 
