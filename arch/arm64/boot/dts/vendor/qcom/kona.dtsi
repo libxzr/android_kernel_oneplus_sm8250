@@ -362,7 +362,7 @@
 	};
 
 	chosen {
-		bootargs = "noirqdebug norandmaps rcupdate.rcu_expedited=1 rcu_nocbs=0-7";
+		bootargs = "noirqdebug norandmaps nodebugmon rcupdate.rcu_expedited=1 rcu_nocbs=0-7";
 	};
 
 	firmware: firmware {
