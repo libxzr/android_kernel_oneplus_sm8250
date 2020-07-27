@@ -5003,6 +5003,9 @@ int register_common_touch_device(struct touchpanel_data *pdata)
 		INIT_WORK(&ts->read_delta_work, touch_read_delta);
 	}
 
+	if (ts->game_switch_support)
+		ts->ts_ops->mode_switch(ts->chip_data, MODE_GAME, true);
+
 	//step 21 : createproc proc files interface
 	init_touchpanel_proc(ts);
 
@@ -5031,6 +5034,7 @@ int register_common_touch_device(struct touchpanel_data *pdata)
 	ts->charge_detect = 0;
 	ts->firmware_update_type = 0;
 	ts->corner_delay_up = -1;
+	ts->noise_level = 1;
 	ts->wet_mode_status = 0;
 	if (ts->project_info == 1) {//project 19811
 		ts->dead_zone_l = 25;
