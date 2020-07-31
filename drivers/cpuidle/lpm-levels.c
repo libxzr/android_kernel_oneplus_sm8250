@@ -125,6 +125,12 @@ module_param_named(print_parsed_dt, print_parsed_dt, bool, 0664);
 static bool sleep_disabled;
 module_param_named(sleep_disabled, sleep_disabled, bool, 0664);
 
+void msm_cpuidle_set_sleep_disable(bool disable)
+{
+	sleep_disabled = disable;
+	pr_info("%s:sleep_disabled=%d\n", __func__, disable);
+}
+
 /**
  * msm_cpuidle_get_deep_idle_latency - Get deep idle latency value
  *
@@ -652,6 +658,7 @@ static inline bool lpm_disallowed(s64 sleep_us, int cpu, struct lpm_cpu *pm_cpu)
 {
 	uint64_t bias_time = 0;
 
+
 	if (cpu_isolated(cpu))
 		goto out;
 
@@ -663,6 +670,7 @@ static inline bool lpm_disallowed(s64 sleep_us, int cpu, struct lpm_cpu *pm_cpu)
 		pm_cpu->bias = bias_time;
 		return true;
 	}
+
 
 out:
 	if (sleep_us < 0)
@@ -703,6 +711,7 @@ static int cpu_power_select(struct cpuidle_device *dev,
 	uint32_t next_wakeup_us = (uint32_t)sleep_us;
 	uint32_t min_residency, max_residency;
 	struct power_params *pwr_params;
+
 
 	if (lpm_disallowed(sleep_us, dev->cpu, cpu))
 		goto done_select;
