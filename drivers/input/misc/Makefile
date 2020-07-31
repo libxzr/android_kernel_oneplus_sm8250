@@ -86,3 +86,4 @@ obj-$(CONFIG_INPUT_YEALINK)		+= yealink.o
 obj-$(CONFIG_INPUT_IDEAPAD_SLIDEBAR)	+= ideapad_slidebar.o
 
 obj-y  += vibrator/
+obj-$(CONFIG_STMVL53L1)			+= vl53L1/
