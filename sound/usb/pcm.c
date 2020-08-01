@@ -41,6 +41,8 @@
 
 #define MAX_SETALT_TIMEOUT_MS 1000
 
+static int snd_usb_pcm_change_state(struct snd_usb_substream *subs, int state);
+
 /* return the estimated delay based on USB frame counters */
 snd_pcm_uframes_t snd_usb_pcm_delay(struct snd_usb_substream *subs,
 				    unsigned int rate)
