@@ -1,0 +1,23 @@
+# Oneplus configuration options
+
+config MACH_ONEPLUS_SM8250
+	bool "Oneplus SM8250"
+	depends on ARCH_QCOM
+	depends on ARCH_KONA
+	help
+	  Support for SM8250 Oneplus variants
+
+menu "Oneplus board selection"
+
+	config MACH_ONEPLUS_8
+		bool "Oneplus 8 board"
+		depends on MACH_ONEPLUS_SM8250
+		help
+		  Support for Oneplus 8 variant
+
+	config MACH_ONEPLUS_8PRO
+		bool "Oneplus 8 Pro board"
+		depends on MACH_ONEPLUS_SM8250
+		help
+		  Support for Oneplus 8 Pro variant
+endmenu
