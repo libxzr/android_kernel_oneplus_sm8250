@@ -135,3 +135,9 @@ all.config
 
 # fetched Android config fragments
 kernel/configs/android-*.cfg
+
+# Build script
+horizon_build.sh
+
+# Output dir
+out
