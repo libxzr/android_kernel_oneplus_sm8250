@@ -17,7 +17,7 @@ kona-qrd-overlay.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
 kona-hdk-overlay.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
 else
 ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
-        dtbo-$(CONFIG_ARCH_KONA) += \
+        dtbo-$(CONFIG_MACH_ONEPLUS_SM8250) += \
                 instantnoodlep-overlay-evb.dtbo \
                 instantnoodlep-overlay-t0.dtbo \
                 instantnoodlep-overlay-evt1.dtbo \
