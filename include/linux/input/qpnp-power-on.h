@@ -55,12 +55,6 @@ struct qpnp_pon {
 	struct pon_regulator	*pon_reg_cfg;
 	struct list_head	list;
 	struct delayed_work	bark_work;
-	struct delayed_work     press_work;
-	struct delayed_work press_pwr;
-#ifdef CONFIG_KEY_FLUSH
-	struct delayed_work     press_work_flush;
-#endif
-	struct work_struct  up_work;
 	atomic_t	   press_count;
 	struct dentry		*debugfs;
 	struct device_node      *pbs_dev_node;
