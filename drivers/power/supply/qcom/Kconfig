@@ -89,5 +89,23 @@ config SMB1398_CHARGER
 	  (2) DIV2 and 3-level buck combo mode to regulate the output power from
 	      wireless charger receiver and provide the input for downstream
 	      chargers.
+	      
+config FG_BQ27541
+	tristate "TI bq27541 fg"
+	depends on I2C
+	help
+	  Say Y here to enable the TI Fuel Gauge driver.This adds support
+	  for battery fuel gauging and state of charge of battery connected to
+	  the fuel gauge. The state of charge is reported through a BMS power
+	  supply property and also sends uevents when the capacity is updated.
+
+config ONEPLUS_FASTCHG
+	tristate "ONEPLUS FAST CHARGE"
+	depends on I2C
+	help
+	  Say Y here to enable the ONEPLUS FAST CHARGE driver.This adds support
+	  for VOOC charge and state of charge of battery connected to
+	  the battery. The state of charge is reported through a battery power
+	  supply property
 
 endmenu

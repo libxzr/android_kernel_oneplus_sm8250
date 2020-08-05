@@ -8,3 +8,5 @@ obj-$(CONFIG_QPNP_FG_GEN4)		+= qpnp-fg-gen4.o fg-memif.o fg-util.o fg-alg.o pmic
 obj-$(CONFIG_QPNP_QG)			+= qpnp-qg.o pmic-voter.o qg-util.o qg-soc.o qg-sdam.o qg-battery-profile.o qg-profile-lib.o fg-alg.o
 obj-$(CONFIG_HL6111R)			+= hl6111r.o
 obj-$(CONFIG_SMB1398_CHARGER)		+= smb1398-charger.o pmic-voter.o
+obj-$(CONFIG_FG_BQ27541)	        += bq27541_fuelgauger.o
+obj-$(CONFIG_ONEPLUS_FASTCHG)	        += oneplus_fastchg.o
