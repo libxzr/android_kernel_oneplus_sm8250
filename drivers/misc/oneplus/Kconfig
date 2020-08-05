@@ -1,0 +1,32 @@
+config PROJECT_INFO
+    bool "detect project info"
+    default n
+    help
+      detect projcet info  If unsure, say n.
+
+config OEM_BOOT_MODE
+    bool "detect oem boot mode"
+    default n
+    help
+        detect oem boot mode  If unsure, say y.
+
+config RF_CABLE_DETECT
+    bool "detect RF cable connection"
+    help
+      detect RF cable connection for different RF configuration
+      To compile this driver as a module, choose M here: the module
+      will be called RF cable.
+      If unsure, say N.
+
+config GPIO_SWITCH
+	tristate "use gpio swith"
+	default y
+	help
+	  we can use gpio switch set gpio out high or low
+
+config REGULATOR_DEMO
+	tristate "use regultor demo"
+	default y
+	help
+	  we can use regulator demo to control regulator
+
