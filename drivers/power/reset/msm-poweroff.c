@@ -187,28 +187,6 @@ int scm_set_dload_mode(int arg1, int arg2)
 
 static void set_dload_mode(int on)
 {
-	int ret;
-	u64 read_ret;
-	/* OEM : Set dload_mode to cust value when twice modemdump is triggered */
-	pr_err("[MDM] twice modemdump state [%d]\n", oem_get_twice_modemdump_state());
-	if (dload_mode_addr && oem_get_twice_modemdump_state()) {
-		__raw_writel(on ? 0xABCDABCD : 0, dload_mode_addr);
-		/* Make sure the download cookie is updated */
-		mb();
-		read_ret = __raw_readl(dload_mode_addr);
-		pr_err("[MDM] dload_mode value [0x%X]\n", read_ret);
-	} else if (dload_mode_addr) {
-		__raw_writel(on ? 0xE47B337D : 0, dload_mode_addr);
-		__raw_writel(on ? 0xCE14091A : 0,
-		       dload_mode_addr + sizeof(unsigned int));
-		/* Make sure the download cookie is updated */
-		mb();
-	}
-
-	ret = scm_set_dload_mode(on ? dload_type : 0, 0);
-	if (ret)
-		pr_err("Failed to set secure DLOAD mode: %d\n", ret);
-
 	dload_mode_enabled = on;
 }
 
