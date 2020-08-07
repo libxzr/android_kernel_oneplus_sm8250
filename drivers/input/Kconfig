@@ -225,5 +225,7 @@ endmenu
 
 source "drivers/input/fingerprint/Kconfig"
 
+source "drivers/input/tri_state_key/Kconfig"
+
 endmenu
 
