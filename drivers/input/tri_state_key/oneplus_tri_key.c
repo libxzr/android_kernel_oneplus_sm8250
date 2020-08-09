@@ -1388,7 +1388,7 @@ static int __init tri_key_platform_init(void)
 	return res;
 }
 
-module_init(tri_key_platform_init);
+late_initcall(tri_key_platform_init);
 
 static void __exit tri_key_platform_exit(void)
 {
