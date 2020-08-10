@@ -545,24 +545,25 @@ static int devfreq_notifier_call(struct notifier_block *nb, unsigned long type,
 
 	freq = find_available_min_freq(devfreq);
 	if (freq < 0) {
-		devfreq->scaling_min_freq = 0;
-		mutex_unlock(&devfreq->lock);
-		return -EINVAL;
+		freq = 0;
 	}
 	devfreq->scaling_min_freq = freq;
 
 	freq = find_available_max_freq(devfreq);
 	if (freq < 0) {
-		devfreq->scaling_max_freq = 0;
-		mutex_unlock(&devfreq->lock);
-		return -EINVAL;
+		freq = 0;
 	}
 	devfreq->scaling_max_freq = freq;
 
 	ret = update_devfreq(devfreq);
 	mutex_unlock(&devfreq->lock);
+	
+	if (ret)
+		dev_err(devfreq->dev.parent,
+			"failed to update frequency from OPP notifier (%d)\n",
+			err);
 
-	return ret;
+	return NOTIFY_OK;;
 }
 
 /**
@@ -576,11 +577,6 @@ static void devfreq_dev_release(struct device *dev)
 	struct devfreq *devfreq = to_devfreq(dev);
 
 	mutex_lock(&devfreq_list_lock);
-	if (IS_ERR(find_device_devfreq(devfreq->dev.parent))) {
-		mutex_unlock(&devfreq_list_lock);
-		dev_warn(&devfreq->dev, "releasing devfreq which doesn't exist\n");
-		return;
-	}
 	list_del(&devfreq->node);
 	mutex_unlock(&devfreq_list_lock);
 
@@ -637,6 +633,7 @@ struct devfreq *devfreq_add_device(struct device *dev,
 	devfreq->dev.parent = dev;
 	devfreq->dev.class = devfreq_class;
 	devfreq->dev.release = devfreq_dev_release;
+	INIT_LIST_HEAD(&devfreq->node);
 	devfreq->profile = profile;
 	strncpy(devfreq->governor_name, governor_name, DEVFREQ_NAME_LEN);
 	devfreq->previous_freq = profile->initial_freq;
@@ -1123,7 +1120,7 @@ static ssize_t available_governors_show(struct device *d,
 	 * The devfreq with immutable governor (e.g., passive) shows
 	 * only own governor.
 	 */
-	if (df->governor->immutable) {
+	if (df->governor && df->governor->immutable) {
 		count = scnprintf(&buf[count], DEVFREQ_NAME_LEN,
 				   "%s ", df->governor_name);
 	/*
