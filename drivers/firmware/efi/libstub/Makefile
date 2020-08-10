@@ -29,6 +29,7 @@ KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
 				   $(call cc-option,-ffreestanding) \
 				   $(call cc-option,-fno-stack-protector) \
 				   -D__DISABLE_EXPORTS \
+				   $(call cc-option,-fno-addrsig) \
 				   $(DISABLE_LTO)
 
 GCOV_PROFILE			:= n
