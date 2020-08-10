@@ -608,7 +608,7 @@ void *rmnet_get_rmnet_port(struct net_device *dev)
 
 	if (dev) {
 		priv = netdev_priv(dev);
-		return (void *)rmnet_get_port(priv->real_dev);
+		return (void *)rmnet_get_port_rcu(priv->real_dev);
 	}
 
 	return NULL;

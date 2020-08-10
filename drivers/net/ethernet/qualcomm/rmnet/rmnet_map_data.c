@@ -1577,7 +1577,7 @@ void rmnet_map_tx_qmap_cmd(struct sk_buff *qmap_skb)
 	struct sk_buff *agg_skb;
 	unsigned long flags;
 
-	port = rmnet_get_port(qmap_skb->dev);
+	port = rmnet_get_port_rcu(qmap_skb->dev);
 
 	if (port && (port->data_format & RMNET_EGRESS_FORMAT_AGGREGATION)) {
 		spin_lock_irqsave(&port->agg_lock, flags);
