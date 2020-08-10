@@ -839,6 +839,12 @@ static void dwc3_remove_requests(struct dwc3 *dwc, struct dwc3_ep *dep)
 		if (req)
 			dwc3_gadget_giveback(dep, req, -ESHUTDOWN);
 	}
+	
+	while (!list_empty(&dep->cancelled_list)) {
+		req = next_request(&dep->cancelled_list);
+		if(req)
+			dwc3_gadget_giveback(dep, req, -ESHUTDOWN);
+	}
 
 	dbg_log_string("DONE for %s(%d)", dep->name, dep->number);
 }
