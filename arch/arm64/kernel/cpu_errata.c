@@ -907,6 +907,8 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
 		.capability = ARM64_WORKAROUND_1542418,
 		ERRATA_MIDR_RANGE(MIDR_CORTEX_A77, 0, 0, 1, 0),
 		.cpu_enable = run_workaround_1542418_asid_rollover,
+	},
+#endif
 #ifdef CONFIG_ARM64_ERRATUM_1542419
 	{
 		/* we depend on the firmware portion for correctness */
