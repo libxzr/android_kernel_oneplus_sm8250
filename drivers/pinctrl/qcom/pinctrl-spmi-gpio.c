@@ -1168,7 +1168,7 @@ static int pmic_gpio_probe(struct platform_device *pdev)
 		if (ret) {
 			dev_err(dev, "failed to add pin range\n");
 			gpiochip_remove(&state->chip);
-			goto err_range;
+			goto err_free;
 		}
  	}
 
