@@ -288,7 +288,7 @@ static void wil_move_all_rx_buff_to_free_list(struct wil6210_priv *wil,
 
 	if (!wil->rx_buff_mgmt.buff_arr)
 		return;
-
+		
 	while (!list_empty(active)) {
 		struct wil_rx_buff *rx_buff =
 			list_first_entry(active, struct wil_rx_buff, list);
