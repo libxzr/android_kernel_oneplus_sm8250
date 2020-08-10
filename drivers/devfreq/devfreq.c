@@ -561,7 +561,7 @@ static int devfreq_notifier_call(struct notifier_block *nb, unsigned long type,
 	if (ret)
 		dev_err(devfreq->dev.parent,
 			"failed to update frequency from OPP notifier (%d)\n",
-			err);
+			ret);
 
 	return NOTIFY_OK;;
 }
