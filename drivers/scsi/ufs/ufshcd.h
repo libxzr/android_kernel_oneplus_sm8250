@@ -959,7 +959,6 @@ struct ufs_hba {
 	bool force_host_reset;
 	bool auto_h8_err;
 	struct ufs_stats ufs_stats;
-	bool silence_err_logs;
 
 	/* Device management request data */
 	struct ufs_dev_cmd dev_cmd;
