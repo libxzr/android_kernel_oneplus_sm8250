@@ -187,10 +187,7 @@ qdf_export_symbol(qdf_wake_up_process);
  * 2) arm architectures in kernel versions >=4.14
  * 3) backported kernels defining BACKPORTED_EXPORT_SAVE_STACK_TRACE_TSK_ARM
  */
-#if ((defined(WLAN_HOST_ARCH_ARM) && !WLAN_HOST_ARCH_ARM) || \
-	LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0) || \
-	defined(BACKPORTED_EXPORT_SAVE_STACK_TRACE_TSK_ARM)) && \
-	defined(CONFIG_STACKTRACE) && !defined(CONFIG_ARCH_STACKWALK)
+#if 0
 #define QDF_PRINT_TRACE_COUNT 32
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 2, 0))
