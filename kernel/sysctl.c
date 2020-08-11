@@ -823,7 +823,7 @@ static struct ctl_table kern_table[] = {
 		.extra1		= &zero,
 		.extra2		= &two_hundred_fifty_five,
 	},
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+#if defined(CONFIG_ENERGY_MODEL) && ((defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL) || defined(CONFIG_CPU_FREQ_GOV_SCHEDHORIZON)))
 	{
 		.procname	= "sched_energy_aware",
 		.data		= &sysctl_sched_energy_aware,
