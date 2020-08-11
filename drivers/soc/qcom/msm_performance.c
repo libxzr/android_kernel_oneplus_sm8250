@@ -57,59 +57,6 @@ static unsigned int curr_cap[CLUSTER_MAX];
 /*******************************sysfs start************************************/
 static int set_cpu_min_freq(const char *buf, const struct kernel_param *kp)
 {
-	int i, j, ntokens = 0;
-	unsigned int val, cpu;
-	const char *cp = buf;
-	struct cpu_status *i_cpu_stats;
-	struct cpufreq_policy policy;
-	cpumask_var_t limit_mask;
-
-	while ((cp = strpbrk(cp + 1, " :")))
-		ntokens++;
-
-	/* CPU:value pair */
-	if (!(ntokens % 2))
-		return -EINVAL;
-
-	cp = buf;
-	cpumask_clear(limit_mask);
-	for (i = 0; i < ntokens; i += 2) {
-		if (sscanf(cp, "%u:%u", &cpu, &val) != 2)
-			return -EINVAL;
-		if (cpu > (num_present_cpus() - 1))
-			return -EINVAL;
-
-		i_cpu_stats = &per_cpu(msm_perf_cpu_stats, cpu);
-
-		i_cpu_stats->min = val;
-		cpumask_set_cpu(cpu, limit_mask);
-
-		cp = strnchr(cp, strlen(cp), ' ');
-		cp++;
-	}
-
-	/*
-	 * Since on synchronous systems policy is shared amongst multiple
-	 * CPUs only one CPU needs to be updated for the limit to be
-	 * reflected for the entire cluster. We can avoid updating the policy
-	 * of other CPUs in the cluster once it is done for at least one CPU
-	 * in the cluster
-	 */
-	get_online_cpus();
-	for_each_cpu(i, limit_mask) {
-		i_cpu_stats = &per_cpu(msm_perf_cpu_stats, i);
-
-		if (cpufreq_get_policy(&policy, i))
-			continue;
-
-		if (cpu_online(i) && (policy.min != i_cpu_stats->min))
-			cpufreq_update_policy(i);
-
-		for_each_cpu(j, policy.related_cpus)
-			cpumask_clear_cpu(j, limit_mask);
-	}
-	put_online_cpus();
-
 	return 0;
 }
 
