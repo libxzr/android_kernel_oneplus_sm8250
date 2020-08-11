@@ -162,7 +162,7 @@ extern char sched_lib_name[LIB_PATH_LENGTH];
 extern unsigned int sched_lib_mask_force;
 extern bool is_sched_lib_based_app(pid_t pid);
 
-#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
+#if defined(CONFIG_ENERGY_MODEL) && ((defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL) || defined(CONFIG_CPU_FREQ_GOV_SCHEDHORIZON)))
 extern unsigned int sysctl_sched_energy_aware;
 extern int sched_energy_aware_handler(struct ctl_table *table, int write,
 				 void __user *buffer, size_t *lenp,
