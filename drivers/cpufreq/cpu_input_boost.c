@@ -13,6 +13,7 @@
 #include <linux/msm_drm_notify.h>
 #include <linux/slab.h>
 #include <linux/version.h>
+#include <drm/drm_panel.h>
 
 /* The sched_param struct is located elsewhere in newer kernels */
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 10, 0)
@@ -399,6 +400,8 @@ static struct input_handler cpu_input_boost_input_handler = {
 	.id_table	= cpu_input_boost_ids
 };
 
+extern struct drm_panel *lcd_active_panel;
+
 static int __init cpu_input_boost_init(void)
 {
 	struct boost_drv *b = &boost_drv_g;
@@ -421,10 +424,14 @@ static int __init cpu_input_boost_init(void)
 
 	b->msm_drm_notif.notifier_call = msm_drm_notifier_cb;
 	b->msm_drm_notif.priority = INT_MAX;
-	ret = msm_drm_register_client(&b->msm_drm_notif);
-	if (ret) {
-		pr_err("Failed to register msm_drm notifier, err: %d\n", ret);
-		goto unregister_handler;
+	if (lcd_active_panel) {
+		ret = drm_panel_notifier_register(lcd_active_panel, &b->msm_drm_notif);
+		if (ret) {
+			pr_err("Unable to register fb_notifier: %d\n", ret);
+			goto unregister_handler;
+		}
+	} else {
+		pr_err("lcd_active_panel is null\n");
 	}
 
 	thread = kthread_run(cpu_boost_thread, b, "cpu_boostd");
@@ -444,4 +451,4 @@ unregister_cpu_notif:
 	cpufreq_unregister_notifier(&b->cpu_notif, CPUFREQ_POLICY_NOTIFIER);
 	return ret;
 }
-subsys_initcall(cpu_input_boost_init);
+late_initcall(cpu_input_boost_init);
