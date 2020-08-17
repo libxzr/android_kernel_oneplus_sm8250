@@ -23,9 +23,12 @@ enum WLCHG_MSG_TYPE {
 	WLCHG_MSG_CMD_ERR,
 	WLCHG_MSG_HEARTBEAT,
 };
-
+#ifdef CONFIG_ONEPLUS_WIRELESSCHG
 extern bool wlchg_wireless_charge_start(void);
 extern int p922x_wireless_get_vout(void);
 bool typec_is_otg_mode(void);
 int switch_to_otg_mode(bool enable);
+#else
+static inline int switch_to_otg_mode(bool enable){ return 0; }
+#endif
 #endif

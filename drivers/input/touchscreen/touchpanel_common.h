@@ -593,8 +593,13 @@ extern bool tp_judge_ic_match(char * tp_ic_name);
 /* add haptic audio tp mask */
 extern int msm_drm_notifier_call_chain(unsigned long val, void *v);
 extern int gf_opticalfp_irq_handler(int event);
+#ifdef CONFIG_ONEPLUS_WIRELESSCHG
 extern int register_reverse_charge_notifier(struct notifier_block *nb);
 extern int unregister_reverse_charge_notifier(struct notifier_block *nb);
+#else
+static inline int register_reverse_charge_notifier(struct notifier_block *nb){ return 0; }
+static inline int unregister_reverse_charge_notifier(struct notifier_block *nb){ return 0; }
+#endif
 
 
 #endif

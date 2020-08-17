@@ -122,7 +122,11 @@ void external_battery_gauge_unregister(
 	struct external_battery_gauge *batt_gauge);
 void bq27541_information_register(struct external_battery_gauge *fast_chg);
 void bq27541_information_unregister(struct external_battery_gauge *fast_chg);
+#ifdef CONFIG_ONEPLUS_WIRELESSCHG
 void exfg_information_register(struct external_battery_gauge *exfg);
+#else
+static inline void exfg_information_register(struct external_battery_gauge *exfg){}
+#endif
 bool get_extern_fg_regist_done(void);
 bool get_extern_bq_present(void);
 int get_prop_pre_shutdown_soc(void);

@@ -862,7 +862,11 @@ extern bool op_set_fast_chg_allow(struct smb_charger *chg, bool enable);
 extern bool get_prop_fast_chg_started(struct smb_charger *chg);
 extern void mcu_en_gpio_set(int value);
 extern void switch_mode_to_normal(void);
+#ifdef CONFIG_ONEPLUS_WIRELESSCHG
 extern void notify_pd_in_to_wireless(void);
+#else
+static inline void notify_pd_in_to_wireless(void){}
+#endif
 extern struct smb_charger *g_chg;
 /* @bsp, 2019/10/21 add new panel node for PD charging */
 extern struct drm_panel *lcd_active_panel;
@@ -1123,6 +1127,10 @@ int smblib_get_qc3_main_icl_offset(struct smb_charger *chg, int *offset_ua);
 int smblib_init(struct smb_charger *chg);
 int smblib_deinit(struct smb_charger *chg);
 /* @bsp, 2019/08/30 Battery & Charging porting */
+#ifdef CONFIG_ONEPLUS_WIRELESSCHG
 extern void exchg_information_register(struct smb_charger *chg);
+#else
+static inline void exchg_information_register(struct smb_charger *chg){}
+#endif
 extern void op_release_usb_lock(void);
 #endif /* __SMB5_CHARGER_H */
