@@ -44,6 +44,7 @@
 #include <linux/bitfield.h>
 #include <linux/blkdev.h>
 #include <linux/suspend.h>
+#include <linux/binfmts.h>
 #include "ufshcd.h"
 #include "ufs_quirks.h"
 #include "unipro.h"
@@ -2100,6 +2101,10 @@ static ssize_t ufshcd_clkscale_enable_store(struct device *dev,
 		return -EINVAL;
 
 	value = !!value;
+
+	if (task_is_booster(current) && !value)
+		value = !value;
+
 	if (value == hba->clk_scaling.is_allowed)
 		goto out;
 
