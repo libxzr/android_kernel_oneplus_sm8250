@@ -43,6 +43,9 @@ instantnoodlev-overlay-evt1.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
 instantnoodlev-overlay-dvt.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
 
 else
+ifeq ($(CONFIG_MACH_ONEPLUS_SM8250),y)
+	dtb-y += kona-v2.1.dtb
+else
 dtb-$(CONFIG_ARCH_KONA) += kona-rumi.dtb \
         kona-mtp.dtb \
         kona-mtp-ws.dtb \
@@ -60,6 +63,7 @@ dtb-$(CONFIG_ARCH_KONA) += kona-rumi.dtb \
         kona-v2.1-cdp.dtb \
         kona-v2.1-qrd.dtb \
         kona-v2.1-hdk.dtb
+endif
 endif
 endif
 
