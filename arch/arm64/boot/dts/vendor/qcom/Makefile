@@ -29,18 +29,18 @@ ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
                 instantnoodlev-overlay-evt1.dtbo \
                 instantnoodlev-overlay-dvt.dtbo
 
-instantnoodlep-overlay-evb.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
-instantnoodlep-overlay-t0.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
-instantnoodlep-overlay-evt1.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
-instantnoodlep-overlay-dvt.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
+instantnoodlep-overlay-evb.dtbo-base := kona-v2.1.dtb
+instantnoodlep-overlay-t0.dtbo-base := kona-v2.1.dtb
+instantnoodlep-overlay-evt1.dtbo-base := kona-v2.1.dtb
+instantnoodlep-overlay-dvt.dtbo-base := kona-v2.1.dtb
 
-instantnoodle-overlay-t0.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
-instantnoodle-overlay-evt1.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
-instantnoodle-overlay-dvt.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
+instantnoodle-overlay-t0.dtbo-base := kona-v2.1.dtb
+instantnoodle-overlay-evt1.dtbo-base := kona-v2.1.dtb
+instantnoodle-overlay-dvt.dtbo-base := kona-v2.1.dtb
 
-instantnoodlev-overlay-t0.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
-instantnoodlev-overlay-evt1.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
-instantnoodlev-overlay-dvt.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
+instantnoodlev-overlay-t0.dtbo-base := kona-v2.1.dtb
+instantnoodlev-overlay-evt1.dtbo-base := kona-v2.1.dtb
+instantnoodlev-overlay-dvt.dtbo-base := kona-v2.1.dtb
 
 else
 ifeq ($(CONFIG_MACH_ONEPLUS_SM8250),y)
