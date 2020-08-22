@@ -16,18 +16,20 @@ kona-rumi-overlay.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
 kona-qrd-overlay.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
 kona-hdk-overlay.dtbo-base := kona.dtb kona-v2.dtb kona-v2.1.dtb
 else
-ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)
-        dtbo-$(CONFIG_MACH_ONEPLUS_SM8250) += \
-                instantnoodlep-overlay-evb.dtbo \
-                instantnoodlep-overlay-t0.dtbo \
-                instantnoodlep-overlay-evt1.dtbo \
-                instantnoodlep-overlay-dvt.dtbo \
+ifeq ($(CONFIG_BUILD_ARM64_DT_OVERLAY),y)                
+        dtbo-$(CONFIG_MACH_ONEPLUS_8) += \
                 instantnoodle-overlay-t0.dtbo \
                 instantnoodle-overlay-evt1.dtbo \
                 instantnoodle-overlay-dvt.dtbo \
                 instantnoodlev-overlay-t0.dtbo \
                 instantnoodlev-overlay-evt1.dtbo \
                 instantnoodlev-overlay-dvt.dtbo
+                
+        dtbo-$(CONFIG_MACH_ONEPLUS_8PRO) += \
+                instantnoodlep-overlay-evb.dtbo \
+                instantnoodlep-overlay-t0.dtbo \
+                instantnoodlep-overlay-evt1.dtbo \
+                instantnoodlep-overlay-dvt.dtbo
 
 instantnoodlep-overlay-evb.dtbo-base := kona-v2.1.dtb
 instantnoodlep-overlay-t0.dtbo-base := kona-v2.1.dtb
