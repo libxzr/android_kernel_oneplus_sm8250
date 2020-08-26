@@ -5010,6 +5010,12 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
 	
 	if (mode == 2)
 		change_fp_nice();
+		
+	if (mode ==2 && !dim_mode)
+		cpu_up(4);
+	else if (mode > 3)
+		cpu_down(4);
+	
 
 	if(aod_index <0){
 		oneplus_aod_hid = 0;
