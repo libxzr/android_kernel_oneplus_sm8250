@@ -2047,7 +2047,7 @@ static int ufs_qcom_pm_qos_init(struct ufs_qcom_host *host)
 	if (device_create_file(host->hba->var->dev, attr))
 		dev_dbg(host->hba->dev, "Failed to create sysfs for pm_qos enable\n");
 
-	host->pm_qos.is_enabled = true;
+	host->pm_qos.is_enabled = false;
 
 	return 0;
 
