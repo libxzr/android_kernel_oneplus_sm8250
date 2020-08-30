@@ -21,3 +21,7 @@ menu "Oneplus board selection"
 		help
 		  Support for Oneplus 8 Pro variant
 endmenu
+
+config DISABLE_PXLW_IRIS_DUAL
+	bool "Disable display techpack config PXLW_IRIS_DUAL"
+	depends on MACH_ONEPLUS_8PRO
