@@ -10,7 +10,11 @@ ifeq ($(CONFIG_MACH_ONEPLUS_8), y)
 include $(srctree)/techpack/display/config/instantnoodledisp.conf
 endif
 ifeq ($(CONFIG_MACH_ONEPLUS_8PRO), y)
+ifneq ($(CONFIG_DISABLE_PXLW_IRIS_DUAL), y)
 include $(srctree)/techpack/display/config/instantnoodlepdisp.conf
+else
+include $(srctree)/techpack/display/config/instantnoodlepodisp.conf
+endif
 endif
 endif
 
@@ -23,7 +27,11 @@ ifeq ($(CONFIG_MACH_ONEPLUS_8), y)
 LINUXINCLUDE    += -include $(srctree)/techpack/display/config/instantnoodledispconf.h
 endif
 ifeq ($(CONFIG_MACH_ONEPLUS_8PRO), y)
+ifneq ($(CONFIG_DISABLE_PXLW_IRIS_DUAL), y)
 LINUXINCLUDE    += -include $(srctree)/techpack/display/config/instantnoodlepdispconf.h
+else
+LINUXINCLUDE    += -include $(srctree)/techpack/display/config/instantnoodlepodispconf.h
+endif
 endif
 endif
 
