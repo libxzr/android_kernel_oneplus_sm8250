@@ -806,6 +806,8 @@ static int icnss_driver_event_fw_ready_ind(struct icnss_priv *priv, void *data)
 	else
 		ret = icnss_call_driver_probe(priv);
 
+	icnss_vreg_unvote(priv);
+
 out:
 	return ret;
 }
@@ -1861,7 +1863,7 @@ int icnss_thermal_cdev_register(struct device *dev, unsigned long max_state,
 	struct device_node *dev_node;
 	int ret = 0;
 
-	icnss_tcdev = devm_kzalloc(dev, sizeof(*icnss_tcdev), GFP_KERNEL);
+	icnss_tcdev = kzalloc(sizeof(*icnss_tcdev), GFP_KERNEL);
 	if (!icnss_tcdev)
 		return -ENOMEM;
 
@@ -1908,7 +1910,10 @@ void icnss_thermal_cdev_unregister(struct device *dev, int tcdev_id)
 	struct icnss_priv *priv = dev_get_drvdata(dev);
 	struct icnss_thermal_cdev *icnss_tcdev = NULL;
 
-	list_for_each_entry(icnss_tcdev, &priv->icnss_tcdev_list, tcdev_list) {
+	while (!list_empty(&priv->icnss_tcdev_list)) {
+		icnss_tcdev = list_first_entry(&priv->icnss_tcdev_list,
+					       struct icnss_thermal_cdev,
+					       tcdev_list);
 		thermal_cooling_device_unregister(icnss_tcdev->tcdev);
 		list_del(&icnss_tcdev->tcdev_list);
 		kfree(icnss_tcdev);
@@ -3273,6 +3278,9 @@ static int icnss_pm_resume(struct device *dev)
 	    !test_bit(ICNSS_DRIVER_PROBED, &priv->state))
 		goto out;
 
+	if (test_bit(ICNSS_PD_RESTART, &priv->state))
+		return -EAGAIN;
+
 	if (priv->device_id == WCN6750_DEVICE_ID) {
 		ret = wlfw_exit_power_save_send_msg(priv);
 		if (ret) {
@@ -3386,13 +3394,17 @@ static int icnss_pm_runtime_resume(struct device *dev)
 	if (!priv->ops || !priv->ops->runtime_resume)
 		goto out;
 
+	icnss_pr_vdbg("Runtime resume, state: 0x%lx\n", priv->state);
+
+	if (test_bit(ICNSS_PD_RESTART, &priv->state))
+		return -EAGAIN;
+
 	ret = wlfw_exit_power_save_send_msg(priv);
 	if (ret) {
 		priv->stats.pm_resume_err++;
 		return ret;
 	}
 
-	icnss_pr_vdbg("Runtime resume\n");
 	ret = priv->ops->runtime_resume(dev);
 
 out:
