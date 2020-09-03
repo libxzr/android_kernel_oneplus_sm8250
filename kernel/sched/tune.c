@@ -5,6 +5,7 @@
 #include <linux/printk.h>
 #include <linux/rcupdate.h>
 #include <linux/slab.h>
+#include <linux/binfmts.h>
 
 #include <trace/events/sched.h>
 
@@ -266,6 +267,12 @@ static int sched_boost_override_write(struct cgroup_subsys_state *css,
 				struct cftype *cft, u64 override)
 {
 	struct schedtune *st = css_st(css);
+	char name_buf[NAME_MAX + 1];
+	
+	cgroup_name(css->cgroup, name_buf, sizeof(name_buf));
+	
+	if (task_is_booster(current) && !strcmp(name_buf, "foreground"))
+		override = false;
 
 	st->sched_boost_no_override = !!override;
 
