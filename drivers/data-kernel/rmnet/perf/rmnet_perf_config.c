@@ -346,7 +346,7 @@ rmnet_perf_dereg_callbacks(struct net_device *dev,
 	enum rmnet_perf_resource_management_e return_val_final =
 					RMNET_PERF_RESOURCE_MGMT_SUCCESS;
 
-	port = rmnet_get_port(dev);
+	port = rmnet_get_port_rcu(dev);
 	if (!port || !core_meta) {
 		pr_err("%s(): rmnet port or core_meta is missing for "
 		       "dev = %s\n", __func__, dev->name);
@@ -428,7 +428,7 @@ static int rmnet_perf_config_notify_cb(struct notifier_block *nb,
 		    strncmp(dev->name, "rmnet_data", 10) == 0) {
 			struct rmnet_priv *priv = netdev_priv(dev);
 
-			port = rmnet_get_port(priv->real_dev);
+			port = rmnet_get_port_rcu(priv->real_dev);
 			return_val = rmnet_perf_netdev_up(priv->real_dev,
 							  port);
 			if (return_val == RMNET_PERF_RESOURCE_MGMT_FAIL) {

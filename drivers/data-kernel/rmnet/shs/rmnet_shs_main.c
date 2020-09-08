@@ -1635,7 +1635,7 @@ void rmnet_shs_init(struct net_device *dev, struct net_device *vnd)
 		map_len = rmnet_shs_get_mask_len(map_mask);
 	}
 
-	rmnet_shs_cfg.port = rmnet_get_port(dev);
+	rmnet_shs_cfg.port = rmnet_get_port_rcu(dev);
 	rmnet_shs_cfg.map_mask = map_mask;
 	rmnet_shs_cfg.map_len = map_len;
 	for (num_cpu = 0; num_cpu < MAX_CPUS; num_cpu++)

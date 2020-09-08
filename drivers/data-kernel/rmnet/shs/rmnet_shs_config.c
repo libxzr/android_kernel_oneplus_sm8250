@@ -122,7 +122,7 @@ static int rmnet_shs_dev_notify_cb(struct notifier_block *nb,
 		if (rmnet_vnd_total && !rmnet_shs_cfg.rmnet_shs_init_complete) {
 			pr_info("rmnet_shs initializing %s", dev->name);
 			priv = netdev_priv(dev);
-			port = rmnet_get_port(priv->real_dev);
+			port = rmnet_get_port_rcu(priv->real_dev);
 			if (!port) {
 				pr_err("rmnet_shs: invalid rmnet_port");
 				break;
