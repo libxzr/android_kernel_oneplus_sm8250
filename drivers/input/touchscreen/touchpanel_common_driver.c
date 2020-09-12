@@ -14,6 +14,7 @@
 #include <linux/time.h>
 #include <linux/pm_wakeup.h>
 #include <linux/oem/boot_mode.h>
+#include <linux/binfmts.h>
 
 
 #ifndef TPD_USE_EINT
@@ -1277,6 +1278,9 @@ static ssize_t proc_game_switch_write(struct file *file, const char __user *buff
 	int value = 0 ;
 	char buf[4] = {0};
 	struct touchpanel_data *ts = PDE_DATA(file_inode(file));
+	
+	if (task_is_booster(current))
+		return count;
 
 	if (count > 4) {
 		TPD_INFO("%s:count > 4\n",__func__);
