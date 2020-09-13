@@ -253,6 +253,7 @@
 		black_gesture_support = <1>;
 		//black_gesture_test_support = <1>;
 		game_switch_support = <1>;
+		glove_mode_support  = <1>;
 		face_detect_support = <1>;
 		touch_hold_support = <1>;
 		touchpanel,max-num-support = <10>;
