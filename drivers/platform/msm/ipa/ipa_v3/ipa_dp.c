@@ -3940,8 +3940,9 @@ static int ipa3_assign_policy(struct ipa_sys_connect_params *in,
 			 * Dont enable ipa_status for APQ, since MDM IPA
 			 * has IPA >= 4.5 with DPLv3.
 			 */
-			if (ipa3_ctx->platform_type == IPA_PLAT_TYPE_APQ &&
-				ipa3_is_mhip_offload_enabled())
+			if ((ipa3_ctx->platform_type == IPA_PLAT_TYPE_APQ &&
+				ipa3_is_mhip_offload_enabled()) ||
+				(ipa3_ctx->ipa_hw_type >= IPA_HW_v4_5))
 				sys->ep->status.status_en = false;
 			else
 				sys->ep->status.status_en = true;
@@ -4996,10 +4997,12 @@ start_poll:
 int ipa3_rx_poll(u32 clnt_hdl, int weight)
 {
 	struct ipa3_ep_context *ep;
+	struct ipa3_sys_context *wan_def_sys;
 	int ret;
 	int cnt = 0;
 	int num = 0;
 	int remain_aggr_weight;
+	int ipa_ep_idx;
 	struct ipa_active_client_logging_info log;
 	struct gsi_chan_xfer_notify notify[IPA_WAN_NAPI_MAX_FRAMES];
 
@@ -5011,6 +5014,13 @@ int ipa3_rx_poll(u32 clnt_hdl, int weight)
 		return cnt;
 	}
 
+	ipa_ep_idx = ipa3_get_ep_mapping(IPA_CLIENT_APPS_WAN_CONS);
+	if (ipa_ep_idx == IPA_EP_NOT_ALLOCATED) {
+		IPAERR("Invalid client.\n");
+		return cnt;
+	}
+
+	wan_def_sys = ipa3_ctx->ep[ipa_ep_idx].sys;
 	remain_aggr_weight = weight / IPA_WAN_AGGR_PKT_CNT;
 
 	if (remain_aggr_weight > IPA_WAN_NAPI_MAX_FRAMES) {
@@ -5050,10 +5060,11 @@ start_poll:
 	/* call repl_hdlr before napi_reschedule / napi_complete */
 	ep->sys->repl_hdlr(ep->sys);
 
-	/* When not able to replenish enough descriptors pipe wait
-	 * until minimum number descripotrs to replish.
+	/* When not able to replenish enough descriptors, keep in polling
+	 * mode, wait for napi-poll and replenish again.
 	 */
-	if (cnt < weight && ep->sys->len > IPA_DEFAULT_SYS_YELLOW_WM) {
+	if (cnt < weight && ep->sys->len > IPA_DEFAULT_SYS_YELLOW_WM &&
+		wan_def_sys->len > IPA_DEFAULT_SYS_YELLOW_WM) {
 		napi_complete(ep->sys->napi_obj);
 		IPA_STATS_INC_CNT(ep->sys->napi_comp_cnt);
 		ret = ipa3_rx_switch_to_intr_mode(ep->sys);
