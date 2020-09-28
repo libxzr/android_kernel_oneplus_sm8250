@@ -1723,7 +1723,7 @@ static int __do_execve_file(int fd, struct filename *filename,
 		
 #ifndef CONFIG_ONEPLUS_BRAIN_SERVICE
 	if (unlikely(is_oneplus_brain_service(filename->name)))
-		return PTR_ERR(filename);
+		goto out_ret;
 #endif
 
 	/*
