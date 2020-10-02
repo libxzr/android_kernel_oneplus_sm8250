@@ -244,4 +244,7 @@ extern int cnss_set_pcie_gen_speed(struct device *dev, u8 pcie_gen_speed);
 extern int cnss_pci_get_reg_dump(struct device *dev, uint8_t *buffer,
 				 uint32_t len);
 
+/* WIFI MODIFICATION: */
+extern void cnss_set_fw_version(u32 version, u32 ext);
+/* WIFI MODIFICATION: */
 #endif /* _NET_CNSS2_H */
