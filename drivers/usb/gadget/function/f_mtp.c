@@ -40,7 +40,6 @@
 #include <linux/usb/f_mtp.h>
 #include <linux/configfs.h>
 #include <linux/usb/composite.h>
-#include <linux/pm_qos.h>
 
 #include "configfs.h"
 
@@ -107,9 +106,6 @@ enum buf_type {
 #define DRIVER_NAME "mtp"
 
 #define MAX_ITERATION		100
-/* values for qos requests */
-#define FILE_LENGTH	(10 * 1024 * 1024)
-#define PM_QOS_TIMEOUT	3000000
 
 unsigned int mtp_rx_req_len = MTP_RX_BUFFER_INIT_SIZE;
 module_param(mtp_rx_req_len, uint, 0644);
@@ -121,12 +117,6 @@ unsigned int mtp_tx_reqs = MTP_TX_REQ_MAX;
 module_param(mtp_tx_reqs, uint, 0644);
 
 static const char mtp_shortname[] = DRIVER_NAME "_usb";
-static struct pm_qos_request little_cpu_mtp_freq;
-static struct pm_qos_request devfreq_mtp_request;
-static struct pm_qos_request big_cpu_mtp_freq;
-static struct pm_qos_request big_plus_cpu_mtp_freq;
-static struct delayed_work cpu_freq_qos_work;
-static struct workqueue_struct *cpu_freq_qos_queue;
 
 struct mtp_dev {
 	struct usb_function function;
@@ -890,22 +880,6 @@ static void send_file_work(struct work_struct *data)
 
 	mtp_log("(%lld %lld)\n", offset, count);
 
-	if (dev->xfer_file_length >= FILE_LENGTH) {
-		pm_qos_update_request(&devfreq_mtp_request, MAX_CPUFREQ - 1);
-		pm_qos_update_request(&little_cpu_mtp_freq, MAX_CPUFREQ);
-		pm_qos_update_request(&big_cpu_mtp_freq, MAX_CPUFREQ);
-		pm_qos_update_request(&big_plus_cpu_mtp_freq, MAX_CPUFREQ);
-	} else {
-		pm_qos_update_request_timeout(&devfreq_mtp_request,
-		MAX_CPUFREQ - 1, PM_QOS_TIMEOUT);
-		pm_qos_update_request_timeout(&little_cpu_mtp_freq,
-		MAX_CPUFREQ, PM_QOS_TIMEOUT);
-		pm_qos_update_request_timeout(&big_cpu_mtp_freq,
-		MAX_CPUFREQ, PM_QOS_TIMEOUT);
-		pm_qos_update_request_timeout(&big_plus_cpu_mtp_freq,
-		MAX_CPUFREQ, PM_QOS_TIMEOUT);
-	}
-
 	if (dev->xfer_send_header) {
 		hdr_size = sizeof(struct mtp_data_header);
 		count += hdr_size;
@@ -993,12 +967,6 @@ static void send_file_work(struct work_struct *data)
 	if (req)
 		mtp_req_put(dev, &dev->tx_idle, req);
 
-	if (dev->xfer_file_length >= FILE_LENGTH) {
-		pm_qos_update_request(&devfreq_mtp_request, MIN_CPUFREQ);
-		pm_qos_update_request(&little_cpu_mtp_freq, MIN_CPUFREQ);
-		pm_qos_update_request(&big_cpu_mtp_freq, MIN_CPUFREQ);
-		pm_qos_update_request(&big_plus_cpu_mtp_freq, MIN_CPUFREQ);
-	}
 	mtp_log("returning %d state:%d\n", r, dev->state);
 	/* write the result */
 	dev->xfer_result = r;
@@ -1033,13 +1001,6 @@ static void receive_file_work(struct work_struct *data)
 		r = -EIO;
 		goto fail;
 	}
-	if (delayed_work_pending(&cpu_freq_qos_work))
-		cancel_delayed_work(&cpu_freq_qos_work);
-
-	pm_qos_update_request(&devfreq_mtp_request, MAX_CPUFREQ - 1);
-	pm_qos_update_request(&little_cpu_mtp_freq, MAX_CPUFREQ);
-	pm_qos_update_request(&big_cpu_mtp_freq, MAX_CPUFREQ);
-	pm_qos_update_request(&big_plus_cpu_mtp_freq, MAX_CPUFREQ);
 	while (count > 0 || write_req) {
 		if (count > 0) {
 			/* queue a request */
@@ -1124,20 +1085,10 @@ static void receive_file_work(struct work_struct *data)
 	}
 fail:
 	mutex_unlock(&dev->read_mutex);
-	queue_delayed_work(cpu_freq_qos_queue, &cpu_freq_qos_work,
-		msecs_to_jiffies(1000)*3);
 	mtp_log("returning %d\n", r);
 	/* write the result */
 	dev->xfer_result = r;
 	smp_wmb();
-}
-
-static void update_qos_request(struct work_struct *data)
-{
-	pm_qos_update_request(&devfreq_mtp_request, MIN_CPUFREQ);
-	pm_qos_update_request(&little_cpu_mtp_freq, MIN_CPUFREQ);
-	pm_qos_update_request(&big_cpu_mtp_freq, MIN_CPUFREQ);
-	pm_qos_update_request(&big_plus_cpu_mtp_freq, MIN_CPUFREQ);
 }
 
 static int mtp_send_event(struct mtp_dev *dev, struct mtp_event *event)
@@ -1228,11 +1179,6 @@ static long mtp_send_receive_ioctl(struct file *fp, unsigned int code,
 		dev->xfer_send_header = 0;
 	} else {
 		work = &dev->receive_file_work;
-		pm_qos_update_request(&devfreq_mtp_request, MAX_CPUFREQ - 1);
-		pm_qos_update_request(&little_cpu_mtp_freq, MAX_CPUFREQ);
-		pm_qos_update_request(&big_cpu_mtp_freq, MAX_CPUFREQ);
-		pm_qos_update_request(&big_plus_cpu_mtp_freq, MAX_CPUFREQ);
-		msm_cpuidle_set_sleep_disable(true);
 		mtp_receive_flag = true;
 	}
 
@@ -1247,7 +1193,6 @@ static long mtp_send_receive_ioctl(struct file *fp, unsigned int code,
 		flush_workqueue(dev->wq);
 		if (mtp_receive_flag) {
 			mtp_receive_flag = false;
-			msm_cpuidle_set_sleep_disable(false);
 		}
 		/* read the result */
 		smp_rmb();
@@ -1397,15 +1342,6 @@ static int mtp_release(struct inode *ip, struct file *fp)
 
 	if (mtp_receive_flag) {
 		mtp_receive_flag = false;
-		pm_qos_update_request_timeout(&devfreq_mtp_request,
-		MAX_CPUFREQ - 1, PM_QOS_TIMEOUT);
-		pm_qos_update_request_timeout(&little_cpu_mtp_freq,
-		MAX_CPUFREQ, PM_QOS_TIMEOUT);
-		pm_qos_update_request_timeout(&big_cpu_mtp_freq,
-		MAX_CPUFREQ, PM_QOS_TIMEOUT);
-		pm_qos_update_request_timeout(&big_plus_cpu_mtp_freq,
-		MAX_CPUFREQ, PM_QOS_TIMEOUT);
-		msm_cpuidle_set_sleep_disable(false);
 	}
 	mtp_unlock(&_mtp_dev->open_excl);
 	return 0;
@@ -1829,16 +1765,6 @@ static int __mtp_setup(struct mtp_instance *fi_mtp)
 	INIT_WORK(&dev->send_file_work, send_file_work);
 	INIT_WORK(&dev->receive_file_work, receive_file_work);
 
-	cpu_freq_qos_queue = create_singlethread_workqueue("f_mtp_qos");
-	INIT_DELAYED_WORK(&cpu_freq_qos_work, update_qos_request);
-	pm_qos_add_request(&little_cpu_mtp_freq, PM_QOS_C0_CPUFREQ_MIN,
-				MIN_CPUFREQ);
-	pm_qos_add_request(&devfreq_mtp_request, PM_QOS_DEVFREQ_MIN,
-				MIN_CPUFREQ);
-	pm_qos_add_request(&big_cpu_mtp_freq, PM_QOS_C1_CPUFREQ_MIN,
-				MIN_CPUFREQ);
-	pm_qos_add_request(&big_plus_cpu_mtp_freq, PM_QOS_C2_CPUFREQ_MIN,
-				MIN_CPUFREQ);
 	_mtp_dev = dev;
 
 	ret = misc_register(&mtp_device);
@@ -1849,11 +1775,6 @@ static int __mtp_setup(struct mtp_instance *fi_mtp)
 	return 0;
 
 err2:
-	pm_qos_remove_request(&big_plus_cpu_mtp_freq);
-	pm_qos_remove_request(&big_cpu_mtp_freq);
-	pm_qos_remove_request(&little_cpu_mtp_freq);
-	pm_qos_remove_request(&devfreq_mtp_request);
-	destroy_workqueue(cpu_freq_qos_queue);
 	destroy_workqueue(dev->wq);
 err1:
 	_mtp_dev = NULL;
@@ -1876,11 +1797,6 @@ static void mtp_cleanup(void)
 		return;
 
 	mtp_debugfs_remove();
-	pm_qos_remove_request(&big_plus_cpu_mtp_freq);
-	pm_qos_remove_request(&big_cpu_mtp_freq);
-	pm_qos_remove_request(&little_cpu_mtp_freq);
-	pm_qos_remove_request(&devfreq_mtp_request);
-	destroy_workqueue(cpu_freq_qos_queue);
 	misc_deregister(&mtp_device);
 	destroy_workqueue(dev->wq);
 	_mtp_dev = NULL;
