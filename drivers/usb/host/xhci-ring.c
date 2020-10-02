@@ -2757,6 +2757,9 @@ irqreturn_t xhci_irq(struct usb_hcd *hcd)
 		goto out;
 	}
 
+	if (status & STS_HCE)
+		xhci_warn(xhci, "WARNING: Host controller Error\n");
+
 	if (!(status & STS_EINT))
 		goto out;
 
