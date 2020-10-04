@@ -2219,7 +2219,6 @@ start:
 				hba->clk_gating.active_reqs--;
 				break;
 			}
-
 			spin_unlock_irqrestore(hba->host->host_lock, flags);
 			flush_work(&hba->clk_gating.ungate_work);
 			spin_lock_irqsave(hba->host->host_lock, flags);
