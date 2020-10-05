@@ -100,7 +100,7 @@ msm_drm-$(CONFIG_DRM_MSM_DSI) += dsi/dsi_phy.o \
 	dsi/dsi_clk_manager.o \
 	dsi/dsi_display_test.o \
 
-#ifeq ($(CONFIG_PXLW_IRIS),y)
+ifeq ($(CONFIG_PXLW_IRIS),y)
 msm_drm-$(CONFIG_DRM_MSM_DSI) += dsi/iris/dsi_iris5_ioctl.o \
 				dsi/iris/dsi_iris5_lightup.o \
 				dsi/iris/dsi_iris5_lightup_ocp.o \
@@ -121,7 +121,7 @@ msm_drm-$(CONFIG_DRM_MSM_DSI) += dsi/iris/dsi_iris5_ioctl.o \
 				dsi/iris/dsi_iris5_extended.o
 ccflags-y += -DCONFIG_PXLW_IRIS
 ccflags-y += -DPXLW_IRIS_DUAL
-#endif
+endif
 
 #ifeq ($(CONFIG_PXLW_SOFT_IRIS), y)
 #msm_drm-$(CONFIG_DRM_MSM_DSI) += dsi/iris/dsi_irissoft_ioctl.o
