@@ -119,8 +119,6 @@ msm_drm-$(CONFIG_DRM_MSM_DSI) += dsi/iris/dsi_iris5_ioctl.o \
 				dsi/iris/msm_iris5_extended.o \
 				dsi/iris/sde_iris5_extended.o \
 				dsi/iris/dsi_iris5_extended.o
-ccflags-y += -DCONFIG_PXLW_IRIS
-ccflags-y += -DPXLW_IRIS_DUAL
 endif
 
 #ifeq ($(CONFIG_PXLW_SOFT_IRIS), y)
