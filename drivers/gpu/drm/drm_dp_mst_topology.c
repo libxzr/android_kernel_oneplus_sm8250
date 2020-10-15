@@ -1886,7 +1886,7 @@ int drm_dp_mst_get_dsc_info(struct drm_dp_mst_topology_mgr *mgr,
 
 	return 0;
 }
-EXPORT_SYMBOL(drm_dp_mst_get_dsc_info);
+EXPORT_SYMBOL_GPL(drm_dp_mst_get_dsc_info);
 
 int drm_dp_mst_update_dsc_info(struct drm_dp_mst_topology_mgr *mgr,
 		struct drm_dp_mst_port *port,
@@ -1904,7 +1904,7 @@ int drm_dp_mst_update_dsc_info(struct drm_dp_mst_topology_mgr *mgr,
 
 	return 0;
 }
-EXPORT_SYMBOL(drm_dp_mst_update_dsc_info);
+EXPORT_SYMBOL_GPL(drm_dp_mst_update_dsc_info);
 
 static int drm_dp_create_payload_step1(struct drm_dp_mst_topology_mgr *mgr,
 				       int id,
@@ -2085,8 +2085,8 @@ int drm_dp_update_payload_part2(struct drm_dp_mst_topology_mgr *mgr)
 EXPORT_SYMBOL(drm_dp_update_payload_part2);
 
 int drm_dp_send_dpcd_read(struct drm_dp_mst_topology_mgr *mgr,
-				 struct drm_dp_mst_port *port,
-				 int offset, int size, u8 *bytes)
+			  struct drm_dp_mst_port *port,
+			  int offset, int size, u8 *bytes)
 {
 	int len;
 	int ret;
@@ -2138,7 +2138,7 @@ fail_put:
 	drm_dp_put_mst_branch_device(mstb);
 	return ret;
 }
-EXPORT_SYMBOL(drm_dp_send_dpcd_read);
+EXPORT_SYMBOL_GPL(drm_dp_send_dpcd_read);
 
 int drm_dp_send_dpcd_write(struct drm_dp_mst_topology_mgr *mgr,
 			   struct drm_dp_mst_port *port,
@@ -2176,7 +2176,7 @@ fail_put:
 	drm_dp_put_mst_branch_device(mstb);
 	return ret;
 }
-EXPORT_SYMBOL(drm_dp_send_dpcd_write);
+EXPORT_SYMBOL_GPL(drm_dp_send_dpcd_write);
 
 int drm_dp_mst_get_max_sdp_streams_supported(
 		struct drm_dp_mst_topology_mgr *mgr,
@@ -2191,7 +2191,7 @@ int drm_dp_mst_get_max_sdp_streams_supported(
 	drm_dp_put_port(port);
 	return ret;
 }
-EXPORT_SYMBOL(drm_dp_mst_get_max_sdp_streams_supported);
+EXPORT_SYMBOL_GPL(drm_dp_mst_get_max_sdp_streams_supported);
 
 static int drm_dp_encode_up_ack_reply(struct drm_dp_sideband_msg_tx *msg, u8 req_type)
 {
@@ -2712,7 +2712,7 @@ bool drm_dp_mst_port_has_audio(struct drm_dp_mst_topology_mgr *mgr,
 EXPORT_SYMBOL(drm_dp_mst_port_has_audio);
 
 bool drm_dp_mst_has_fec(struct drm_dp_mst_topology_mgr *mgr,
-		struct drm_dp_mst_port *port)
+			struct drm_dp_mst_port *port)
 {
 	bool ret = false;
 
@@ -2723,7 +2723,7 @@ bool drm_dp_mst_has_fec(struct drm_dp_mst_topology_mgr *mgr,
 	drm_dp_put_port(port);
 	return ret;
 }
-EXPORT_SYMBOL(drm_dp_mst_has_fec);
+EXPORT_SYMBOL_GPL(drm_dp_mst_has_fec);
 
 /**
  * drm_dp_mst_get_edid() - get EDID for an MST port

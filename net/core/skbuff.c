@@ -5612,3 +5612,4 @@ void skb_condense(struct sk_buff *skb)
 	 */
 	skb->truesize = SKB_TRUESIZE(skb_end_offset(skb));
 }
+EXPORT_SYMBOL_GPL(skb_condense);

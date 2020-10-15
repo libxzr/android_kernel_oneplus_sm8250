@@ -655,6 +655,7 @@ static void run_workaround_1542418_asid_rollover(const struct arm64_cpu_capabili
 		arm64_workaround_1542418_asid_rollover();
 }
 #endif
+
 static bool __maybe_unused
 has_neoverse_n1_erratum_1542419(const struct arm64_cpu_capabilities *entry,
 				int scope)
