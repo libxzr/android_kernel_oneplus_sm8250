@@ -6,11 +6,6 @@
 		interrupt-parent = <&tlmm>;
 	};
 
-	bootloader_log {
-		compatible = "bootloader_log";
-		linux,contiguous-region = <&bootloader_log_mem>;
-	};
-
 	fingerprint_detect:fingerprint_detect {
 		compatible = "oneplus,fpdetect";
 		fp-gpio-id0 = <&tlmm 77 0>;
@@ -561,17 +556,6 @@
 };
 
 &reserved_memory {
-
-	bootloader_log_mem: bootloader_log_mem@0x9FFF7000 {
-		reg = <0 0x9FFF7000 0 0x00009000>;
-		label = "bootloader_log_mem";
-	};
-
-	param_mem: param_mem@ac200000 {
-		reg = <0 0xAC200000 0 0x00100000>;
-		label = "param_mem";
-	};
-
 	/*after cdsp_secure_heap we add a offset to ignore change address need reconfig*/
 	ramoops: ramoops@0xA9800000 {
 		compatible = "ramoops";
