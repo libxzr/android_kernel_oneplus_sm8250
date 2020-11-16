@@ -221,6 +221,9 @@ void operate_mode_switch(struct touchpanel_data *ts)
 		ts->ts_ops->mode_switch(ts->chip_data, MODE_LIMIT_SWITCH, ts->limit_switch);
 
 		ts->ts_ops->mode_switch(ts->chip_data, MODE_NORMAL, true);
+
+		if (ts->noise_level)
+			ts->ts_ops->mode_switch(ts->chip_data, MODE_GAME, true);
 	}
 }
 
