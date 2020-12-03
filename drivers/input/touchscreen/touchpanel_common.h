@@ -472,6 +472,7 @@ struct touchpanel_data {
 							      can not operate i2c when tp suspend*/
 	bool ps_status;                                     /*save ps status, ps near = 1, ps far = 0*/
 	int noise_level;                                     /*save ps status, ps near = 1, ps far = 0*/
+	bool force_game_switch;                             /*force enable game switch*/
 	bool gesture_switch;								/*gesture mode close or open gesture*/
 	bool reject_point;									/*reject point for sensor*/
 	bool fingerprint_int_test;							/*fingerprint int pin test*/

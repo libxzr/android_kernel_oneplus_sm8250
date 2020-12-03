@@ -222,7 +222,7 @@ void operate_mode_switch(struct touchpanel_data *ts)
 
 		ts->ts_ops->mode_switch(ts->chip_data, MODE_NORMAL, true);
 
-		if (ts->noise_level)
+		if (ts->noise_level || ts->force_game_switch)
 			ts->ts_ops->mode_switch(ts->chip_data, MODE_GAME, true);
 	}
 }
@@ -1317,6 +1317,9 @@ static ssize_t proc_game_switch_write(struct file *file, const char __user *buff
 	char buf[4] = {0};
 	struct touchpanel_data *ts = PDE_DATA(file_inode(file));
 
+	if (ts->force_game_switch)
+		return count;
+
 	if (count > 4) {
 		TPD_INFO("%s:count > 4\n",__func__);
 		return count;
@@ -1368,6 +1371,69 @@ static ssize_t proc_game_switch_read(struct file *file, char __user *user_buf, s
 static const struct file_operations proc_game_switch_fops = {
 	.write = proc_game_switch_write,
 	.read  = proc_game_switch_read,
+	.open  = simple_open,
+	.owner = THIS_MODULE,
+};
+
+//proc/touchpanel/force_game_switch
+static ssize_t proc_force_game_switch_write(struct file *file, const char __user *buffer, size_t count, loff_t *ppos)
+{
+	int value = 0 ;
+	char buf[4] = {0};
+	struct touchpanel_data *ts = PDE_DATA(file_inode(file));
+
+	if (count > 4) {
+		TPD_INFO("%s:count > 4\n",__func__);
+		return count;
+	}
+
+	if (!ts) {
+		TPD_INFO("%s: ts is NULL\n",__func__);
+		return count;
+	}
+
+	if (!ts->ts_ops->mode_switch) {
+		TPD_INFO("%s:not support ts_ops->mode_switch callback\n",__func__);
+		return count;
+	}
+	if (copy_from_user(buf, buffer, count)) {
+		TPD_INFO("%s: read proc input error.\n", __func__);
+		return count;
+	}
+	sscanf(buf, "%x", &value);
+	ts->force_game_switch = value > 0;
+
+	TPD_INFO("%s: force_game_switch value=0x%x\n", __func__, value);
+
+	if (!ts->is_suspended) {
+		mutex_lock(&ts->mutex);
+		ts->ts_ops->mode_switch(ts->chip_data, MODE_GAME, value > 0);
+		mutex_unlock(&ts->mutex);
+	} else {
+		TPD_INFO("%s: game_switch_support is_suspended.\n", __func__);
+	}
+
+	return count;
+}
+
+static ssize_t proc_force_game_switch_read(struct file *file, char __user *user_buf, size_t count, loff_t *ppos)
+{
+	int ret = 0;
+	char page[4] = {0};
+	struct touchpanel_data *ts = PDE_DATA(file_inode(file));
+
+	if (!ts) {
+		sprintf(page, "%d\n", -1);//no support
+	} else {
+		sprintf(page, "%d\n", ts->force_game_switch);//support
+	}
+	ret = simple_read_from_buffer(user_buf, count, ppos, page, strlen(page));
+	return ret;
+}
+
+static const struct file_operations proc_force_game_switch_fops = {
+	.write = proc_force_game_switch_write,
+	.read  = proc_force_game_switch_read,
 	.open  = simple_open,
 	.owner = THIS_MODULE,
 };
@@ -2589,6 +2655,14 @@ static int init_touchpanel_proc(struct touchpanel_data *ts)
 	//proc files-step2-3:/proc/touchpanel/game_switch_enable (edge limit control interface)
 	if (ts->game_switch_support) {
 		prEntry_tmp = proc_create_data("game_switch_enable", 0666, prEntry_tp, &proc_game_switch_fops, ts);
+		if (prEntry_tmp == NULL) {
+			ret = -ENOMEM;
+			TPD_INFO("%s: Couldn't create proc entry, %d\n", __func__, __LINE__);
+		}
+	}
+
+	if (ts->game_switch_support) {
+		prEntry_tmp = proc_create_data("force_game_switch_enable", 0666, prEntry_tp, &proc_force_game_switch_fops, ts);
 		if (prEntry_tmp == NULL) {
 			ret = -ENOMEM;
 			TPD_INFO("%s: Couldn't create proc entry, %d\n", __func__, __LINE__);
@@ -5139,6 +5213,7 @@ int register_common_touch_device(struct touchpanel_data *pdata)
 	ts->corner_delay_up = -1;
 	ts->wet_mode_status = 0;
 	ts->noise_level = 0;
+	ts->force_game_switch = 0;
 	if (ts->project_info == 1) {//project 19811
 		ts->dead_zone_l = 25;
 		ts->dead_zone_p = 25;
@@ -5552,7 +5627,7 @@ static int tfb_notifier_callback(struct notifier_block *self, unsigned long even
 				mutex_lock(&ts->mutex);
 				if (!ts->is_suspended && (ts->suspend_state == TP_SPEEDUP_RESUME_COMPLETE)) {
 					ts->ts_ops->mode_switch(ts->chip_data, MODE_REFRESH_SWITCH, 0);
-					if (ts->noise_level)
+					if (ts->noise_level || ts->force_game_switch)
 						ts->ts_ops->mode_switch(ts->chip_data, MODE_GAME, true);
 				}
 				mutex_unlock(&ts->mutex);
@@ -5562,7 +5637,7 @@ static int tfb_notifier_callback(struct notifier_block *self, unsigned long even
 				mutex_lock(&ts->mutex);
 				if (!ts->is_suspended && (ts->suspend_state == TP_SPEEDUP_RESUME_COMPLETE)) {
 					ts->ts_ops->mode_switch(ts->chip_data, MODE_REFRESH_SWITCH, 1);
-					if (ts->noise_level)
+					if (ts->noise_level || ts->force_game_switch)
 						ts->ts_ops->mode_switch(ts->chip_data, MODE_GAME, true);
 				}
 				mutex_unlock(&ts->mutex);
@@ -5572,7 +5647,7 @@ static int tfb_notifier_callback(struct notifier_block *self, unsigned long even
 				mutex_lock(&ts->mutex);
 				if (!ts->is_suspended && (ts->suspend_state == TP_SPEEDUP_RESUME_COMPLETE)) {
 					ts->ts_ops->mode_switch(ts->chip_data, MODE_REFRESH_SWITCH, 1);
-					if (ts->noise_level)
+					if (ts->noise_level || ts->force_game_switch)
 						ts->ts_ops->mode_switch(ts->chip_data, MODE_GAME, true);
 				}
 				mutex_unlock(&ts->mutex);
