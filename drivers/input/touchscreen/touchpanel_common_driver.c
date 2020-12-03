@@ -5138,6 +5138,7 @@ int register_common_touch_device(struct touchpanel_data *pdata)
 	ts->firmware_update_type = 0;
 	ts->corner_delay_up = -1;
 	ts->wet_mode_status = 0;
+	ts->noise_level = 0;
 	if (ts->project_info == 1) {//project 19811
 		ts->dead_zone_l = 25;
 		ts->dead_zone_p = 25;
