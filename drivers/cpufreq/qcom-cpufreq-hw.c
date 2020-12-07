@@ -478,8 +478,8 @@ static int qcom_cpufreq_hw_read_lut(struct platform_device *pdev,
 
 		cur_freq = c->table[i].frequency;
 
-		dev_dbg(dev, "index=%d freq=%d, core_count %d\n",
-			i, c->table[i].frequency, core_count);
+		dev_info(dev, "index=%d freq=%d volt=%u, core_count %d\n",
+			 i, c->table[i].frequency, volt, core_count);
 
 		if (core_count != c->max_cores) {
 			if (core_count == (c->max_cores - 1)) {
