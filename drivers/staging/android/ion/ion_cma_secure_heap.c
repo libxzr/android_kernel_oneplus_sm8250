@@ -12,7 +12,6 @@
 #include <linux/err.h>
 #include <linux/dma-mapping.h>
 #include <linux/msm_ion.h>
-#include <trace/events/kmem.h>
 
 #include <soc/qcom/secure_buffer.h>
 #include <asm/cacheflush.h>
@@ -128,11 +127,7 @@ ion_secure_cma_add_to_pool(struct ion_cma_secure_heap *sheap,
 	unsigned long attrs = 0;
 	int ret = 0;
 	struct ion_cma_alloc_chunk *chunk;
-	atomic_t *temp = &sheap->total_pool_size;
 
-	trace_ion_secure_cma_add_to_pool_start(len,
-					       atomic_read(temp),
-					       prefetch);
 	mutex_lock(&sheap->chunk_lock);
 
 	chunk = kzalloc(sizeof(*chunk), GFP_KERNEL);
@@ -166,10 +161,6 @@ out_free:
 	kfree(chunk);
 out:
 	mutex_unlock(&sheap->chunk_lock);
-
-	trace_ion_secure_cma_add_to_pool_end(len,
-					     atomic_read(temp),
-					     prefetch);
 
 	return ret;
 }
@@ -255,7 +246,6 @@ int ion_secure_cma_prefetch(struct ion_heap *heap, void *data)
 		len = diff;
 
 	sheap->last_alloc = len;
-	trace_ion_prefetching(sheap->last_alloc);
 	schedule_work(&sheap->work);
 
 	return 0;
@@ -349,8 +339,6 @@ __ion_secure_cma_shrink_pool(struct ion_cma_secure_heap *sheap, int max_nr)
 	struct list_head *entry, *_n;
 	unsigned long drained_size = 0, skipped_size = 0;
 
-	trace_ion_secure_cma_shrink_pool_start(drained_size, skipped_size);
-
 	list_for_each_safe(entry, _n, &sheap->chunks) {
 		struct ion_cma_alloc_chunk *chunk = container_of(entry,
 					struct ion_cma_alloc_chunk, entry);
@@ -367,7 +355,6 @@ __ion_secure_cma_shrink_pool(struct ion_cma_secure_heap *sheap, int max_nr)
 		}
 	}
 
-	trace_ion_secure_cma_shrink_pool_end(drained_size, skipped_size);
 	return drained_size;
 }
 
@@ -686,14 +673,12 @@ static int ion_secure_cma_allocate(struct ion_heap *heap,
 		       __func__, heap->name);
 		return -ENOMEM;
 	}
-	trace_ion_secure_cma_allocate_start(heap->name, len, flags);
 	if (!allow_non_contig)
 		buf = __ion_secure_cma_allocate(heap, buffer, len,
 						flags);
 	else
 		buf = __ion_secure_cma_allocate_non_contig(heap, buffer, len,
 							   flags);
-	trace_ion_secure_cma_allocate_end(heap->name, len, flags);
 	if (buf) {
 		int ret;
 
@@ -702,11 +687,7 @@ static int ion_secure_cma_allocate(struct ion_heap *heap,
 			       __func__);
 			ret = 1;
 		} else {
-			trace_ion_cp_secure_buffer_start(heap->name, len,
-							 flags);
 			ret = msm_secure_table(buf->table);
-			trace_ion_cp_secure_buffer_end(heap->name, len,
-						       flags);
 		}
 		if (ret) {
 			struct ion_cma_secure_heap *sheap =
