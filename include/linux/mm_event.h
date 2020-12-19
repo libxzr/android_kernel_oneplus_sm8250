@@ -24,4 +24,9 @@ struct mm_event_task {
 	u64 accm_lat;
 } __attribute__ ((packed));
 
+static inline void mm_event_task_init(struct task_struct *tsk) {}
+static inline void mm_event_start(ktime_t *time) {}
+static inline void mm_event_end(enum mm_event_type event, ktime_t start) {}
+static inline void mm_event_count(enum mm_event_type event, int count) {}
+
 #endif
