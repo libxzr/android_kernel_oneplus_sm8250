@@ -95,7 +95,7 @@ static void tp_touch_release(struct touchpanel_data *ts);
 static void tp_btnkey_release(struct touchpanel_data *ts);
 static void tp_fw_update_work(struct work_struct *work);
 static int init_debug_info_proc(struct touchpanel_data *ts);
-static void tp_work_func(struct touchpanel_data *ts);
+static void tp_work_func(struct touchpanel_data *ts, int irq);
 __attribute__((weak)) int request_firmware_select(const struct firmware **firmware_p, const char *name, struct device *device) {return 1;}
 __attribute__((weak)) int register_devinfo(char *name, struct manufacture_info *info) {return 1;}
 __attribute__((weak)) int preconfig_power_control(struct touchpanel_data *ts) {return 0;}
@@ -851,10 +851,10 @@ static void tp_work_common_callback(void)
 	if (g_tp == NULL)
 		return;
 	ts = g_tp;
-	tp_work_func(ts);
+	tp_work_func(ts, 0);
 }
 
-static void tp_work_func(struct touchpanel_data *ts)
+static void tp_work_func(struct touchpanel_data *ts, int irq)
 {
 	u32 cur_event = 0;
 
@@ -871,7 +871,7 @@ static void tp_work_func(struct touchpanel_data *ts)
 	if (ts->ts_ops->u32_trigger_reason)
 		cur_event = ts->ts_ops->u32_trigger_reason(ts->chip_data, ts->gesture_enable, ts->is_suspended);
 	else
-		cur_event = ts->ts_ops->trigger_reason(ts->chip_data, ts->gesture_enable, ts->is_suspended);
+		cur_event = ts->ts_ops->trigger_reason(ts->chip_data, ts->gesture_enable, ts->is_suspended, irq);
 
 	if (CHK_BIT(cur_event, IRQ_TOUCH) || CHK_BIT(cur_event, IRQ_BTN_KEY) || CHK_BIT(cur_event, IRQ_DATA_LOGGER) || \
 		CHK_BIT(cur_event, IRQ_FACE_STATE) || CHK_BIT(cur_event, IRQ_FINGERPRINT)) {
@@ -1072,7 +1072,7 @@ static irqreturn_t tp_irq_thread_fn(int irq, void *dev_id)
 	if (ts->int_mode == BANNABLE) {
 		__pm_stay_awake(ts->source);	//avoid system enter suspend lead to i2c error
 		mutex_lock(&ts->mutex);
-		tp_work_func(ts);
+		tp_work_func(ts, irq);
 		mutex_unlock(&ts->mutex);
 		__pm_relax(ts->source);
 	} else {

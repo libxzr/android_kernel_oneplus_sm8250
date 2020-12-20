@@ -1098,7 +1098,7 @@ static fw_update_state sec_fw_update(void *chip_data, const struct firmware *fw,
 	return FW_UPDATE_SUCCESS;
 }
 
-static u8 sec_trigger_reason(void *chip_data, int gesture_enable, int is_suspended)
+static u8 sec_trigger_reason(void *chip_data, int gesture_enable, int is_suspended, int irq)
 {
 	int ret = 0;
 	int event_id = 0;
@@ -1108,6 +1108,10 @@ static u8 sec_trigger_reason(void *chip_data, int gesture_enable, int is_suspend
 	struct chip_data_s6sy761 *chip_info = (struct chip_data_s6sy761 *)chip_data;
 	struct fp_underscreen_info tp_info;
 
+	BUG_ON(!irq);
+
+	pm_qos_req_stp.type = PM_QOS_REQ_AFFINE_IRQ;
+	pm_qos_req_stp.irq = irq;
 	pm_qos_add_request(&pm_qos_req_stp, PM_QOS_CPU_DMA_LATENCY, PM_QOS_VALUE_TP);
 	ret = touch_i2c_read_block(chip_info->client, SEC_READ_ONE_EVENT, SEC_EVENT_BUFF_SIZE, chip_info->first_event);
 	if (ret < 0) {
