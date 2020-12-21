@@ -27,7 +27,7 @@
 static struct dma_buf_s6sy761 *dma_buffer;
 extern int tp_register_times;
 extern struct touchpanel_data *g_tp;
-#define PM_QOS_VALUE_TP 200
+#define PM_QOS_VALUE_TP 532
 struct pm_qos_request pm_qos_req_stp;
 
 /****************** Start of Log Tag Declear and level define*******************************/
