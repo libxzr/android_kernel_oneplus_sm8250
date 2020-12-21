@@ -1864,11 +1864,7 @@ static int ufs_qcom_pm_qos_init(struct ufs_qcom_host *host)
 			goto free_groups;
 		}
 
-		ret = of_property_read_u32_index(node,
-			"qcom,pm-qos-cpu-group-latency-us", i,
-			&host->pm_qos.groups[i].latency_us);
-		if (ret)
-			goto free_groups;
+		host->pm_qos.groups[i].latency_us = 1062;
 
 		host->pm_qos.groups[i].req.type = PM_QOS_REQ_AFFINE_IRQ;
 		host->pm_qos.groups[i].req.irq = host->hba->irq;
