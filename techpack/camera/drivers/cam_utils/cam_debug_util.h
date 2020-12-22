@@ -105,7 +105,7 @@ bool cam_is_log_enabled(unsigned int module_id);
  * @args     :  Arguments which needs to be print in log
  */
 #define CAM_INFO(__module, fmt, args...)                           \
-	pr_info("[%d %d] CAM_INFO: %s: %s: %d " fmt "\n",                     \
+	pr_debug("[%d %d] CAM_INFO: %s: %s: %d " fmt "\n",                     \
 	    task_tgid_nr(current),  task_pid_nr(current),   \
 		cam_get_module_name(__module), __func__,  __LINE__, ##args)
 
@@ -118,7 +118,7 @@ bool cam_is_log_enabled(unsigned int module_id);
  * @args     :  Arguments which needs to be print in log
  */
 #define CAM_INFO_RATE_LIMIT(__module, fmt, args...)                 \
-	pr_info_ratelimited("CAM_INFO: %s: %s: %d " fmt "\n",            \
+	pr_debug_ratelimited("CAM_INFO: %s: %s: %d " fmt "\n",            \
 		cam_get_module_name(__module), __func__,  __LINE__, ##args)
 
 /*
