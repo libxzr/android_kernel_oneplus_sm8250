@@ -1358,15 +1358,14 @@ static const struct file_operations proc_write_ps_status_fops = {
 	.owner = THIS_MODULE,
 };
 
+bool is_gaming __read_mostly;
+
 //proc/touchpanel/game_switch_enable
 static ssize_t proc_game_switch_write(struct file *file, const char __user *buffer, size_t count, loff_t *ppos)
 {
 	int value = 0 ;
 	char buf[4] = {0};
 	struct touchpanel_data *ts = PDE_DATA(file_inode(file));
-
-	if (ts->force_game_switch)
-		return count;
 
 	if (count > 4) {
 		TPD_INFO("%s:count > 4\n",__func__);
@@ -1387,6 +1386,12 @@ static ssize_t proc_game_switch_write(struct file *file, const char __user *buff
 		return count;
 	}
 	sscanf(buf, "%x", &value);
+
+	is_gaming = value > 0;
+
+	if (ts->force_game_switch)
+		return count;
+
 	ts->noise_level = value;
 	ts->game_mode_status = value > 0 ? 1 : 0;
 
