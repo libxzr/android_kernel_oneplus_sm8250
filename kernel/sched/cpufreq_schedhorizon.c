@@ -188,8 +188,13 @@ static int match_nearest_efficient_step(int freq,int maxstep,int *freq_table)
     return i;
 }
 
+extern bool is_gaming __read_mostly;
+
 static void do_freq_limit(struct sugov_policy *sg_policy, unsigned int *freq, u64 time)
 {
+	if (is_gaming)
+		return;
+
     if (*freq > sg_policy->tunables->efficient_freq[sg_policy->tunables->current_step] && !sg_policy->first_hp_request_time) {
 	    /* First request */
 	    *freq = sg_policy->tunables->efficient_freq[sg_policy->tunables->current_step];
