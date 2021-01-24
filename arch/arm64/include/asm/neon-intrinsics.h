@@ -25,4 +25,8 @@
 
 #include <arm_neon.h>
 
+#ifdef CONFIG_CC_IS_CLANG
+#pragma clang diagnostic ignored "-Wincompatible-pointer-types"
+#endif
+
 #endif /* ! _NEON_INTRINSICS_H */
