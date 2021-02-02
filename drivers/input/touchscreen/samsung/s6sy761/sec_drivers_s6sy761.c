@@ -3534,7 +3534,7 @@ static void __exit tp_driver_exit(void)
 	i2c_del_driver(&tp_i2c_driver);
 }
 
-late_initcall(tp_driver_init);
+device_initcall_sync(tp_driver_init);
 module_exit(tp_driver_exit);
 /***********************End of module init and exit*******************************/
 
