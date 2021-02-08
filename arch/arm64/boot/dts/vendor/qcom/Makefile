@@ -1,16 +1,19 @@
+dtbo-$(CONFIG_MACH_ONEPLUS_8) += \
+	instantnoodle-overlay-t0.dtbo \
+	instantnoodle-overlay-evt1.dtbo \
+	instantnoodle-overlay-dvt.dtbo \
+	instantnoodlev-overlay-t0.dtbo \
+	instantnoodlev-overlay-evt1.dtbo \
+	instantnoodlev-overlay-dvt.dtbo
 
-        dtbo-$(CONFIG_ARCH_KONA) += \
-                instantnoodlep-overlay-evb.dtbo \
-                instantnoodlep-overlay-t0.dtbo \
-                instantnoodlep-overlay-evt1.dtbo \
-                instantnoodlep-overlay-dvt.dtbo \
-                instantnoodle-overlay-t0.dtbo \
-                instantnoodle-overlay-evt1.dtbo \
-                instantnoodle-overlay-dvt.dtbo \
-                instantnoodlev-overlay-t0.dtbo \
-                instantnoodlev-overlay-evt1.dtbo \
-                instantnoodlev-overlay-dvt.dtbo \
-                kebab-overlay.dtbo
+dtbo-$(CONFIG_MACH_ONEPLUS_8PRO) += \
+	instantnoodlep-overlay-evb.dtbo \
+	instantnoodlep-overlay-t0.dtbo \
+	instantnoodlep-overlay-evt1.dtbo \
+	instantnoodlep-overlay-dvt.dtbo
+
+dtbo-$(CONFIG_MACH_ONEPLUS_8T) += \
+	kebab-overlay.dtbo
 
 instantnoodlep-overlay-evb.dtbo-base := kona-v2.1.dtb
 instantnoodlep-overlay-t0.dtbo-base := kona-v2.1.dtb
