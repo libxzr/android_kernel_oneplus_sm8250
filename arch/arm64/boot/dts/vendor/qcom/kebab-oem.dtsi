@@ -500,6 +500,12 @@
 };
 
 &reserved_memory {
+
+	param_mem: param_mem@ac200000 {
+		reg = <0 0xAC200000 0 0x00100000>;
+		label = "param_mem";
+	};
+
 	/*after cdsp_secure_heap we add a offset to ignore change address need reconfig*/
 	ramoops: ramoops@0xA9800000 {
 		compatible = "ramoops";
