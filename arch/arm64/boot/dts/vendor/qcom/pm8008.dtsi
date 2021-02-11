@@ -65,8 +65,8 @@ pm8008_9: qcom,pm8008@9 {
 			reg = <0x4000>;
 			regulator-name = "pm8008_l1";
 			regulator-min-microvolt = <528000>;
-			regulator-max-microvolt = <1504000>;
-			qcom,min-dropout-voltage = <225000>;
+			regulator-max-microvolt = <1200000>;
+		        qcom,min-dropout-voltage = <100000>;
 			qcom,hpm-min-load = <10000>;
 		};
 
@@ -74,8 +74,8 @@ pm8008_9: qcom,pm8008@9 {
 			reg = <0x4100>;
 			regulator-name = "pm8008_l2";
 			regulator-min-microvolt = <528000>;
-			regulator-max-microvolt = <1504000>;
-			qcom,min-dropout-voltage = <225000>;
+			regulator-max-microvolt = <1200000>;
+			qcom,min-dropout-voltage = <100000>;
 			qcom,hpm-min-load = <10000>;
 		};
 
