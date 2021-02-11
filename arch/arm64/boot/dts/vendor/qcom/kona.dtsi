@@ -350,7 +350,7 @@
 	};
 
 	chosen {
-		bootargs = "noirqdebug nodebugmon rcu_nocbs=0-7";
+		bootargs = "noirqdebug nodebugmon rcu_nocbs=0-7 kpti=off";
 	};
 
 	firmware: firmware {
@@ -2448,6 +2448,7 @@
 		#clock-cells = <1>;
 		mboxes = <&qmp_aop 0>;
 		mbox-names = "qdss_clk";
+		qcom,clk-stop-bimc-log;
 	};
 
 	clock_gcc: qcom,gcc@100000 {
@@ -4511,6 +4512,21 @@
 		etflpass_reg {
 			qcom,dump-size = <0x1000>;
 			qcom,dump-id = <0x104>;
+		};
+
+		osm_reg {
+			qcom,dump-size = <0x400>;
+			qcom,dump-id = <0x163>;
+		};
+
+		pcu_reg {
+			qcom,dump-size = <0x400>;
+			qcom,dump-id = <0x164>;
+		};
+
+		fsm_data {
+			qcom,dump-size = <0x400>;
+			qcom,dump-id = <0x165>;
 		};
 	};
 
