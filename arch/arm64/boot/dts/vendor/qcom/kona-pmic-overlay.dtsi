@@ -165,7 +165,7 @@
 		regulator-name = "vdd_tof";
 		regulator-min-microvolt = <3600000>;
 		regulator-max-microvolt = <3600000>;
-		gpio = <&pm8009_gpios 1 GPIO_ACTIVE_HIGH>;
+//		gpio = <&pm8009_gpios 1 GPIO_ACTIVE_HIGH>;
 		startup-delay-us = <1000>;
 		enable-active-high;
 	};
@@ -173,9 +173,9 @@
 	vreg_hap_boost: regulator-haptics-boost {
 		compatible = "regulator-fixed";
 		regulator-name = "vdd_hap_boost";
-		gpio = <&pm8150b_gpios 5 GPIO_ACTIVE_HIGH>;
+		/*gpio = <&pm8150b_gpios 5 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&haptics_boost_default>;
+		pinctrl-0 = <&haptics_boost_default>;*/
 		startup-delay-us = <1000>;
 		enable-active-high;
 		status = "disabled";
