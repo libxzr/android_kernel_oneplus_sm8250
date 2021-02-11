@@ -599,9 +599,9 @@
 		L2C: pm8150a_l2: regulator-pm8150a-l2 {
 			regulator-name = "pm8150a_l2";
 			qcom,set = <RPMH_REGULATOR_SET_ALL>;
-			regulator-min-microvolt = <1200000>;
-			regulator-max-microvolt = <1304000>;
-			qcom,init-voltage = <1200000>;
+			regulator-min-microvolt = <1300000>;
+			regulator-max-microvolt = <1300000>;
+			qcom,init-voltage = <1300000>;
 			qcom,init-mode = <RPMH_REGULATOR_MODE_LPM>;
 		};
 	};
@@ -759,9 +759,9 @@
 			qcom,set = <RPMH_REGULATOR_SET_ALL>;
 			qcom,proxy-consumer-enable;
 			qcom,proxy-consumer-current = <857000>;
-			regulator-min-microvolt = <3104000>;
-			regulator-max-microvolt = <3304000>;
-			qcom,init-voltage = <3104000>;
+			regulator-min-microvolt = <3000000>;
+			regulator-max-microvolt = <3000000>;
+			qcom,init-voltage = <3000000>;
 			qcom,init-mode = <RPMH_REGULATOR_MODE_LPM>;
 		};
 	};
@@ -849,9 +849,9 @@
 		L2F: pm8009_l2: regulator-pm8009-l2 {
 			regulator-name = "pm8009_l2";
 			qcom,set = <RPMH_REGULATOR_SET_ALL>;
-			regulator-min-microvolt = <1200000>;
-			regulator-max-microvolt = <1200000>;
-			qcom,init-voltage = <1200000>;
+			regulator-min-microvolt = <1100000>;
+			regulator-max-microvolt = <1100000>;
+			qcom,init-voltage = <1100000>;
 			qcom,init-mode = <RPMH_REGULATOR_MODE_LPM>;
 		};
 	};
@@ -873,6 +873,24 @@
 			qcom,init-mode = <RPMH_REGULATOR_MODE_LPM>;
 		};
 	};
+
+       rpmh-regulator-ldof4 {
+                compatible = "qcom,rpmh-vrm-regulator";
+                qcom,resource-name = "ldof4";
+                qcom,regulator-type = "pmic5-ldo";
+                qcom,supported-modes =
+                        <RPMH_REGULATOR_MODE_LPM
+                         RPMH_REGULATOR_MODE_HPM>;
+                qcom,mode-threshold-currents = <0 30000>;
+                L4F: pm8009_l4: regulator-pm8009-l4 {
+                        regulator-name = "pm8009_l4";
+                        qcom,set = <RPMH_REGULATOR_SET_ALL>;
+                        regulator-min-microvolt = <1056000>;
+                        regulator-max-microvolt = <1056000>;
+                        qcom,init-voltage = <1056000>;
+                        qcom,init-mode = <RPMH_REGULATOR_MODE_LPM>;
+                };
+        };
 
 	rpmh-regulator-ldof5 {
 		compatible = "qcom,rpmh-vrm-regulator";

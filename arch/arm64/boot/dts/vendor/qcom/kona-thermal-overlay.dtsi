@@ -7,24 +7,22 @@
 &thermal_zones {
 	soc {
 		cooling-maps {
-			soc_cpu4 {
-				trip = <&soc_trip>;
-				cooling-device = <&cpu4_isolate 1 1>;
+			soctrip_cpu4 {
+				trip = <&soc_trip2>;
+				cooling-device =
+					<&CPU4 6 6>;
 			};
 
-			soc_cpu5 {
-				trip = <&soc_trip>;
-				cooling-device = <&cpu5_isolate 1 1>;
+			soctrip_cpu7 {
+				trip = <&soc_trip2>;
+				cooling-device =
+					<&cpu7_isolate 1 1>;
 			};
 
-			soc_cpu6 {
+			soctrip_cpu6 {
 				trip = <&soc_trip>;
-				cooling-device = <&cpu6_isolate 1 1>;
-			};
-
-			soc_cpu7 {
-				trip = <&soc_trip>;
-				cooling-device = <&cpu7_isolate 1 1>;
+				cooling-device =
+					<&cpu6_isolate 1 1>;
 			};
 		};
 	};
