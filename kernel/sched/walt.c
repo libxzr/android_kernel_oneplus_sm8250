@@ -3674,6 +3674,8 @@ int walt_proc_user_hint_handler(struct ctl_table *table,
 	unsigned int old_value;
 	static DEFINE_MUTEX(mutex);
 
+	return 0;
+
 	mutex_lock(&mutex);
 
 	sched_user_hint_reset_time = jiffies + HZ;
