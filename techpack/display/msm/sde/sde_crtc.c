@@ -5231,50 +5231,16 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
 			zpos++;
 		}
 
-		if (fp_index >= 0) {
-			if (dim_mode == 0) {
-				//pstates[fp_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0xff;
-				fp_index = -1;
-			}
-		}
-        if (fppressed_index >= 0) {
-			if (fp_mode == 0) {
-				pstates[fppressed_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0;
-				if(oneplus_aod_fod == 1 && aod_index < 0) {
-					SDE_DEBUG("set reset pstate\n");
-					for (i = 0; i < cnt; i++) {
-						if(i!=fppressed_index ) {
-							if(pstates[i].sde_pstate->property_values[PLANE_PROP_ALPHA].value == 0){
-								SDE_ATRACE_BEGIN("aod_layer_reset");
-								pstates[i].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0xff;
-								SDE_ATRACE_END("aod_layer_reset");
-							}
-						}
-					}
-				}
-				fppressed_index = -1;
-			} else {
-				pstates[fppressed_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0xff;
-			}
-		}
-
-         if (aod_index >= 0) {
-			if (aod_mode == 1) {
-				SDE_DEBUG("aod layer hid");
-                SDE_ATRACE_BEGIN("aod_layer_hid");
-				pstates[aod_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0;
-				aod_index = -1;
-                SDE_ATRACE_END("aod_layer_hid");
-			}
-		}
-
 		if (fp_index >= 0)
 			cstate->fingerprint_mode = true;
 		else
 			cstate->fingerprint_mode = false;
 
-		if ((fp_index >= 0 || dim_backlight > 0) && sde_crtc_config_fingerprint_dim_layer(&cstate->base, zpos)) {
-			SDE_ERROR("Failed to config dim layer\n");
+		if (fp_index >= 0)
+			pstates[fp_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0;
+
+		if (sde_crtc_config_fingerprint_dim_layer(&cstate->base, zpos)) {
+			//SDE_ERROR("Failed to config dim layer\n");
 			return -EINVAL;
 		}
 		if (fppressed_index >= 0)
