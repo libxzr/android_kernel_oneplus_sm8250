@@ -195,6 +195,7 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
 	struct ashmem_area *asma = file->private_data;
 	unsigned long prot_mask;
 	size_t size;
+	int ret = 0;
 
 	/* user needs to SET_SIZE before mapping */
 	size = READ_ONCE(asma->size);
@@ -214,8 +215,6 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
 	vma->vm_flags &= ~calc_vm_may_flags(~prot_mask);
 
 	if (!READ_ONCE(asma->file)) {
-		int ret = 0;
-
 		mutex_lock(&asma->mmap_lock);
 		if (!asma->file)
 			ret = ashmem_file_setup(asma, size, vma);
@@ -228,12 +227,18 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
 	get_file(asma->file);
 
 	if (vma->vm_flags & VM_SHARED) {
-		shmem_set_file(vma, asma->file);
+		ret = shmem_zero_setup(vma);
+		if (ret) {
+			fput(asma->file);
+			return ret;
+		}
 	} else {
-		if (vma->vm_file)
-			fput(vma->vm_file);
-		vma->vm_file = asma->file;
+		vma_set_anonymous(vma);
 	}
+
+	if (vma->vm_file)
+		fput(vma->vm_file);
+	vma->vm_file = asma->file;
 
 	return 0;
 }
