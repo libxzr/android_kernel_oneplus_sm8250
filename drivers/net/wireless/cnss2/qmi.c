@@ -74,6 +74,12 @@
 #define P867_VZW_DEFAULT_BDF                "13wlan.v0a"
 #define P867_VZW_CHAIN0_ONLY_BDF            "13wlan0.v0a"
 #define P867_VZW_CHAIN1_ONLY_BDF            "13wlan1.v0a"
+#define P828_PUBLIC_CHINA_DEFAULT_BDF		"15wlan.b0c"
+#define P828_PUBLIC_CHINA_CHAIN0_ONLY_BDF	"15wlan0.b0c"
+#define P828_PUBLIC_CHINA_CHAIN1_ONLY_BDF	"15wlan1.b0c"
+#define P828_PUBLIC_INDIA_DEFAULT_BDF		"15wlan.b0i"
+#define P828_PUBLIC_INDIA_CHAIN0_ONLY_BDF	"15wlan0.b0i"
+#define P828_PUBLIC_INDIA_CHAIN1_ONLY_BDF	"15wlan1.b0i"
 #define QMI_WLFW_TIMEOUT_MS		(plat_priv->ctrl_params.qmi_timeout)
 #define QMI_WLFW_TIMEOUT_JF		msecs_to_jiffies(QMI_WLFW_TIMEOUT_MS)
 #define COEX_TIMEOUT			QMI_WLFW_TIMEOUT_JF
@@ -1172,7 +1178,9 @@ void cnss_get_filename(char *filename,
 					 P805_PUBLIC_AMERICA_DEFAULT_BDF);
 			break;
 			}
-		} else if (hw_id == 15 || hw_id == 21 || hw_id == 22) {
+		} else if (hw_id == 15 || hw_id == 53 || hw_id == 54 ||
+				hw_id == 55 || hw_id == 21 || hw_id == 22 ||
+				hw_id == 23) {
 			switch (rf_id) {
 			case 11:
 			cnss_pr_dbg("it is China PVT version, begin to load the China BDF file");
@@ -1235,7 +1243,7 @@ void cnss_get_filename(char *filename,
 					 P805_PUBLIC_AMERICA_DEFAULT_BDF);
 			break;
 			}
-		} else if (hw_id == 51 || hw_id == 52 || hw_id == 53) {
+		} else if (hw_id == 52) {
 			cnss_get_china_sec_res_filename(filename, filename_len,
 							hw_id, tempstr);
 		} else {
@@ -1512,6 +1520,89 @@ void cnss_get_filename(char *filename,
 			else
 				snprintf(filename, filename_len,
 					 P867_VZW_DEFAULT_BDF);
+		}
+	} else if (pj_id == 15) {
+		if (hw_id == 11) {
+			switch (rf_id) {
+			case 11:
+			cnss_pr_dbg("it is CHINA EVT1 version, begin to load the CHINA BDF file");
+			if (tempstr == 1)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_CHINA_CHAIN0_ONLY_BDF);
+			else if (tempstr == 2)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_CHINA_CHAIN1_ONLY_BDF);
+			else
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_CHINA_DEFAULT_BDF);
+			break;
+			case 13:
+			cnss_pr_dbg("it is INDIA EVT1 version, begin to load the INDIA BDF file");
+			if (tempstr == 1)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_INDIA_CHAIN0_ONLY_BDF);
+			else if (tempstr == 2)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_INDIA_CHAIN1_ONLY_BDF);
+			else
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_INDIA_DEFAULT_BDF);
+			break;
+			}
+		} else if (hw_id == 12 || hw_id == 21) {
+			switch (rf_id) {
+			case 11:
+			cnss_pr_dbg("it is CHINA DVT version, begin to load the CHINA BDF file");
+			if (tempstr == 1)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_CHINA_CHAIN0_ONLY_BDF);
+			else if (tempstr == 2)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_CHINA_CHAIN1_ONLY_BDF);
+			else
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_CHINA_DEFAULT_BDF);
+			break;
+			case 13:
+			cnss_pr_dbg("it is INDIA DVT version, begin to load the INDIA BDF file");
+			if (tempstr == 1)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_INDIA_CHAIN0_ONLY_BDF);
+			else if (tempstr == 2)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_INDIA_CHAIN1_ONLY_BDF);
+			else
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_INDIA_DEFAULT_BDF);
+			break;
+			}
+		} else if (hw_id == 13 || hw_id == 22) {
+			switch (rf_id) {
+			case 11:
+			cnss_pr_dbg("it is CHINA PVT version, begin to load the CHINA BDF file");
+			if (tempstr == 1)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_CHINA_CHAIN0_ONLY_BDF);
+			else if (tempstr == 2)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_CHINA_CHAIN1_ONLY_BDF);
+			else
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_CHINA_DEFAULT_BDF);
+			break;
+			case 13:
+			cnss_pr_dbg("it is INDIA PVT version, begin to load the INDIA BDF file");
+			if (tempstr == 1)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_INDIA_CHAIN0_ONLY_BDF);
+			else if (tempstr == 2)
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_INDIA_CHAIN1_ONLY_BDF);
+			else
+				snprintf(filename, filename_len,
+					 P828_PUBLIC_INDIA_DEFAULT_BDF);
+			break;
+			}
 		}
 	} else {
 		snprintf(filename, filename_len,
