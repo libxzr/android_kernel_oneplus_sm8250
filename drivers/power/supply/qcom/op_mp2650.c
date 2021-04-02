@@ -35,8 +35,7 @@ struct mp2650_charger *s_mcharger = NULL;
 int reg_access_allow = 0;
 int mp2650_reg = 0;
 
-int connected_charger_type;
-EXPORT_SYMBOL(connected_charger_type);
+extern int connected_charger_type;
 
 static void mp2650_set_mps_otg_en_val(int value);
 static int mp2650_otg_enable(struct mp2650_charger *chg, bool en);

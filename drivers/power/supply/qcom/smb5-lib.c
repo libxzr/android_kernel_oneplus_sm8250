@@ -112,7 +112,8 @@ static void pps_usbpd_connect_cb(struct usbpd_svid_handler *hdlr,
 static void pps_usbpd_disconnect_cb(struct usbpd_svid_handler *hdlr);
 static struct op_pps op_pps_chg;
 
-extern int connected_charger_type;
+int connected_charger_type;
+EXPORT_SYMBOL(connected_charger_type);
 module_param_call(sys_boot_complete, usb_enum_check, param_get_int, &sys_boot_complete, 0644);
 MODULE_PARM_DESC(sys_boot_complete, "sys_boot_complete");
 
