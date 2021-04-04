@@ -1,0 +1,904 @@
+diff --git a/arch/arm64/boot/dts/vendor/qcom/dsi-panel-samsung_ana6706_dsc.dtsi b/arch/arm64/boot/dts/vendor/qcom/dsi-panel-samsung_ana6706_dsc.dtsi
+index 7c8b7e927f33..6b2c6cfee76d 100644
+--- a/arch/arm64/boot/dts/vendor/qcom/dsi-panel-samsung_ana6706_dsc.dtsi
++++ b/arch/arm64/boot/dts/vendor/qcom/dsi-panel-samsung_ana6706_dsc.dtsi
+@@ -964,6 +964,7 @@
+ 
+ 			timing@2 {
+ 				qcom,mdss-dsi-timing-default;
++				qcom,mdss-dsi-splash-dms-switch-to-this-timing;
+ 				qcom,mdss-dsi-panel-framerate = <120>;
+ 				qcom,mdss-dsi-panel-clockrate = <1452000000>;
+ 				qcom,mdss-dsi-panel-width = <1440>;
+@@ -1886,5 +1887,7 @@
+ 			qcom,display-topology = <1 1 1>,<2 2 1>;
+ 			qcom,default-topology-index = <1>;
+ 		};
++		/delete-node/ timing@0;
++		/delete-node/ timing@1;
+ 	};
+ };
+diff --git a/drivers/input/touchscreen/touchpanel_common.h b/drivers/input/touchscreen/touchpanel_common.h
+index 2758c5ba3d52..cd75bfd203a0 100644
+--- a/drivers/input/touchscreen/touchpanel_common.h
++++ b/drivers/input/touchscreen/touchpanel_common.h
+@@ -61,6 +61,17 @@
+ #define FingerprintDown     16
+ #define FingerprintUp       17
+ 
++#define KEY_GESTURE_W               246
++#define KEY_GESTURE_M               247
++#define KEY_GESTURE_S               248
++#define KEY_DOUBLE_TAP              KEY_WAKEUP
++#define KEY_GESTURE_CIRCLE          250
++#define KEY_GESTURE_TWO_SWIPE       251
++#define KEY_GESTURE_DOWN_ARROW        252
++#define KEY_GESTURE_LEFT_ARROW      253
++#define KEY_GESTURE_RIGHT_ARROW     254
++#define KEY_GESTURE_SINGLE_TAP      255
++
+ #define BIT0 (0x1 << 0)
+ #define BIT1 (0x1 << 1)
+ #define BIT2 (0x1 << 2)
+diff --git a/drivers/input/touchscreen/touchpanel_common_driver.c b/drivers/input/touchscreen/touchpanel_common_driver.c
+index e9044a0e4a90..32e6f8bd6250 100644
+--- a/drivers/input/touchscreen/touchpanel_common_driver.c
++++ b/drivers/input/touchscreen/touchpanel_common_driver.c
+@@ -50,7 +50,7 @@ unsigned int tp_register_times = 0;
+ //unsigned int probe_time = 0;
+ struct touchpanel_data *g_tp = NULL;
+ struct point_info *pre_points = NULL;
+-int tp_1v8_power = 0;
++int tp_1v8_power = 1;
+ static DECLARE_WAIT_QUEUE_HEAD(waiter);
+ static struct input_dev *ps_input_dev = NULL;
+ static int lcd_id = 0;
+@@ -377,6 +377,8 @@ int sec_double_tap(struct gesture_info *gesture)
+ static void tp_gesture_handle(struct touchpanel_data *ts)
+ {
+ 	struct gesture_info gesture_info_temp;
++	bool enabled = false;
++	int key = -1;
+ 
+ 	if (project_code == 20801) {
+ 		if (!ts->ts_ops->enable_single_tap) {
+@@ -420,20 +422,54 @@ static void tp_gesture_handle(struct touchpanel_data *ts)
+ 			gesture_info_temp.gesture_type == SingleTap ? "(single tap)" :
+ 			gesture_info_temp.gesture_type == Wgestrue ? "(W)" : "unknown");
+ 
+-	if ((gesture_info_temp.gesture_type == DouTap && DouTap_enable) ||
+-			(gesture_info_temp.gesture_type == UpVee && UpVee_enable) ||
+-			(gesture_info_temp.gesture_type ==  LeftVee&& LeftVee_enable) ||
+-			(gesture_info_temp.gesture_type == RightVee && RightVee_enable) ||
+-			(gesture_info_temp.gesture_type == Circle && Circle_enable) ||
+-			(gesture_info_temp.gesture_type == DouSwip && DouSwip_enable) ||
+-			(gesture_info_temp.gesture_type == Mgestrue && Mgestrue_enable) ||
+-			(gesture_info_temp.gesture_type == Sgestrue && Sgestrue_enable) ||
+-			(gesture_info_temp.gesture_type == SingleTap && SingleTap_enable) ||
+-			(gesture_info_temp.gesture_type == Wgestrue && Wgestrue_enable)) {
++	switch (gesture_info_temp.gesture_type) {
++		case DouTap:
++			enabled = DouTap_enable;
++			key = KEY_DOUBLE_TAP;
++			break;
++		case UpVee:
++			enabled = UpVee_enable;
++			key = KEY_GESTURE_DOWN_ARROW;
++			break;
++		case LeftVee:
++			enabled = LeftVee_enable;
++			key = KEY_GESTURE_RIGHT_ARROW;
++			break;
++		case RightVee:
++			enabled = RightVee_enable;
++			key = KEY_GESTURE_LEFT_ARROW;
++			break;
++		case Circle:
++			enabled = Circle_enable;
++			key = KEY_GESTURE_CIRCLE;
++			break;
++		case DouSwip:
++			enabled = DouSwip_enable;
++			key = KEY_GESTURE_TWO_SWIPE;
++			break;
++		case Mgestrue:
++			enabled = Mgestrue_enable;
++			key = KEY_GESTURE_M;
++			break;
++		case Sgestrue:
++			enabled = Sgestrue_enable;
++			key = KEY_GESTURE_S;
++			break;
++		case SingleTap:
++			enabled = SingleTap_enable;
++			key = KEY_GESTURE_SINGLE_TAP;
++			break;
++		case Wgestrue:
++			enabled = Wgestrue_enable;
++			key = KEY_GESTURE_W;
++			break;
++	}
++
++	if (enabled) {
+ 		memcpy(&ts->gesture, &gesture_info_temp, sizeof(struct gesture_info));
+-		input_report_key(ts->input_dev, KEY_F4, 1);
++		input_report_key(ts->input_dev, key, 1);
+ 		input_sync(ts->input_dev);
+-		input_report_key(ts->input_dev, KEY_F4, 0);
++		input_report_key(ts->input_dev, key, 0);
+ 		input_sync(ts->input_dev);
+ 	}
+ }
+@@ -1194,80 +1230,6 @@ void switch_usb_state(int usb_state)
+ }
+ EXPORT_SYMBOL(switch_usb_state);
+ 
+-/*
+- *    gesture_enable = 0 : disable gesture
+- *    gesture_enable = 1 : enable gesture when ps is far away
+- *    gesture_enable = 2 : disable gesture when ps is near
+- */
+-static ssize_t proc_gesture_control_write(struct file *file, const char __user *buffer, size_t count, loff_t *ppos)
+-{
+-	int value = 0;
+-	char buf[4] = {0};
+-	struct touchpanel_data *ts = PDE_DATA(file_inode(file));
+-
+-	if (count > 2)
+-		return count;
+-	if (!ts)
+-		return count;
+-
+-	if (copy_from_user(buf, buffer, count)) {
+-		TPD_INFO("%s: read proc input error.\n", __func__);
+-		return count;
+-	}
+-	TPD_INFO("%s write argc1[0x%x],argc2[0x%x]\n",__func__,buf[0],buf[1]);
+-	UpVee_enable = (buf[0] & BIT0)?1:0;
+-	DouSwip_enable = (buf[0] & BIT1)?1:0;
+-	LeftVee_enable = (buf[0] & BIT3)?1:0;
+-	RightVee_enable = (buf[0] & BIT4)?1:0;
+-	Circle_enable = (buf[0] & BIT6)?1:0;
+-	DouTap_enable = (buf[0] & BIT7)?1:0;
+-	Sgestrue_enable = (buf[1] & BIT0)?1:0;
+-	Mgestrue_enable	= (buf[1] & BIT1)?1:0;
+-	Wgestrue_enable = (buf[1] & BIT2)?1:0;
+-	SingleTap_enable = (buf[1] & BIT3)?1:0;
+-	Enable_gesture = (buf[1] & BIT7)?1:0;
+-
+-	if (UpVee_enable || DouSwip_enable || LeftVee_enable || RightVee_enable
+-			|| Circle_enable || DouTap_enable || Sgestrue_enable || Mgestrue_enable
+-			|| Wgestrue_enable || SingleTap_enable || Enable_gesture) {
+-		value = 1;
+-	} else {
+-		value = 0;
+-	}
+-
+-	mutex_lock(&ts->mutex);
+-	if (ts->gesture_enable != value) {
+-		ts->gesture_enable = value;
+-		tp_1v8_power = ts->gesture_enable;
+-		TPD_INFO("%s: gesture_enable = %d, is_suspended = %d\n", __func__, ts->gesture_enable, ts->is_suspended);
+-		if (ts->is_incell_panel && (ts->suspend_state == TP_RESUME_EARLY_EVENT) && (ts->tp_resume_order == LCD_TP_RESUME)) {
+-			TPD_INFO("tp will resume, no need mode_switch in incell panel\n"); /*avoid i2c error or tp rst pulled down in lcd resume*/
+-		} else if (ts->is_suspended)
+-			operate_mode_switch(ts);
+-	}else {
+-		TPD_INFO("%s: do not do same operator :%d\n", __func__, value);
+-	}
+-	mutex_unlock(&ts->mutex);
+-
+-	return count;
+-}
+-
+-static ssize_t proc_gesture_control_read(struct file *file, char __user *user_buf, size_t count, loff_t *ppos)
+-{
+-	int ret = 0;
+-	char page[4] = {0};
+-	struct touchpanel_data *ts = PDE_DATA(file_inode(file));
+-
+-	if (!ts)
+-		return count;
+-
+-	TPD_DEBUG("gesture_enable is: %d\n", ts->gesture_enable);
+-	ret = sprintf(page, "%d\n", ts->gesture_enable);
+-	ret = simple_read_from_buffer(user_buf, count, ppos, page, strlen(page));
+-
+-	return ret;
+-}
+-
+ static ssize_t proc_coordinate_read(struct file *file, char __user *user_buf, size_t count, loff_t *ppos)
+ {
+ 	int ret = 0;
+@@ -1288,13 +1250,6 @@ static ssize_t proc_coordinate_read(struct file *file, char __user *user_buf, si
+ 	return ret;
+ }
+ 
+-static const struct file_operations proc_gesture_control_fops = {
+-	.write = proc_gesture_control_write,
+-	.read  = proc_gesture_control_read,
+-	.open  = simple_open,
+-	.owner = THIS_MODULE,
+-};
+-
+ static const struct file_operations proc_coordinate_fops = {
+ 	.read  = proc_coordinate_read,
+ 	.open  = simple_open,
+@@ -2642,6 +2597,52 @@ static ssize_t sec_update_fw_show(struct device *dev,
+ 
+ static DEVICE_ATTR(tp_fw_update, 0644, sec_update_fw_show, sec_update_fw_store);
+ 
++#define GESTURE_ATTR(name, out) \
++	static ssize_t name##_enable_read_func(struct file *file, char __user *user_buf, size_t count, loff_t *ppos) \
++	{ \
++		int ret = 0; \
++		char page[PAGESIZE]; \
++		ret = sprintf(page, "%d\n", out); \
++		ret = simple_read_from_buffer(user_buf, count, ppos, page, strlen(page)); \
++		return ret; \
++	} \
++	static ssize_t name##_enable_write_func(struct file *file, const char __user *user_buf, size_t count, loff_t *ppos) \
++	{ \
++		int enabled = 0; \
++		char page[PAGESIZE] = {0}; \
++		copy_from_user(page, user_buf, count); \
++		sscanf(page, "%d", &enabled); \
++		out = enabled > 0 ? 1 : 0; \
++		return count; \
++	} \
++	static const struct file_operations name##_enable_proc_fops = { \
++	    .write = name##_enable_write_func, \
++	    .read =  name##_enable_read_func, \
++	    .open = simple_open, \
++	    .owner = THIS_MODULE, \
++	};
++
++GESTURE_ATTR(single_tap, SingleTap_enable);
++GESTURE_ATTR(double_tap, DouTap_enable);
++GESTURE_ATTR(down_arrow, UpVee_enable);
++GESTURE_ATTR(left_arrow, RightVee_enable);
++GESTURE_ATTR(right_arrow, LeftVee_enable);
++GESTURE_ATTR(double_swipe, DouSwip_enable);
++GESTURE_ATTR(letter_o, Circle_enable);
++GESTURE_ATTR(letter_w, Wgestrue_enable);
++GESTURE_ATTR(letter_m, Mgestrue_enable);
++GESTURE_ATTR(letter_s, Sgestrue_enable);
++
++#define CREATE_PROC_NODE(PARENT, NAME, MODE) \
++	prEntry_tmp = proc_create(#NAME, MODE, PARENT, &NAME##_proc_fops); \
++	if (prEntry_tmp == NULL) { \
++		ret = -ENOMEM; \
++		TPD_INFO("%s: Couldn't create proc entry, %d\n", __func__, __LINE__); \
++	}
++
++#define CREATE_GESTURE_NODE(NAME) \
++	CREATE_PROC_NODE(prEntry_tp, NAME##_enable, 0666)
++
+ static int init_touchpanel_proc(struct touchpanel_data *ts)
+ {
+ 	int ret = 0;
+@@ -2696,11 +2697,17 @@ static int init_touchpanel_proc(struct touchpanel_data *ts)
+ 
+ 	//proc files-step2-4:/proc/touchpanel/double_tap_enable (black gesture related interface)
+ 	if (ts->black_gesture_support) {
+-		prEntry_tmp = proc_create_data("gesture_enable", 0666, prEntry_tp, &proc_gesture_control_fops, ts);
+-		if (prEntry_tmp == NULL) {
+-			ret = -ENOMEM;
+-			TPD_INFO("%s: Couldn't create proc entry, %d\n", __func__, __LINE__);
+-		}
++		CREATE_GESTURE_NODE(single_tap);
++		CREATE_GESTURE_NODE(double_tap);
++		CREATE_GESTURE_NODE(down_arrow);
++		CREATE_GESTURE_NODE(left_arrow);
++		CREATE_GESTURE_NODE(right_arrow);
++		CREATE_GESTURE_NODE(double_swipe);
++		CREATE_GESTURE_NODE(letter_o);
++		CREATE_GESTURE_NODE(letter_w);
++		CREATE_GESTURE_NODE(letter_m);
++		CREATE_GESTURE_NODE(letter_s);
++
+ 		prEntry_tmp = proc_create_data("coordinate", 0444, prEntry_tp, &proc_coordinate_fops, ts);
+ 		if (prEntry_tmp == NULL) {
+ 			ret = -ENOMEM;
+@@ -4270,6 +4277,16 @@ static int init_input_device(struct touchpanel_data *ts)
+ 	set_bit(BTN_TOUCH, ts->input_dev->keybit);
+ 	if (ts->black_gesture_support) {
+ 		set_bit(KEY_F4, ts->input_dev->keybit);
++		set_bit(KEY_GESTURE_W, ts->input_dev->keybit);
++		set_bit(KEY_GESTURE_M, ts->input_dev->keybit);
++		set_bit(KEY_GESTURE_S, ts->input_dev->keybit);
++		set_bit(KEY_DOUBLE_TAP, ts->input_dev->keybit);
++		set_bit(KEY_GESTURE_CIRCLE, ts->input_dev->keybit);
++		set_bit(KEY_GESTURE_TWO_SWIPE, ts->input_dev->keybit);
++		set_bit(KEY_GESTURE_DOWN_ARROW, ts->input_dev->keybit);
++		set_bit(KEY_GESTURE_LEFT_ARROW, ts->input_dev->keybit);
++		set_bit(KEY_GESTURE_RIGHT_ARROW, ts->input_dev->keybit);
++		set_bit(KEY_GESTURE_SINGLE_TAP, ts->input_dev->keybit);
+ 	}
+ 
+ 	ts->kpd_input_dev->name = TPD_DEVICE"_kpd";
+@@ -5340,7 +5357,7 @@ int register_common_touch_device(struct touchpanel_data *pdata)
+ 	ts->loading_fw = false;
+ 	ts->is_suspended = 0;
+ 	ts->suspend_state = TP_SPEEDUP_RESUME_COMPLETE;
+-	ts->gesture_enable = 0;
++	ts->gesture_enable = 1;
+ 	ts->es_enable = 0;
+ 	ts->fd_enable = 0;
+ 	ts->palm_enable = 1;
+diff --git a/drivers/power/supply/qcom/qpnp-fg-gen4.c b/drivers/power/supply/qcom/qpnp-fg-gen4.c
+index 80febe4f08e3..ad050baaf3f6 100644
+--- a/drivers/power/supply/qcom/qpnp-fg-gen4.c
++++ b/drivers/power/supply/qcom/qpnp-fg-gen4.c
+@@ -4691,6 +4691,7 @@ static int fg_psy_get_property(struct power_supply *psy,
+ 	case POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG:
+ 		rc = ttf_get_time_to_empty(chip->ttf, &pval->intval);
+ 		break;
++#ifdef CONFIG_MACH_ONEPLUS_8T
+ 	case POWER_SUPPLY_PROP_TIME_TO_FULL_NOW:
+ 		if (fg->iskebab) {
+ 			if (fg->use_external_fg && external_fg
+@@ -4702,6 +4703,7 @@ static int fg_psy_get_property(struct power_supply *psy,
+ 			rc = ttf_get_time_to_full(chip->ttf, &pval->intval);
+ 		pval->intval = pval->intval > 0 ? pval->intval : 1;
+ 		break;
++#endif
+ 	case POWER_SUPPLY_PROP_CC_STEP:
+ 		if ((chip->ttf->cc_step.sel >= 0) &&
+ 				(chip->ttf->cc_step.sel < MAX_CC_STEPS)) {
+@@ -4927,7 +4929,9 @@ static enum power_supply_property fg_psy_props[] = {
+ 	POWER_SUPPLY_PROP_DEBUG_BATTERY,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
+ 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
++#ifdef CONFIG_MACH_ONEPLUS_8T
+ 	POWER_SUPPLY_PROP_TIME_TO_FULL_NOW,
++#endif
+ 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
+ 	POWER_SUPPLY_PROP_CC_STEP,
+ 	POWER_SUPPLY_PROP_CC_STEP_SEL,
+diff --git a/drivers/power/supply/qcom/qpnp-smb5.c b/drivers/power/supply/qcom/qpnp-smb5.c
+index e65bdecc085a..7d030a92106f 100644
+--- a/drivers/power/supply/qcom/qpnp-smb5.c
++++ b/drivers/power/supply/qcom/qpnp-smb5.c
+@@ -1734,7 +1734,10 @@ static int smb5_usb_get_prop(struct power_supply *psy,
+ 		val->intval = get_client_vote(chg->usb_icl_votable, PD_VOTER);
+ 		break;
+ 	case POWER_SUPPLY_PROP_CURRENT_MAX:
+-		rc = smblib_get_prop_input_current_max(chg, val);
++		if (chg->dash_on)
++			val->intval = 3000000;
++		else
++			rc = smblib_get_prop_input_current_max(chg, val);
+ 		break;
+ 	case POWER_SUPPLY_PROP_TYPE:
+ 		val->intval = POWER_SUPPLY_TYPE_USB_PD;
+@@ -2644,7 +2647,9 @@ static enum power_supply_property smb5_batt_props[] = {
+ //	POWER_SUPPLY_PROP_FCC_STEPPER_ENABLE,
+ 	POWER_SUPPLY_PROP_OP_DISABLE_CHARGE,
+ 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
++#ifdef CONFIG_MACH_ONEPLUS_8T
+ 	POWER_SUPPLY_PROP_TIME_TO_FULL_NOW,
++#endif
+ 	POWER_SUPPLY_PROP_COOL_DOWN,
+ 	POWER_SUPPLY_PROP_DUMP_REG,
+ };
+@@ -2857,10 +2862,12 @@ static int smb5_batt_get_prop(struct power_supply *psy,
+ 		rc = smblib_get_prop_from_bms(chg,
+ 				POWER_SUPPLY_PROP_TIME_TO_FULL_AVG, val);
+ 		break;
++#ifdef CONFIG_MACH_ONEPLUS_8T
+ 	case POWER_SUPPLY_PROP_TIME_TO_FULL_NOW:
+ 		rc = smblib_get_prop_from_bms(chg,
+ 				POWER_SUPPLY_PROP_TIME_TO_FULL_NOW, val);
+ 		break;
++#endif
+ 	case POWER_SUPPLY_PROP_COOL_DOWN:
+ 		val->intval = chg->cool_down;
+ 		break;
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index d193005dc2e6..62cf9e6e9b1d 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -45,6 +45,8 @@
+ #define USB_TP_TRANSMISSION_DELAY	40	/* ns */
+ #define USB_TP_TRANSMISSION_DELAY_MAX	65535	/* ns */
+ 
++int deny_new_usb __read_mostly = 0;
++
+ /* Protect struct usb_device->state and ->children members
+  * Note: Both are also protected by ->dev.sem, except that ->state can
+  * change to USB_STATE_NOTATTACHED even when the semaphore isn't held. */
+@@ -4998,6 +5000,12 @@ static void hub_port_connect(struct usb_hub *hub, int port1, u16 portstatus,
+ 			goto done;
+ 		return;
+ 	}
++
++	if (deny_new_usb) {
++		dev_err(&port_dev->dev, "denied insert of USB device on port %d\n", port1);
++		goto done;
++	}
++
+ 	if (hub_is_superspeed(hub->hdev))
+ 		unit_load = 150;
+ 	else
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index b3046b69e4a2..14e500eb8ae9 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -102,6 +102,9 @@
+ #if defined(CONFIG_SYSCTL)
+ 
+ /* External variables not in a header file. */
++#ifdef CONFIG_USB
++extern int deny_new_usb;
++#endif
+ extern int suid_dumpable;
+ #ifdef CONFIG_COREDUMP
+ extern int core_uses_pid;
+@@ -1201,6 +1204,17 @@ static struct ctl_table kern_table[] = {
+ 		.extra1		= &zero,
+ 		.extra2		= &two,
+ 	},
++#endif
++#ifdef CONFIG_USB
++	{
++		.procname	= "deny_new_usb",
++		.data		= &deny_new_usb,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax_sysadmin,
++		.extra1		= &zero,
++		.extra2		= &one,
++	},
+ #endif
+ 	{
+ 		.procname	= "ngroups_max",
+diff --git a/techpack/display/msm/dsi/dsi_defs.h b/techpack/display/msm/dsi/dsi_defs.h
+index c48400dec9bb..883d21629531 100644
+--- a/techpack/display/msm/dsi/dsi_defs.h
++++ b/techpack/display/msm/dsi/dsi_defs.h
+@@ -606,6 +606,7 @@ struct dsi_video_engine_cfg {
+ 	bool hsa_lp11_en;
+ 	bool eof_bllp_lp11_en;
+ 	bool bllp_lp11_en;
++	bool splash_dms;
+ 	enum dsi_video_traffic_mode traffic_mode;
+ 	u32 vc_id;
+ 	u32 dma_sched_line;
+@@ -707,6 +708,7 @@ struct dsi_display_mode {
+ 	u32 dsi_mode_flags;
+ 	enum dsi_op_mode panel_mode;
+ 	bool is_preferred;
++	bool splash_dms;
+ 	struct dsi_display_mode_priv_info *priv_info;
+ };
+ 
+diff --git a/techpack/display/msm/dsi/dsi_display.c b/techpack/display/msm/dsi/dsi_display.c
+index e0f8e3788290..4c5786b6434d 100644
+--- a/techpack/display/msm/dsi/dsi_display.c
++++ b/techpack/display/msm/dsi/dsi_display.c
+@@ -3525,6 +3525,8 @@ static int dsi_display_ctrl_init(struct dsi_display *display)
+ 	int rc = 0;
+ 	int i;
+ 	struct dsi_display_ctrl *ctrl;
++	struct dsi_display_mode *cur_mode = display->panel->cur_mode;
++	bool is_cont_splash_enabled = display->is_cont_splash_enabled;
+ 
+ 	/* when ULPS suspend feature is enabled, we will keep the lanes in
+ 	 * ULPS during suspend state and clamp DSI phy. Hence while resuming
+@@ -3536,8 +3538,17 @@ static int dsi_display_ctrl_init(struct dsi_display *display)
+ 	if (!display->panel->ulps_suspend_enabled || !display->ulps_enabled) {
+ 		display_for_each_ctrl(i, display) {
+ 			ctrl = &display->ctrl[i];
++
++			if ((cur_mode->dsi_mode_flags & DSI_MODE_FLAG_DMS) &&
++			    is_cont_splash_enabled) {
++				pr_info("[%s] Forcing DSI CTRL reinit for "
++					"Dynamic Mode Setting usecase during "
++					"continuous splash.\n", display->name);
++				is_cont_splash_enabled = false;
++			}
++
+ 			rc = dsi_ctrl_host_init(ctrl->ctrl,
+-					display->is_cont_splash_enabled);
++					is_cont_splash_enabled);
+ 			if (rc) {
+ 				DSI_ERR("[%s] failed to init host_%d, rc=%d\n",
+ 				       display->name, i, rc);
+@@ -5823,13 +5834,27 @@ static int dsi_display_set_mode_sub(struct dsi_display *display,
+ 				goto error;
+ 			}
+ 		}
++		if ((mode->dsi_mode_flags & DSI_MODE_FLAG_DMS) &&
++				(display->panel->panel_mode == DSI_OP_CMD_MODE)) {
++			atomic_set(&display->clkrate_change_pending, 1);
++		}
+ 		if (priv_info->phy_timing_len) {
+ 			display_for_each_ctrl(i, display) {
+ 				ctrl = &display->ctrl[i];
+-				rc = dsi_phy_set_timing_params(ctrl->phy,
++				if ((mode->dsi_mode_flags & DSI_MODE_FLAG_DMS) &&
++					(display->panel->panel_mode == DSI_OP_CMD_MODE)) {
++					rc = dsi_phy_set_timing_params_commit(ctrl->phy,
++						priv_info->phy_timing_val,
++						priv_info->phy_timing_len);
++					pr_info("[%s] Force commit PHY timing params "
++						"for seamless DMS usecase\n",
++						display->name);
++				} else {
++					rc = dsi_phy_set_timing_params(ctrl->phy,
+ 						priv_info->phy_timing_val,
+ 						priv_info->phy_timing_len,
+ 						commit_phy_timing);
++				}
+ 				if (rc)
+ 					DSI_ERR("Fail to add timing params\n");
+ 			}
+@@ -8367,10 +8392,22 @@ int dsi_display_prepare(struct dsi_display *display)
+ 	dsi_display_ctrl_isr_configure(display, true);
+ 
+ 	if (mode->dsi_mode_flags & DSI_MODE_FLAG_DMS) {
+-		if (display->is_cont_splash_enabled &&
+-		    display->config.panel_mode == DSI_OP_VIDEO_MODE) {
+-			DSI_ERR("DMS not supported on first frame\n");
+-			rc = -EINVAL;
++		if (display->is_cont_splash_enabled) {
++			pr_err("DMS is not supposed to be set on first frame, "
++			       "%s\n",
++			       display->config.panel_mode == DSI_OP_CMD_MODE ?
++			       "but command mode can handle it. Let's go!" :
++			       "video mode cannot handle it. Bailing out.");
++			if (display->config.panel_mode == DSI_OP_VIDEO_MODE) {
++				rc = -EINVAL;
++				goto error;
++			}
++		} else {
++			/* update dsi ctrl for new mode */
++			rc = dsi_display_pre_switch(display);
++			if (rc)
++				pr_err("[%s] panel pre-prepare-res-switch failed, rc=%d\n",
++						display->name, rc);
+ 			goto error;
+ 		}
+ 
+@@ -8801,6 +8838,7 @@ int dsi_display_enable(struct dsi_display *display)
+ 	 * resource init and hence we return early
+ 	 */
+ 	if (display->is_cont_splash_enabled) {
++		struct dsi_display_mode *adj_mode = NULL;
+ 
+ 		dsi_display_config_ctrl_for_cont_splash(display);
+ #if defined(CONFIG_PXLW_IRIS)
+@@ -8816,6 +8854,63 @@ int dsi_display_enable(struct dsi_display *display)
+ 
+ 		display->panel->panel_initialized = true;
+ 		DSI_DEBUG("cont splash enabled, display enable not required\n");
++
++		/*
++		 * Start re-setting during continuous splash to perform mode
++		 * set before the first frame, if requested by the DT
++		 * configuration property
++		 */
++		mode = display->panel->cur_mode;
++		if (!(mode->dsi_mode_flags & DSI_MODE_FLAG_DMS))
++			return 0;
++
++		/*
++		 * At this point the panel is ON from bootloader (displaying
++		 * the splash screen) and the Command Mode Engine is also up:
++		 * send the commands to switch the resolution NOW!
++		 */
++		pr_info("[%s] Dynamic Mode Setting: switching now!\n",
++			display->name);
++		rc = dsi_panel_post_switch(display->panel);
++		if (rc)
++			pr_warn("[%s] Cannot send post-switch cmd: %d\n",
++				display->name, rc);
++
++		/* If Display Stream Compression is required, update params. */
++		if (mode->priv_info->dsc_enabled) {
++			mode->priv_info->dsc.pic_width *= display->ctrl_count;
++			rc = dsi_panel_update_pps(display->panel);
++			if (rc)
++				pr_warn("[%s] Cannot update PPS: %d\n",
++					display->name, rc);
++		}
++
++		rc = dsi_panel_switch(display->panel);
++		if (rc) {
++			pr_err("[%s] CRITICAL: Cannot switch resolution: "
++			       "rc = %d - Returning failure and "
++			       "hoping for DSI recovery...\n",
++				display->name, rc);
++			return rc;
++		}
++
++		/*
++		 * Find the entry for the current DRM mode structure:
++		 * beware that panel->cur_mode is only an internal cache.
++		 */
++		rc = dsi_display_find_mode(display, mode, &adj_mode);
++		if (unlikely(rc)) {
++			pr_err("[%s] This is impossible! Can't find mode!\n",
++				__func__);
++			return rc;
++		}
++
++		/* Reset the splash_dms flag: we're out of cont splash now */
++		adj_mode->splash_dms = false;
++
++		/* Remove the DMS flag, since we have already switched */
++		adj_mode->dsi_mode_flags &= ~DSI_MODE_FLAG_DMS;
++
+ 		return 0;
+ 	}
+ 
+diff --git a/techpack/display/msm/dsi/dsi_drm.c b/techpack/display/msm/dsi/dsi_drm.c
+index 534097c31293..158fe8a794ad 100644
+--- a/techpack/display/msm/dsi/dsi_drm.c
++++ b/techpack/display/msm/dsi/dsi_drm.c
+@@ -867,6 +867,9 @@ int dsi_connector_get_modes(struct drm_connector *connector, void *data,
+ 	for (i = 0; i < count; i++) {
+ 		struct drm_display_mode *m;
+ 
++		if (modes[i].splash_dms)
++			modes[i].dsi_mode_flags |= DSI_MODE_FLAG_DMS;
++
+ 		memset(&drm_mode, 0x0, sizeof(drm_mode));
+ 		dsi_convert_to_drm_mode(&modes[i], &drm_mode);
+ 		m = drm_mode_duplicate(connector->dev, &drm_mode);
+@@ -889,6 +892,10 @@ int dsi_connector_get_modes(struct drm_connector *connector, void *data,
+ 			m->type |= DRM_MODE_TYPE_PREFERRED;
+ 		}
+ 		drm_mode_probed_add(connector, m);
++
++		if (modes[i].splash_dms)
++			drm_set_preferred_mode(
++				connector, m->hdisplay, m->vdisplay);
+ 	}
+ 
+ 	rc = dsi_drm_update_edid_name(&edid, display->panel->name);
+diff --git a/techpack/display/msm/dsi/dsi_panel.c b/techpack/display/msm/dsi/dsi_panel.c
+index 256baaeeca8e..f714bcf48f20 100644
+--- a/techpack/display/msm/dsi/dsi_panel.c
++++ b/techpack/display/msm/dsi/dsi_panel.c
+@@ -4735,6 +4735,9 @@ int dsi_panel_get_mode(struct dsi_panel *panel,
+ 		} else {
+ 			mode->panel_mode = panel->panel_mode;
+ 		}
++
++		mode->splash_dms = of_property_read_bool(child_np,
++				"qcom,mdss-dsi-splash-dms-switch-to-this-timing");
+ 	}
+ 	goto done;
+ 
+diff --git a/techpack/display/msm/dsi/dsi_phy.c b/techpack/display/msm/dsi/dsi_phy.c
+index 675b16ab2938..f43e72e51373 100644
+--- a/techpack/display/msm/dsi/dsi_phy.c
++++ b/techpack/display/msm/dsi/dsi_phy.c
+@@ -1110,6 +1110,33 @@ int dsi_phy_set_timing_params(struct msm_dsi_phy *phy,
+ 	return rc;
+ }
+ 
++/* TODO: Deduplicate this ASAP */
++int dsi_phy_set_timing_params_commit(struct msm_dsi_phy *phy,
++				     u32 *timing, u32 size)
++{
++	int rc = 0;
++
++	if (!phy || !timing || !size) {
++		pr_err("Invalid params\n");
++		return -EINVAL;
++	};
++
++	mutex_lock(&phy->phy_lock);
++
++	if (phy->hw.ops.phy_timing_val)
++		rc = phy->hw.ops.phy_timing_val(&phy->cfg.timing, timing, size);
++	if (!rc)
++		phy->cfg.is_phy_timing_present = true;
++
++	if (phy->hw.ops.commit_phy_timing)
++		phy->hw.ops.commit_phy_timing(&phy->hw, &phy->cfg.timing);
++	else
++		pr_warn("WARNING: No function to commit PHY timing!!\n");
++
++	mutex_unlock(&phy->phy_lock);
++	return rc;
++}
++
+ /**
+  * dsi_phy_conv_phy_to_logical_lane() - Convert physical to logical lane
+  * @lane_map:     logical lane
+diff --git a/techpack/display/msm/dsi/dsi_phy.h b/techpack/display/msm/dsi/dsi_phy.h
+index 6643a940c198..b0c118dd6bb8 100644
+--- a/techpack/display/msm/dsi/dsi_phy.h
++++ b/techpack/display/msm/dsi/dsi_phy.h
+@@ -263,6 +263,10 @@ int dsi_phy_set_clk_freq(struct msm_dsi_phy *phy,
+ int dsi_phy_set_timing_params(struct msm_dsi_phy *phy,
+ 			      u32 *timing, u32 size, bool commit);
+ 
++/* TODO: Deduplicate this */
++int dsi_phy_set_timing_params_commit(struct msm_dsi_phy *phy,
++				     u32 *timing, u32 size);
++
+ /**
+  * dsi_phy_lane_reset() - Reset DSI PHY lanes in case of error
+  * @phy:	DSI PHY handle
+diff --git a/techpack/display/msm/sde/sde_crtc.c b/techpack/display/msm/sde/sde_crtc.c
+index b024ef0b10ea..6708bf7e4372 100644
+--- a/techpack/display/msm/sde/sde_crtc.c
++++ b/techpack/display/msm/sde/sde_crtc.c
+@@ -2803,6 +2803,7 @@ int bl_to_alpha_dc(int brightness)
+ 	return alpha;
+ }
+ 
++bool oneplus_dimlayer_hbm_enable;
+ int oneplus_get_panel_brightness_to_alpha(void)
+ {
+ 	struct dsi_display *display = get_main_display();
+@@ -2811,7 +2812,7 @@ int oneplus_get_panel_brightness_to_alpha(void)
+ 		return 0;
+ 	if (oneplus_panel_alpha)
+ 		return oneplus_panel_alpha;
+-    if (display->panel->dim_status)
++    if (oneplus_dimlayer_hbm_enable)
+ 		return brightness_to_alpha(display->panel->hbm_backlight);
+     else
+ 	return bl_to_alpha_dc(display->panel->hbm_backlight);
+@@ -2956,6 +2957,7 @@ ssize_t notify_dim_store(struct device *dev,
+ 	if (dim_status == oneplus_dim_status)
+ 		return count;
+ 	oneplus_dim_status = dim_status;
++	oneplus_dimlayer_hbm_enable = oneplus_dim_status != 0;
+ 	pr_err("notify dim %d,aod = %d press= %d aod_hide =%d\n",
+ 		oneplus_dim_status, dsi_display->panel->aod_status, oneplus_onscreenfp_status, aod_layer_hide);
+ 	if (oneplus_dim_status == 1 && HBM_flag) {
+@@ -5190,7 +5192,7 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
+     }
+ 
+ 	SDE_DEBUG("fp_index=%d,fppressed_index=%d,aod_index=%d\n", fp_index, fppressed_index, aod_index);
+-	if (fp_index >= 0 || fppressed_index >= 0 || oneplus_force_screenfp || dim_backlight == 1) {
++	if (oneplus_dimlayer_hbm_enable || oneplus_force_screenfp || dim_backlight == 1) {
+ 		if (fp_index >= 0 && fppressed_index >= 0) {
+ 			if (pstates[fp_index].stage >= pstates[fppressed_index].stage) {
+ 				SDE_ERROR("Bug!!@@@@: fp layer top of fppressed layer\n");
+@@ -5227,50 +5229,16 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
+ 			zpos++;
+ 		}
+ 
+-		if (fp_index >= 0) {
+-			if (dim_mode == 0) {
+-				//pstates[fp_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0xff;
+-				fp_index = -1;
+-			}
+-		}
+-        if (fppressed_index >= 0) {
+-			if (fp_mode == 0) {
+-				pstates[fppressed_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0;
+-				if(oneplus_aod_fod == 1 && aod_index < 0) {
+-					SDE_DEBUG("set reset pstate\n");
+-					for (i = 0; i < cnt; i++) {
+-						if(i!=fppressed_index ) {
+-							if(pstates[i].sde_pstate->property_values[PLANE_PROP_ALPHA].value == 0){
+-								SDE_ATRACE_BEGIN("aod_layer_reset");
+-								pstates[i].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0xff;
+-								SDE_ATRACE_END("aod_layer_reset");
+-							}
+-						}
+-					}
+-				}
+-				fppressed_index = -1;
+-			} else {
+-				pstates[fppressed_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0xff;
+-			}
+-		}
+-
+-         if (aod_index >= 0) {
+-			if (aod_mode == 1) {
+-				SDE_DEBUG("aod layer hid");
+-                SDE_ATRACE_BEGIN("aod_layer_hid");
+-				pstates[aod_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0;
+-				aod_index = -1;
+-                SDE_ATRACE_END("aod_layer_hid");
+-			}
+-		}
+-
+-		if (fp_index >= 0)
++		if (oneplus_dimlayer_hbm_enable)
+ 			cstate->fingerprint_mode = true;
+ 		else
+ 			cstate->fingerprint_mode = false;
+ 
+-		if ((fp_index >= 0 || dim_backlight > 0) && sde_crtc_config_fingerprint_dim_layer(&cstate->base, zpos)) {
+-			SDE_ERROR("Failed to config dim layer\n");
++		if (fp_index >= 0)
++			pstates[fp_index].sde_pstate->property_values[PLANE_PROP_ALPHA].value = 0;
++
++		if (sde_crtc_config_fingerprint_dim_layer(&cstate->base, zpos)) {
++			//SDE_ERROR("Failed to config dim layer\n");
+ 			return -EINVAL;
+ 		}
+ 		if (fppressed_index >= 0)
+@@ -5279,6 +5247,7 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
+ 			cstate->fingerprint_pressed = false;
+ 		}
+ 	} else {
++		cstate->fingerprint_dim_layer = NULL;
+ 		cstate->fingerprint_pressed = false;
+ 		cstate->fingerprint_mode = false;
+ 		for (i = 0; i < cnt; i++) {
+@@ -5287,8 +5256,10 @@ static int sde_crtc_onscreenfinger_atomic_check(struct sde_crtc_state *cstate,
+ 			}
+ 		}
+     }
+-	if (fp_index < 0 && !dim_backlight) {
+-		cstate->fingerprint_dim_layer = NULL;
++	if (fp_mode == 1 && !oneplus_dimlayer_hbm_enable) {
++		cstate->fingerprint_mode = true;
++		cstate->fingerprint_pressed = true;
++		return 0;
+ 	}
+ 
+ 	return 0;
+diff --git a/techpack/display/msm/sde/sde_encoder.c b/techpack/display/msm/sde/sde_encoder.c
+index 7190542b759d..166c75244ab8 100644
+--- a/techpack/display/msm/sde/sde_encoder.c
++++ b/techpack/display/msm/sde/sde_encoder.c
+@@ -292,6 +292,7 @@ struct sde_encoder_virt {
+ 	struct kthread_work input_event_work;
+ 	struct kthread_work esd_trigger_work;
+ 	struct input_handler *input_handler;
++	bool input_handler_registered;
+ #if defined(CONFIG_PXLW_IRIS)
+ 	struct kthread_work disable_autorefresh_work;
+ #endif
+@@ -743,6 +744,7 @@ void sde_encoder_destroy(struct drm_encoder *drm_enc)
+ 
+ 	kfree(sde_enc->input_handler);
+ 	sde_enc->input_handler = NULL;
++	sde_enc->input_handler_registered = false;
+ 
+ 	kfree(sde_enc);
+ }
+@@ -3210,6 +3212,7 @@ static int _sde_encoder_input_handler(
+ 	input_handler->id_table = sde_input_ids;
+ 
+ 	sde_enc->input_handler = input_handler;
++	sde_enc->input_handler_registered = false;
+ 
+ 	return rc;
+ }
+@@ -3366,7 +3369,18 @@ static void sde_encoder_virt_enable(struct drm_encoder *drm_enc)
+ 		return;
+ 	}
+ 
+-	_sde_encoder_input_handler_register(drm_enc);
++	/* register input handler if not already registered */
++	if (sde_enc->input_handler && !sde_enc->input_handler_registered &&
++			!msm_is_mode_seamless_dms(cur_mode) &&
++		sde_encoder_check_curr_mode(drm_enc, MSM_DISPLAY_CMD_MODE) &&
++			!msm_is_mode_seamless_dyn_clk(cur_mode)) {
++		_sde_encoder_input_handler_register(drm_enc);
++		if (!sde_enc->input_handler || !sde_enc->input_handler->private)
++			SDE_ERROR(
++			"input handler registration failed, rc = %d\n", ret);
++		else
++			sde_enc->input_handler_registered = true;
++	}
+ 
+ 	if ((drm_enc->crtc && drm_enc->crtc->state &&
+ 			drm_enc->crtc->state->connectors_changed &&
+@@ -3497,7 +3511,11 @@ static void sde_encoder_virt_disable(struct drm_encoder *drm_enc)
+ 	if (!sde_encoder_in_clone_mode(drm_enc))
+ 		sde_encoder_wait_for_event(drm_enc, MSM_ENC_TX_COMPLETE);
+ 
+-	_sde_encoder_input_handler_unregister(drm_enc);
++	if (sde_enc->input_handler && sde_enc->input_handler_registered &&
++		sde_encoder_check_curr_mode(drm_enc, MSM_DISPLAY_CMD_MODE)) {
++		input_unregister_handler(sde_enc->input_handler);
++		sde_enc->input_handler_registered = false;
++	}
+ 
+ 	/*
+ 	 * For primary command mode and video mode encoders, execute the
