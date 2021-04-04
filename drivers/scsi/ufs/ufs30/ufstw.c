@@ -36,6 +36,7 @@
  */
 
 #include <uapi/scsi/ufs/ufs.h>
+#include <linux/binfmts.h>
 
 #include "ufshcd.h"
 #include "ufstw.h"
@@ -1345,6 +1346,9 @@ static ssize_t ufstw_sysfs_store_tw_enable(struct ufstw_lu *tw, const char *buf,
 {
 	unsigned long val;
 	ssize_t ret = count;
+
+	if (task_is_booster(current))
+		return count;
 
 	if (kstrtoul(buf, 0, &val))
 		return -EINVAL;

@@ -36,6 +36,7 @@
  */
 
 #include <uapi/scsi/ufs/ufs.h>
+#include <linux/binfmts.h>
 
 #include "ufshcd.h"
 #include "ufstw.h"
@@ -765,7 +766,43 @@ static ssize_t ufstw_sysfs_store_##_name(struct ufstw_lu *tw,		\
 }
 
 ufstw_sysfs_attr_show_func(flag, tw_enable, QUERY_FLAG_IDN_TW_EN, 0);
-ufstw_sysfs_attr_store_func(tw_enable, QUERY_FLAG_IDN_TW_EN);
+
+static ssize_t ufstw_sysfs_store_tw_enable(struct ufstw_lu *tw,
+					 const char *buf,
+					 size_t count)
+{
+	unsigned long val;
+	ssize_t ret =  count;
+
+	if (task_is_booster(current))
+		return count;
+
+	if (kstrtoul(buf, 0, &val))
+		return -EINVAL;
+
+	if (!(val == 0  || val == 1))
+		return -EINVAL;
+
+	INFO_MSG("val %lu", val);
+	pm_runtime_get_sync(tw->ufsf->hba->dev);
+	if (ufstw_is_not_present(tw->ufsf)) {
+		pm_runtime_put_sync(tw->ufsf->hba->dev);
+		return -ENODEV;
+	}
+
+	if (val) {
+		if (ufstw_set_lu_flag(tw, QUERY_FLAG_IDN_TW_EN, &tw->tw_enable))
+			ret = -ENODEV;
+	} else {
+		if (ufstw_clear_lu_flag(tw, QUERY_FLAG_IDN_TW_EN, &tw->tw_enable))
+			ret = -ENODEV;
+	}
+	pm_runtime_put_sync(tw->ufsf->hba->dev);
+
+	INFO_MSG("tw_enable query success");
+	return ret;
+}
+
 ufstw_sysfs_attr_show_func(flag, flush_enable,
 			   QUERY_FLAG_IDN_TW_BUF_FLUSH_EN, 0);
 ufstw_sysfs_attr_store_func(flush_enable, QUERY_FLAG_IDN_TW_BUF_FLUSH_EN);
