@@ -17,6 +17,7 @@
 #include <linux/pm_wakeup.h>
 #include <linux/msm_drm_notify.h>
 #include <linux/power_supply.h>
+#include <drm/drm_panel.h>
 #include <uapi/linux/sched/types.h>
 
 #include "f2fs.h"
@@ -344,11 +345,17 @@ static struct notifier_block fb_notifier_block = {
 	.notifier_call = msm_drm_notifier_callback,
 };
 
+extern struct drm_panel *lcd_active_panel;
+
 void __init f2fs_init_rapid_gc(void)
 {
 	INIT_WORK(&rapid_gc_fb_worker, rapid_gc_fb_work);
 	gc_wakelock = wakeup_source_register(NULL, "f2fs_rapid_gc_wakelock");
-	msm_drm_register_client(&fb_notifier_block);
+	if (lcd_active_panel) {
+		drm_panel_notifier_register(lcd_active_panel, &fb_notifier_block);
+	} else {
+		pr_err("lcd_active_panel is null\n");
+	}
 }
 
 void __exit f2fs_destroy_rapid_gc(void)
