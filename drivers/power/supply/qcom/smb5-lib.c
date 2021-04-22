@@ -5639,7 +5639,8 @@ int smblib_set_prop_pd_active(struct smb_charger *chg,
 			temp_region = op_battery_temp_region_get(chg);
 			if (temp_region != BATT_TEMP_COLD
 				&& temp_region != BATT_TEMP_HOT
-				&& chg->typec_mode != POWER_SUPPLY_TYPEC_SINK_POWERED_CABLE) {
+				&& chg->typec_mode != POWER_SUPPLY_TYPEC_SINK_POWERED_CABLE
+				&& !chg->chg_done) {
 				op_charging_en(chg, true);
 			}
 		}
@@ -7178,7 +7179,7 @@ static void smblib_handle_apsd_done(struct smb_charger *chg, bool rising)
 	smblib_set_prop_charge_parameter_set(chg);
 	temp_region = op_battery_temp_region_get(chg);
 	if (temp_region != BATT_TEMP_COLD
-		&& temp_region != BATT_TEMP_HOT) {
+		&& temp_region != BATT_TEMP_HOT && !chg->chg_done) {
 		op_charging_en(chg, true);
 	}
 
@@ -8990,7 +8991,8 @@ static void op_set_pd_active_work(struct work_struct *work)
 	temp_region_now = op_battery_temp_region_get(chg);
 	if (temp_region_now != BATT_TEMP_COLD
 		&& temp_region_now != BATT_TEMP_HOT
-		&& chg->typec_mode != POWER_SUPPLY_TYPEC_SINK_POWERED_CABLE) {
+		&& chg->typec_mode != POWER_SUPPLY_TYPEC_SINK_POWERED_CABLE
+		&& !chg->chg_done) {
 		op_charging_en(chg, true);
 	}
 }
@@ -8999,6 +9001,7 @@ static void op_set_pd_active_work(struct work_struct *work)
 void op_set_swarp_charger(struct smb_charger *chg)
 {
 	chg->real_charger_type = POWER_SUPPLY_TYPE_DASH;
+	chg->dash_present = true;
 	enhance_dash_type_set(CHARGER_SWARP_65W);
 }
 
