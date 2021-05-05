@@ -495,6 +495,8 @@ static irqreturn_t mdm_errfatal(int irq, void *dev_id)
 	struct esoc_clink *esoc;
 	struct device *dev;
 
+	return IRQ_HANDLED;
+
 	if (!mdm)
 		goto no_mdm_irq;
 	dev = mdm->dev;
