@@ -774,8 +774,9 @@ schedtune_boostgroup_init(struct schedtune *st, int idx)
 	/* Keep track of allocated boost groups */
 	allocated_group[idx] = st;
 	st->idx = idx;
-	
+#ifdef CONFIG_DYNAMIC_STUNE_BOOST	
 	INIT_WORK(&st->dsb_work, dsb_worker);
+#endif
 }
 
 static struct cgroup_subsys_state *
