@@ -4713,7 +4713,7 @@ static int fg_psy_get_property(struct power_supply *psy,
 	case POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG:
 		rc = ttf_get_time_to_empty(chip->ttf, &pval->intval);
 		break;
-#if defined(OEM_TARGET_PRODUCT_KEBAB)
+#if 0
 	case POWER_SUPPLY_PROP_TIME_TO_FULL_NOW:
 		if (fg->iskebab) {
 			if (fg->use_external_fg && external_fg
@@ -4953,7 +4953,7 @@ static enum power_supply_property fg_psy_props[] = {
 	POWER_SUPPLY_PROP_DEBUG_BATTERY,
 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
-#if defined(OEM_TARGET_PRODUCT_KEBAB)
+#if 0
 	POWER_SUPPLY_PROP_TIME_TO_FULL_NOW,
 #endif
 	POWER_SUPPLY_PROP_TIME_TO_EMPTY_AVG,
