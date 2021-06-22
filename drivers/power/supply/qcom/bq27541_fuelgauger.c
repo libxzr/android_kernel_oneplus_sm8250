@@ -1157,8 +1157,6 @@ static int bq27541_set_lcd_off_status(int off)
 		} else {
 			bq27541_di->lcd_is_off = false;
 			bq27541_di->lcd_off_delt_soc = 0;
-			schedule_delayed_work(&bq27541_di->battery_soc_work,
-				msecs_to_jiffies(RESUME_SCHDULE_SOC_UPDATE_WORK_MS));
 		}
 	}
 	return 0;
