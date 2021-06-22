@@ -1266,7 +1266,7 @@ static int bq27541_temperature_thrshold_update(int temp)
 
 static void update_battery_soc_work(struct work_struct *work)
 {
-	int schedule_time, vbat, temp, switch_flag = 0;
+	int vbat, temp, switch_flag = 0;
 	static int pre_plugin_status = 0;
 	static bool pre_dash_started = 0;
 	int plugged = is_usb_plugged();
@@ -1306,13 +1306,8 @@ static void update_battery_soc_work(struct work_struct *work)
 	if (!bq27541_di->already_modify_smooth)
 		schedule_delayed_work(
 		&bq27541_di->modify_soc_smooth_parameter, 1000);
-	if (bq27541_di->lcd_is_off)
-		schedule_time = 2 * RESUME_SCHDULE_SOC_UPDATE_WORK_MS;
-	else
-		schedule_time =
-			vbat < 3600 ? LOW_BAT_SOC_UPDATE_MS : BATTERY_SOC_UPDATE_MS;
 	schedule_delayed_work(&bq27541_di->battery_soc_work,
-			msecs_to_jiffies(schedule_time));
+			msecs_to_jiffies(vbat < 3600 ? LOW_BAT_SOC_UPDATE_MS : BATTERY_SOC_UPDATE_MS));
 }
 
 bool get_extern_fg_regist_done(void)
