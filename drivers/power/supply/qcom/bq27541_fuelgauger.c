@@ -2596,7 +2596,7 @@ static int bq27541_battery_suspend(struct device *dev)
 	struct bq27541_device_info *di = dev_get_drvdata(dev);
 
 	pr_info("bq27541_battery_suspend\n");
-	//cancel_delayed_work_sync(&di->battery_soc_work);
+	cancel_delayed_work_sync(&di->battery_soc_work);
 	atomic_set(&di->suspended, 1);
 	ret = get_current_time(&di->rtc_suspend_time);
 	if (ret) {
