@@ -435,8 +435,6 @@ static struct i2c_client *new_client;
 #define BATTERY_SOC_UPDATE_MS 12000
 #define LOW_BAT_SOC_UPDATE_MS 6000
 
-#define RESUME_SCHDULE_SOC_UPDATE_WORK_MS 60000
-
 static int get_current_time(unsigned long *now_tm_sec)
 {
 	struct rtc_time tm;
@@ -2632,7 +2630,7 @@ static int bq27541_battery_resume(struct device *dev)
 			di->short_time_standby_count++;
 	}
 	schedule_delayed_work(&bq27541_di->battery_soc_work,
-			msecs_to_jiffies(RESUME_SCHDULE_SOC_UPDATE_WORK_MS));
+			msecs_to_jiffies(BATTERY_SOC_UPDATE_MS));
 	return 0;
 }
 
