@@ -430,7 +430,6 @@ static struct i2c_client *new_client;
 #define CAPACITY_CALIBRATE_TIME_60_PERCENT     45 /* 45s */
 #define LOW_BATTERY_CAPACITY_THRESHOLD         20
 
-#define SHORT_TIME_STANDBY_SOC_CHECK_COUNT     15
 #define LOW_BATTERY_LEVEL_THRESHOLD            8
 #define BATTERY_SOC_UPDATE_MS 12000
 #define LOW_BAT_SOC_UPDATE_MS 6000
@@ -2613,10 +2612,7 @@ static int bq27541_battery_resume(struct device *dev)
 	suspend_time =  di->rtc_resume_time - di->rtc_suspend_time;
 	pr_info("suspend_time=%d\n", suspend_time);
 	update_pre_capacity_data.suspend_time = suspend_time;
-	if (di->soc_pre < LOW_BATTERY_LEVEL_THRESHOLD)
-		di->short_time_standby_count += SHORT_TIME_STANDBY_SOC_CHECK_COUNT;
-	if ((di->rtc_resume_time - di->lcd_off_time >= TWO_POINT_FIVE_MINUTES)
-		|| di->short_time_standby_count >= SHORT_TIME_STANDBY_SOC_CHECK_COUNT) {
+	if (di->soc_pre < LOW_BATTERY_LEVEL_THRESHOLD) {
 		pr_err("di->rtc_resume_time - di->lcd_off_time=%ld\n",
 				di->rtc_resume_time - di->lcd_off_time);
 		__pm_stay_awake(di->update_soc_wake_lock);
@@ -2625,9 +2621,6 @@ static int bq27541_battery_resume(struct device *dev)
 				update_pre_capacity_data.workqueue,
 				&(update_pre_capacity_data.work),
 				msecs_to_jiffies(1000));
-		di->short_time_standby_count = 0;
-	} else {
-			di->short_time_standby_count++;
 	}
 	schedule_delayed_work(&bq27541_di->battery_soc_work,
 			msecs_to_jiffies(BATTERY_SOC_UPDATE_MS));
