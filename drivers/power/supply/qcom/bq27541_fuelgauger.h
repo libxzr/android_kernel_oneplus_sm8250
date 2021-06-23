@@ -249,7 +249,6 @@ struct bq27541_device_info {
 	int  temp_thr_update_count;
 	int  fw_ver;
 	int time_to_full;
-	int short_time_standby_count;
 
 	bool lcd_is_off;
 	bool allow_reading;
