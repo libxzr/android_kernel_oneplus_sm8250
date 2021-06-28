@@ -1041,8 +1041,7 @@ static int bq27541_get_batt_bq_soc(void)
 	soc = bq27541_battery_soc(bq27541_di, 0);
 	bq27541_di->disable_calib_soc = false;
 	if (!is_dash_started()) {
-		if (!bq27541_di->allow_reading)
-			bq27541_set_allow_reading(false);
+		bq27541_set_allow_reading(false);
 	}
 	return soc;
 }
