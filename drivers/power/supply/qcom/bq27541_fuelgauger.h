@@ -7,7 +7,6 @@
 #define DEVICE_TYPE_BQ28Z610	0xFFA5
 #define DEVICE_BQ27541			0
 #define DEVICE_BQ27411			1
-#define DEVICE_BQ28Z610			2
 
 #define DRIVER_VERSION			"1.1.0"
 

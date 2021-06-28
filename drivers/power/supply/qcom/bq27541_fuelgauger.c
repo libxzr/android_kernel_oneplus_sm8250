@@ -2263,8 +2263,7 @@ static void bq28z610_modify_soc_smooth_parameter(struct bq27541_device_info *di)
 	int rc = 0;
 	bool tried_again = false;
 
-	if (di->modify_soc_smooth == false
-		|| di->device_type != DEVICE_BQ28Z610) {
+	if (di->modify_soc_smooth == false) {
 		return;
 	}
 
