@@ -2554,7 +2554,7 @@ static bool _mmc_cache_enabled(struct mmc_host *host)
 {
 	return (host->card->ext_csd.cache_size > 0) &&
 	       (host->card->ext_csd.cache_ctrl & 1) &&
-	       (!(card->quirks & MMC_QUIRK_CACHE_DISABLE));
+	       (!(host->card->quirks & MMC_QUIRK_CACHE_DISABLE));
 }
 
 static int _mmc_suspend(struct mmc_host *host, bool is_suspend)
