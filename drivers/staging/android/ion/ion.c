@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
  * Copyright (C) 2011 Google, Inc.
- * Copyright (c) 2011-2019, The Linux Foundation. All rights reserved.
- * Copyright (C) 2019-2020 Sultan Alsawaf <sultan@kerneltoast.com>.
+ * Copyright (c) 2011-2018, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2019-2021 Sultan Alsawaf <sultan@kerneltoast.com>.
  */
 
 #include <linux/miscdevice.h>
@@ -308,6 +308,12 @@ static int ion_dma_buf_begin_cpu_access(struct dma_buf *dmabuf,
 						 iommu_data);
 	struct ion_dma_buf_attachment *a;
 
+	if (!hlos_accessible_buffer(buffer))
+		return -EPERM;
+
+	if (!(buffer->flags & ION_FLAG_CACHED))
+		return 0;
+
 	for (a = buffer->attachments; a; a = a->next) {
 		if (down_read_trylock(&a->map_rwsem)) {
 			if (a->dma_mapped)
@@ -326,6 +332,12 @@ static int ion_dma_buf_end_cpu_access(struct dma_buf *dmabuf,
 	struct ion_buffer *buffer = container_of(dmabuf->priv, typeof(*buffer),
 						 iommu_data);
 	struct ion_dma_buf_attachment *a;
+
+	if (!hlos_accessible_buffer(buffer))
+		return -EPERM;
+
+	if (!(buffer->flags & ION_FLAG_CACHED))
+		return 0;
 
 	for (a = buffer->attachments; a; a = a->next) {
 		if (down_read_trylock(&a->map_rwsem)) {
@@ -386,6 +398,12 @@ static int ion_dma_buf_begin_cpu_access_partial(struct dma_buf *dmabuf,
 	struct ion_dma_buf_attachment *a;
 	int ret = 0;
 
+	if (!hlos_accessible_buffer(buffer))
+		return -EPERM;
+
+	if (!(buffer->flags & ION_FLAG_CACHED))
+		return 0;
+
 	for (a = buffer->attachments; a; a = a->next) {
 		if (a->table.nents > 1 && sg_next(a->table.sgl)->dma_length) {
 			ret = -EINVAL;
@@ -414,6 +432,12 @@ static int ion_dma_buf_end_cpu_access_partial(struct dma_buf *dmabuf,
 	struct ion_dma_buf_attachment *a;
 	int ret = 0;
 
+	if (!hlos_accessible_buffer(buffer))
+		return -EPERM;
+
+	if (!(buffer->flags & ION_FLAG_CACHED))
+		return 0;
+
 	for (a = buffer->attachments; a; a = a->next) {
 		if (a->table.nents > 1 && sg_next(a->table.sgl)->dma_length) {
 			ret = -EINVAL;
@@ -441,7 +465,7 @@ static int ion_dma_buf_get_flags(struct dma_buf *dmabuf, unsigned long *flags)
 	return 0;
 }
 
-static const struct dma_buf_ops dma_buf_ops_full = {
+static const struct dma_buf_ops ion_dma_buf_ops = {
 	.map_dma_buf = ion_map_dma_buf,
 	.unmap_dma_buf = ion_unmap_dma_buf,
 	.mmap = ion_mmap,
@@ -459,27 +483,12 @@ static const struct dma_buf_ops dma_buf_ops_full = {
 	.get_flags = ion_dma_buf_get_flags
 };
 
-static const struct dma_buf_ops dma_buf_ops_no_cpu_access = {
-	.map_dma_buf = ion_map_dma_buf,
-	.unmap_dma_buf = ion_unmap_dma_buf,
-	.mmap = ion_mmap,
-	.release = ion_dma_buf_release,
-	.attach = ion_dma_buf_attach,
-	.detach = ion_dma_buf_detach,
-	.map = ion_dma_buf_kmap,
-	.unmap = ion_dma_buf_kunmap,
-	.vmap = ion_dma_buf_vmap,
-	.vunmap = ion_dma_buf_vunmap,
-	.get_flags = ion_dma_buf_get_flags
-};
-
 struct dma_buf *ion_alloc_dmabuf(size_t len, unsigned int heap_id_mask,
 				 unsigned int flags)
 {
 	struct ion_device *idev = &ion_dev;
 	struct dma_buf_export_info exp_info;
 	struct ion_buffer *buffer = NULL;
-	const struct dma_buf_ops *ops;
 	struct dma_buf *dmabuf;
 	struct ion_heap *heap;
 
@@ -503,13 +512,8 @@ struct dma_buf *ion_alloc_dmabuf(size_t len, unsigned int heap_id_mask,
 	if (IS_ERR(buffer))
 		return ERR_CAST(buffer);
 
-	if ((buffer->flags & ION_FLAG_CACHED) && hlos_accessible_buffer(buffer))
-		ops = &dma_buf_ops_full;
-	else
-		ops = &dma_buf_ops_no_cpu_access;
-
 	exp_info = (typeof(exp_info)){
-		.ops = ops,
+		.ops = &ion_dma_buf_ops,
 		.size = buffer->size,
 		.flags = O_RDWR,
 		.priv = &buffer->iommu_data
@@ -542,7 +546,7 @@ void ion_device_add_heap(struct ion_device *idev, struct ion_heap *heap)
 {
 	if (heap->flags & ION_HEAP_FLAG_DEFER_FREE) {
 		heap->wq = alloc_workqueue("%s", WQ_UNBOUND | WQ_MEM_RECLAIM |
-					   WQ_CPU_INTENSIVE, 1, heap->name);
+					   WQ_CPU_INTENSIVE, 0, heap->name);
 		BUG_ON(!heap->wq);
 	}
 
