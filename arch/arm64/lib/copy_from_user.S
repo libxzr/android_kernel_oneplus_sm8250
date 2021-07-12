@@ -40,7 +40,7 @@
 	.endm
 
 	.macro ldrh1 reg, ptr, val
-	uao_user_alternative 9998f, ldrh, ldtrh, \reg, \ptr, \val
+	uao_user_alternative 9997f, ldrh, ldtrh, \reg, \ptr, \val
 	.endm
 
 	.macro strh1 reg, ptr, val
@@ -48,7 +48,7 @@
 	.endm
 
 	.macro ldr1 reg, ptr, val
-	uao_user_alternative 9998f, ldr, ldtr, \reg, \ptr, \val
+	uao_user_alternative 9997f, ldr, ldtr, \reg, \ptr, \val
 	.endm
 
 	.macro str1 reg, ptr, val
@@ -56,7 +56,7 @@
 	.endm
 
 	.macro ldp1 reg1, reg2, ptr, val
-	uao_ldp 9998f, \reg1, \reg2, \ptr, \val
+	uao_ldp 9997f, \reg1, \reg2, \ptr, \val
 	.endm
 
 	.macro stp1 reg1, reg2, ptr, val
@@ -64,9 +64,11 @@
 	.endm
 
 end	.req	x5
+srcin	.req	x15
 SYM_FUNC_START(__arch_copy_from_user)
 	uaccess_enable_not_uao x3, x4, x5
 	add	end, x0, x2
+	mov	srcin, x1
 #include "copy_template.S"
 	uaccess_disable_not_uao x3, x4
 	mov	x0, #0				// Nothing to copy
@@ -76,6 +78,11 @@ EXPORT_SYMBOL(__arch_copy_from_user)
 
 	.section .fixup,"ax"
 	.align	2
+9997:	cmp	dst, dstin
+	b.ne	9998f
+	// Before being absolutely sure we couldn't copy anything, try harder
+USER(9998f, ldtrb tmp1w, [srcin])
+	strb	tmp1w, [dst], #1
 9998:	sub	x0, end, dst			// bytes not copied
 	uaccess_disable_not_uao x3, x4
 	ret
