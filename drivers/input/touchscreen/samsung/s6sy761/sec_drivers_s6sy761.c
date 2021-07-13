@@ -3403,6 +3403,18 @@ static int sec_tp_probe(struct i2c_client *client, const struct i2c_device_id *i
 	sec_raw_device_init(ts);
 	sec_create_proc(ts, &sec_proc_ops);
 	schedule_delayed_work(&ts->work_read_info, msecs_to_jiffies(50));
+
+	/* 7. setup pm_qos requests*/
+	ts->pm_i2c_req.type = PM_QOS_REQ_AFFINE_IRQ;
+	ts->pm_i2c_req.irq = geni_i2c_get_adap_irq(client);
+	pm_qos_add_request(&ts->pm_i2c_req, PM_QOS_CPU_DMA_LATENCY,
+		PM_QOS_DEFAULT_VALUE);
+
+	ts->pm_touch_req.type = PM_QOS_REQ_AFFINE_IRQ;
+	ts->pm_touch_req.irq = client->irq;
+	pm_qos_add_request(&ts->pm_touch_req, PM_QOS_CPU_DMA_LATENCY,
+		PM_QOS_DEFAULT_VALUE);
+
 	TPD_INFO("%s, probe normal end\n", __func__);
 	return 0;
 
@@ -3424,6 +3436,9 @@ static int sec_tp_remove(struct i2c_client *client)
 	struct touchpanel_data *ts = i2c_get_clientdata(client);
 
 	TPD_INFO("%s is called\n", __func__);
+
+	pm_qos_remove_request(&ts->pm_touch_req);
+	pm_qos_remove_request(&ts->pm_i2c_req);
 
 	cancel_delayed_work_sync(&ts->work_read_info);
 	flush_delayed_work(&ts->work_read_info);
