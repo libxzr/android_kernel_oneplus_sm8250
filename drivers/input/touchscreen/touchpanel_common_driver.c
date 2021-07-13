@@ -904,6 +904,10 @@ static void tp_work_func(struct touchpanel_data *ts)
 		TPD_INFO("not support ts_ops->trigger_reason callback\n");
 		return;
 	}
+
+	pm_qos_update_request(&ts->pm_touch_req, 100);
+	pm_qos_update_request(&ts->pm_i2c_req, 100);
+
 	/*
 	 *  trigger_reason:this callback determine which trigger reason should be
 	 *  The value returned has some policy!
@@ -953,6 +957,9 @@ static void tp_work_func(struct touchpanel_data *ts)
 	} else {
 		TPD_DEBUG("unknown irq trigger reason\n");
 	}
+
+	pm_qos_update_request(&ts->pm_i2c_req, PM_QOS_DEFAULT_VALUE);
+	pm_qos_update_request(&ts->pm_touch_req, PM_QOS_DEFAULT_VALUE);
 }
 
 static void tp_work_func_unlock(struct touchpanel_data *ts)
@@ -4876,9 +4883,11 @@ int tp_register_irq_func(struct touchpanel_data *ts)
 				TPD_DEVICE, ts);
 		if (ret < 0) {
 			TPD_INFO("%s request_threaded_irq ret is %d\n", __func__, ret);
+			goto err_irq;
 		}
 	} else {
 		TPD_INFO("%s:no valid irq\n", __func__);
+		goto err_irq;
 	}
 #else
 	hrtimer_init(&ts->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
@@ -4886,6 +4895,11 @@ int tp_register_irq_func(struct touchpanel_data *ts)
 	hrtimer_start(&ts->timer, ktime_set(3, 0), HRTIMER_MODE_REL);
 #endif
 
+	return 0;
+
+err_irq:
+	pm_qos_remove_request(&ts->pm_touch_req);
+	pm_qos_remove_request(&ts->pm_i2c_req);
 	return ret;
 }
 

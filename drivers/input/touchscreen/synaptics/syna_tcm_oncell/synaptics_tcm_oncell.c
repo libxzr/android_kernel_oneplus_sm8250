@@ -4729,6 +4729,16 @@ static int syna_tcm_probe(struct i2c_client *client, const struct i2c_device_id 
 	}
 	g_tcm_info = tcm_info;
 
+	ts->pm_i2c_req.type = PM_QOS_REQ_AFFINE_IRQ;
+	ts->pm_i2c_req.irq = geni_i2c_get_adap_irq(client);
+	pm_qos_add_request(&ts->pm_i2c_req, PM_QOS_CPU_DMA_LATENCY,
+		PM_QOS_DEFAULT_VALUE);
+
+	ts->pm_touch_req.type = PM_QOS_REQ_AFFINE_IRQ;
+	ts->pm_touch_req.irq = client->irq;
+	pm_qos_add_request(&ts->pm_touch_req, PM_QOS_CPU_DMA_LATENCY,
+		PM_QOS_DEFAULT_VALUE);
+
 	return 0;
 
 err_register_driver:
@@ -4772,6 +4782,9 @@ static int syna_tcm_remove(struct i2c_client *client)
 	RELEASE_BUFFER(tcm_info->resp);
 	RELEASE_BUFFER(tcm_info->out);
 	RELEASE_BUFFER(tcm_info->in);
+
+	pm_qos_remove_request(&ts->pm_touch_req);
+	pm_qos_remove_request(&ts->pm_i2c_req);
 
 	kfree(tcm_info);
 	kfree(ts);
