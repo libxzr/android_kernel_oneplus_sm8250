@@ -6411,9 +6411,6 @@ static int __wlan_hdd_cfg80211_start_ap(struct wiphy *wiphy,
 	struct cfg80211_chan_def new_chandef;
 	struct cfg80211_chan_def *chandef;
 	uint16_t sap_ch;
-	bool srd_channel_allowed, disable_nan = true;
-	enum QDF_OPMODE vdev_opmode;
-	uint8_t vdev_id_list[MAX_NUMBER_OF_CONC_CONNECTIONS], i;
 
 	hdd_enter();
 
@@ -6500,12 +6497,10 @@ static int __wlan_hdd_cfg80211_start_ap(struct wiphy *wiphy,
 	sta_sap_scc_on_dfs_chan =
 		policy_mgr_is_sta_sap_scc_allowed_on_dfs_chan(
 							hdd_ctx->psoc);
-	sta_cnt = policy_mgr_get_mode_specific_conn_info(hdd_ctx->psoc, NULL,
-							 vdev_id_list,
-							 PM_STA_MODE);
-	sap_cnt = policy_mgr_get_mode_specific_conn_info(hdd_ctx->psoc, NULL,
-							 &vdev_id_list[sta_cnt],
-							 PM_SAP_MODE);
+	sta_cnt = policy_mgr_mode_specific_connection_count(hdd_ctx->psoc,
+							    PM_STA_MODE, NULL);
+	sap_cnt = policy_mgr_mode_specific_connection_count(hdd_ctx->psoc,
+							    PM_SAP_MODE, NULL);
 
 	hdd_debug("sta_sap_scc_on_dfs_chan %u, sta_cnt %u",
 		  sta_sap_scc_on_dfs_chan, sta_cnt);
@@ -6520,15 +6515,9 @@ static int __wlan_hdd_cfg80211_start_ap(struct wiphy *wiphy,
 		hdd_err("SAP not allowed on DFS channel if no dfs master capability!!");
 		return -EINVAL;
 	}
-
-	vdev_opmode = wlan_vdev_mlme_get_opmode(adapter->vdev);
-	ucfg_mlme_get_srd_master_mode_for_vdev(hdd_ctx->psoc, vdev_opmode,
-					       &srd_channel_allowed);
-
-	if (!srd_channel_allowed &&
+	if (!wlan_reg_is_etsi13_srd_chan_allowed_master_mode(hdd_ctx->pdev) &&
 	    wlan_reg_is_etsi13_srd_chan(hdd_ctx->pdev, channel)) {
-		hdd_err("vdev opmode %d not allowed on SRD channel.",
-			vdev_opmode);
+		hdd_err("SAP not allowed on SRD channel.");
 		return -EINVAL;
 	}
 	if (cds_is_sub_20_mhz_enabled()) {
@@ -6568,15 +6557,10 @@ static int __wlan_hdd_cfg80211_start_ap(struct wiphy *wiphy,
 	/* Disable NAN Disc before starting P2P GO or STA+SAP or SAP+SAP */
 	if (adapter->device_mode == QDF_P2P_GO_MODE || sta_cnt ||
 	    (sap_cnt > (MAX_SAP_NUM_CONCURRENCY_WITH_NAN - 1))) {
-		for (i = 0; i < sta_cnt + sap_cnt; i++)
-			if (vdev_id_list[i] == adapter->vdev_id)
-				disable_nan = false;
-		if (disable_nan) {
-			hdd_debug("Invalid NAN concurrency. SAP: %d STA: %d P2P_GO: %d",
-				  sap_cnt, sta_cnt,
-				  (adapter->device_mode == QDF_P2P_GO_MODE));
-			ucfg_nan_disable_concurrency(hdd_ctx->psoc);
-		}
+		hdd_debug("Invalid NAN concurrency. SAP: %d STA: %d P2P_GO: %d",
+			  sap_cnt, sta_cnt,
+			  (adapter->device_mode == QDF_P2P_GO_MODE));
+		ucfg_nan_disable_concurrency(hdd_ctx->psoc);
 	}
 
 	/* NDI + SAP conditional supported */
