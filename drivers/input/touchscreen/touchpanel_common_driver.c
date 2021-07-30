@@ -4874,6 +4874,16 @@ int tp_register_irq_func(struct touchpanel_data *ts)
 {
 	int ret = 0;
 
+	ts->pm_i2c_req.type = PM_QOS_REQ_AFFINE_IRQ;
+	ts->pm_i2c_req.irq = geni_i2c_get_adap_irq(ts->client);
+	pm_qos_add_request(&ts->pm_i2c_req, PM_QOS_CPU_DMA_LATENCY,
+			   PM_QOS_DEFAULT_VALUE);
+
+	ts->pm_touch_req.type = PM_QOS_REQ_AFFINE_IRQ;
+	ts->pm_touch_req.irq = ts->irq;
+	pm_qos_add_request(&ts->pm_touch_req, PM_QOS_CPU_DMA_LATENCY,
+			   PM_QOS_DEFAULT_VALUE);
+
 #ifdef TPD_USE_EINT
 	if (gpio_is_valid(ts->hw_res.irq_gpio)) {
 		TPD_DEBUG("%s, irq_gpio is %d, ts->irq is %d\n", __func__, ts->hw_res.irq_gpio, ts->irq);
@@ -4901,6 +4911,13 @@ err_irq:
 	pm_qos_remove_request(&ts->pm_touch_req);
 	pm_qos_remove_request(&ts->pm_i2c_req);
 	return ret;
+}
+
+static void tp_unregister_irq_func(struct touchpanel_data *ts)
+{
+	pm_qos_remove_request(&ts->pm_touch_req);
+	pm_qos_remove_request(&ts->pm_i2c_req);
+	free_irq(ts->irq, ts);
 }
 
 //work schdule for reading&update delta
@@ -5414,7 +5431,7 @@ earsense_alloc_free:
 	kfree(ts->earsense_delta);
 
 threaded_irq_free:
-	free_irq(ts->irq, ts);
+	tp_unregister_irq_func(ts);
 
 manu_info_alloc_err:
 	kfree(ts->panel_data.manufacture_info.version);
@@ -5430,7 +5447,7 @@ free_touch_panel_input:
 
 err_check_functionality_failed:
 	if (ts->int_mode == UNBANNABLE) {
-		free_irq(ts->irq, ts);
+		tp_unregister_irq_func(ts);
 	}
 	//ts->ts_ops->power_control(ts->chip_data, false);
 
@@ -5604,7 +5621,7 @@ static void tp_resume(struct device *dev)
 		goto NO_NEED_RESUME;
 
 	//free irq at first
-	free_irq(ts->irq, ts);
+	tp_unregister_irq_func(ts);
 
 	if (ts->ts_ops->reinit_device) {
 		ts->ts_ops->reinit_device(ts->chip_data);
