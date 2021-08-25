@@ -136,7 +136,7 @@ int touch_i2c_write_block(struct i2c_client* client, u16 addr, unsigned short le
 {
     int retval;
     unsigned char retry;
-    unsigned char buffer[4];
+    unsigned char buffer[20];
     struct i2c_msg msg[1];
 
     msg[0].addr = client->addr;
