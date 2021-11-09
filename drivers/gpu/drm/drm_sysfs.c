@@ -1420,6 +1420,22 @@ static ssize_t force_screenfp_store(struct device *dev,
 	return count;
 }
 
+int oneplus_panel_status = 0;
+static ssize_t power_status_show(struct device *dev,
+				struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", oneplus_panel_status);
+}
+
+static ssize_t power_status_store(struct device *dev,
+				struct device_attribute *attr,
+				const char *buf, size_t count)
+{
+	sscanf(buf, "%d", &oneplus_panel_status);
+
+	return count;
+}
+
 static ssize_t dimlayer_bl_en_show(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -1526,6 +1542,7 @@ static DEVICE_ATTR_WO(notify_aod);
 static DEVICE_ATTR_RW(dimlayer_bl_en);
 static DEVICE_ATTR_RW(dp_en);
 static DEVICE_ATTR_RW(dither_en);
+static DEVICE_ATTR_RW(power_status);
 static DEVICE_ATTR_RW(seed_lp);
 static struct attribute *connector_dev_attrs[] = {
 	&dev_attr_status.attr,
@@ -1568,6 +1585,7 @@ static struct attribute *connector_dev_attrs[] = {
 	&dev_attr_dimlayer_bl_en.attr,
 	&dev_attr_dp_en.attr,
 	&dev_attr_dither_en.attr,
+	&dev_attr_power_status.attr,
 	&dev_attr_seed_lp.attr,
 	NULL
 };
