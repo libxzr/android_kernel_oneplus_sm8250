@@ -30,6 +30,7 @@
 #include <linux/regulator/machine.h>
 #include <linux/sched/clock.h>
 #include <linux/sched/stat.h>
+#include <linux/devfreq_boost.h>
 #include <soc/qcom/pm.h>
 #include <soc/qcom/event_timer.h>
 #include <soc/qcom/lpm_levels.h>
@@ -611,6 +612,9 @@ static inline bool lpm_disallowed(s64 sleep_us, int cpu, struct lpm_cpu *pm_cpu)
 		goto out;
 
 	if (sleep_disabled)
+		return true;
+
+	if (time_before(jiffies, last_input_time + msecs_to_jiffies(3000)))
 		return true;
 
 	bias_time = sched_lpm_disallowed_time(cpu);
