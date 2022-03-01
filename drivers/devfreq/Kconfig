@@ -284,6 +284,24 @@ config DEVFREQ_MSM_CPU_LLCCBW_BOOST_FREQ
 	help
 	  Boost frequency for the MSM DDR bus.
 
+config DEVFREQ_MSM_CPU0_CPU_L3_LAT_BOOST_FREQ
+	int "Boost freq for cpu0-cpu-l3-lat"
+	default "0"
+	help
+	  Boost frequency for the MSM L3 lat.
+
+config DEVFREQ_MSM_CPU4_CPU_L3_LAT_BOOST_FREQ
+	int "Boost freq for cpu4-cpu-l3-lat"
+	default "0"
+	help
+	  Boost frequency for the MSM L3 lat.
+
+config DEVFREQ_MSM_CPU7_CPU_L3_LAT_BOOST_FREQ
+	int "Boost freq for cpu7-cpu-l3-lat"
+	default "0"
+	help
+	  Boost frequency for the MSM L3 lat.
+
 endif
 
 source "drivers/devfreq/event/Kconfig"

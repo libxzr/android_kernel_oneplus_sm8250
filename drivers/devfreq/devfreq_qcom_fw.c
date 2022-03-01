@@ -17,6 +17,7 @@
 #include <linux/list.h>
 #include <linux/devfreq.h>
 #include <linux/pm_opp.h>
+#include <linux/devfreq_boost.h>
 
 #define INIT_HZ				300000000UL
 #define XO_HZ				19200000UL
@@ -344,6 +345,15 @@ static int devfreq_qcom_fw_driver_probe(struct platform_device *pdev)
 	}
 
 	dev_info(dev, "Devfreq QCOM Firmware dev registered.\n");
+
+	if (!strcmp(dev_name(dev), "18590000.qcom,devfreq-l3:qcom,cpu0-cpu-l3-lat"))
+		devfreq_register_boost_device(DEVFREQ_MSM_CPU0_CPU_L3_LAT, df);
+
+	if (!strcmp(dev_name(dev), "18590000.qcom,devfreq-l3:qcom,cpu4-cpu-l3-lat"))
+		devfreq_register_boost_device(DEVFREQ_MSM_CPU4_CPU_L3_LAT, df);
+
+	if (!strcmp(dev_name(dev), "18590000.qcom,devfreq-l3:qcom,cpu7-cpu-l3-lat"))
+		devfreq_register_boost_device(DEVFREQ_MSM_CPU7_CPU_L3_LAT, df);
 
 	return 0;
 }
