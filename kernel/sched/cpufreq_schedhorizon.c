@@ -27,7 +27,7 @@ static unsigned int default_efficient_freq_pr[] = {2073600};
 static u64 default_up_delay_pr[] = {100 * NSEC_PER_MSEC};
 
 #define DEFAULT_RTG_BOOST_FREQ_LP 0
-#define DEFAULT_RTG_BOOST_FREQ_HP 0
+#define DEFAULT_RTG_BOOST_FREQ_HP 1478400
 #define DEFAULT_RTG_BOOST_FREQ_PR 0
 
 #define DEFAULT_HISPEED_LOAD_LP 100
