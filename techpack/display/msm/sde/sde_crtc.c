@@ -5073,7 +5073,7 @@ static int _sde_crtc_check_secure_state(struct drm_crtc *crtc,
 	return 0;
 }
 
-int op_dimlayer_bl_alpha = 260;
+int op_dimlayer_bl_alpha = 460;
 int op_dimlayer_bl_enabled = 0;
 int op_dimlayer_bl_enable_real = 0;
 int op_dimlayer_bl = 0;
