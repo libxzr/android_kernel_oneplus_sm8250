@@ -1,0 +1,5 @@
+config OPLUS_FEATURE_OCH
+	bool "cpufreq_health"
+	default n
+	help
+		This selects cpufreq and vlotage statistics driver

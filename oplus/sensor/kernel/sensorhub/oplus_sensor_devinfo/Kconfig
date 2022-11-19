@@ -1,0 +1,17 @@
+config OPLUS_SENSOR_MTK68XX
+	bool "for MediaTek 68xx"
+	default n
+	help
+	  It support 68xx.
+
+config OPLUS_FEATURE_SENSOR_DEVINFO_V1
+	tristate "for oplus customization"
+	default n
+	help
+	  It support sensor_devinfo.
+
+config OPLUS_FEATURE_SENSOR_DEVINFO_V2
+	tristate "for oplus customization"
+	default n
+	help
+	  It support sensor_devinfo.

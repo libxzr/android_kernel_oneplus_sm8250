@@ -1,0 +1,76 @@
+SDM660共仓库代码提交示例：
+http://gerrit.scm.adc.com:8080/#/c/292702/
+http://gerrit.scm.adc.com:8080/#/c/292700/
+http://gerrit.scm.adc.com:8080/#/c/292710/
+http://gerrit.scm.adc.com:8080/#/c/292718/
+http://gerrit.scm.adc.com:8080/#/c/294437/
+
+1. 共仓库说明：
+fingerprints_REE
+├── config.mk                               //所有Android config相关内容，PRODUCT_PACKAGES、TA预编译等，该文件由Oplus_common.mk中include
+├── drivers                                 //指纹REE驱动部分内容
+│   ├── fpc
+│   │   ├── fpc1020_tee.c                   //高通平台加载驱动
+│   │   ├── fpc_irq.c                       //MTK平台加载驱动
+│   │   └── Makefile
+│   ├── include
+│   ├── Kconfig
+│   ├── Makefile
+│   └── oplus_fp_common
+│       ├── Makefile                        //提取项目名用于传入CONFIG_OPLUS_FINGERPRINT_PROJCT宏定义
+│       └── oplus_fp_common.c                //fp_common部分，MTK、QCOM共用
+├── platform                                //平台差异部分
+│   ├── mtk
+│   │   ├── alipay
+│   │   ├── Android.mk
+│   │   ├── ut_gatekeeper                   //microtrust gatekeeper TAC，6750t兼容fpc1263时去掉Microtrust仓库部分
+│   │   └── ut_keymaster                    //microtrust keymaster TAC，6750t兼容fpc1263时去掉Microtrust仓库部分
+│   └── qcom
+│       ├── alipay_client
+│       ├── Android.mk
+│       └── rpmbeng_client
+├── prebuilt                                //prebuilt相关，TA预加载，init.rc
+│   ├── init_oplus_fingerprints_rc           //统一指纹相关init.rc添加内容，该文件由init.oplus.rc中import
+│   ├── init_oplus_fingerprints_sh           //统一指纹开机shell操作内容
+│   │   ├── Android.mk
+│   │   ├── init.oplus.fingerprints_mtk.sh   //mtk调用shell脚本
+│   │   └── init.oplus.fingerprints_qcom.sh  //QCOM调用shell脚本
+│   └── project                             //不同项目预加载项，FPTA Alipay TA等，该目录只供QCOM平台使用，MTK平台TA加载由Microtrust仓库进行
+│       ├── 16017
+│       │   ├── alipay_ta
+│       │   └── fpc_ta
+│       ├── 16051
+│       │   └── fpc_ta
+│       └── Android.mk                      //定义编译具体项目，不同项目需添加对应目录
+├── sepolicy                                //统一指纹selinux权限设定
+└── vendor                                  //指纹HAL部分代码，后续可以加入汇顶等
+    └── fpc
+        ├── Android.mk                      //指纹功能配置项，包含平台选择项，如定义FPC_TEE_RUNTIME=QSEE
+        ├── fpc_hal
+        │   ├── ...
+        │   └── tee_hal
+        │       ├── Android.mk              //根据FPC_TEE_RUNTIME进行兼容，并传入CONFIG_OPLUS_FINGERPRINT_QCOM宏用于区分高通和MTK平台
+        │       └── ...
+        └── fpc_tac
+            ├── Android.mk
+            ├── interface
+            └── normal
+                ├── Android.mk              //根据FPC_TEE_RUNTIME进行兼容，并传入CONFIG_OPLUS_FINGERPRINT_QCOM宏用于区分高通和MTK平台
+                └── ...
+
+2. 兼容移植说明：
+   a. 配置xml增加仓库：
+      + <project name="PSW/BSP/Fingerprint_REE" path="SDM660.LA.1.0/android/vendor/oplus_app/fingerprints_hal" revision="psw/stable/master/O"/>
+   b. kernel仓库：
+      + 对应项目defconfig中增加CONFIG定义
+      + drivers/input/Kconfig、drivers/input/Makefile中增加 misc/oplus_fp_drivers/索引
+      + 创建drivers/input/misc/oplus_fp_drivers链接文件，采用相对链接到vendor/oplus_app/fingerprints_hal/drivers目录
+        如高通平台 cd drivers/input/misc/; ln -s ../../../../../vendor/oplus_app/fingerprints_hal/drivers oplus_fp_drivers
+   c. 配置vendor/oplus仓库：
+      + Oplus_common.mk中增加 -include vendor/oplus_app/fingerprints_hal/config.mk
+      + init.oplus.rc中增加 import init.oplus.fingerprints.rc
+   d. 指纹selinux相关：
+      + 需要把对应的目录加到system/sepolicy/android.mk，对应关系如下：
+        OPLUS_SEPOLICY_DIRS  -- vendor/oplus/sepolicy/common
+        PLAT_PUBLIC_POLICY  -- vendor/oplus/sepolicy/public
+        PLAT_PRIVATE_POLICY -- vendor/oplus/sepolicy/private

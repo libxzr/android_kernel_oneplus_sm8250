@@ -1,0 +1,175 @@
+1. 共仓库说明（待更新完善）：
+bsp
+├── config                                       //所有Android config相关内容
+│   ├── common
+│   │   └── config.mk
+│   └── platform
+│       ├── mtk
+│       │   └── config.mk
+│       └── qcom
+│           └── config.mk
+├── cpplint.py
+├── hal
+│   ├── Android.mk
+│   ├── AutoSmoking                             //指纹自动化压力测试
+│   │   ├── AutoSmoking.cpp
+│   │   └── include
+│   │       └── AutoSmoking.h
+│   ├── Ca                                      //指纹CA模块
+│   │   ├── CaFactory.cpp
+│   │   ├── FpCa.cpp
+│   │   ├── include
+│   │   │   ├── CaFactory.h
+│   │   │   ├── FpCa.h
+│   │   │   ├── ICa.h
+│   │   │   ├── QseeCa.h
+│   │   │   ├── ReeCa.h
+│   │   │   ├── ree_com_api.h
+│   │   │   └── TrustonicCa.h
+│   │   ├── qsee
+│   │   │   └── QseeCa.cpp
+│   │   ├── ree
+│   │   │   ├── lib
+│   │   │   │   ├── libfpta.so
+│   │   │   │   ├── libfpta_vnd.so
+│   │   │   │   ├── ree_com_api.h
+│   │   │   │   └── ReeTa.c
+│   │   │   └── ReeCa.cpp
+│   │   └── trustonic
+│   │       └── TrustonicCa.cpp
+│   ├── Config                                   //指纹项目相关的config解析模块
+│   │   ├── FingerprintConfig.cpp
+│   │   └── include
+│   │       └── FingerprintConfig.h
+│   ├── Context                                  //指纹核心Context模块
+│   │   ├── HalContext.cpp
+│   │   └── include
+│   │       └── HalContext.h
+│   ├── Dcs                                      //指纹埋点接口
+│   │   ├── DcsInfo.cpp
+│   │   ├── DcsReport.cpp
+│   │   └── include
+│   │       ├── DcsInfo.h
+│   │       ├── DcsReport.h
+│   │       └── DcsType.h
+│   ├── Device                                   //指纹设备操作相关接口
+│   │   ├── Device.cpp
+│   │   └── include
+│   │       └── Device.h
+│   ├── Dump                                     //指纹DUMP子模块/试用存图功能
+│   │   ├── AppData
+│   │   │   └── AppData.cpp
+│   │   ├── AutoTestData
+│   │   │   └── AutoTestData.cpp
+│   │   ├── CaliData
+│   │   │   └── CaliData.cpp
+│   │   ├── CreateData.cpp
+│   │   ├── DataInfo.cpp
+│   │   ├── Dump.cpp
+│   │   ├── FactoryTestData
+│   │   │   └── FactoryTestData.cpp
+│   │   ├── include
+│   │   │   ├── AppData.h
+│   │   │   ├── AutoTestData.h
+│   │   │   ├── CaliData.h
+│   │   │   ├── CreateData.h
+│   │   │   ├── DataInfo.h
+│   │   │   ├── Dump.h
+│   │   │   ├── FactoryTestData.h
+│   │   │   ├── IData.h
+│   │   │   └── UserData.h
+│   │   └── UserData
+│   │       └── UserData.cpp
+│   ├── FactoryTest                              //指纹产线工模测试/校准模块
+│   │   ├── FactoryTest.cpp
+│   │   └── include
+│   │       └── FactoryTest.h
+│   ├── Handler                                  //Handler模块,多线程设计的基础组件
+│   │   ├── Handler.cpp
+│   │   ├── include
+│   │   │   ├── Handler.h
+│   │   │   └── Message.h
+│   │   └── Message.cpp
+│   ├── Health                                   //HealthMonitor监控自模块，用于各类异常超时处理
+│   │   └── HealthMonitor.cpp
+│   ├── Hidl                                     //Hidl接口相关模块
+│   │   ├── AndroidR
+│   │   │   ├── BiometricsFingerprint.cpp
+│   │   │   └── include
+│   │   │       └── BiometricsFingerprint.h
+│   │   ├── AndroidS
+│   │   │   ├── BiometricsFingerprintAdaptS.cpp
+│   │   │   └── include
+│   │   │       └── BiometricsFingerprintAdaptS.h
+│   │   └── Service.cpp
+│   ├── include
+│   │   ├── ActionType.h
+│   │   ├── fingerprint.h
+│   │   ├── FpCommon.h
+│   │   ├── FpEnum.h
+│   │   ├── FpType.h
+│   │   ├── FpVendor.h
+│   │   ├── HalLog.h
+│   │   └── HealthMonitor.h
+│   ├── Manager                                   //核心manager模块，包含主要录入解锁逻辑
+│   │   ├── FingerprintCommon.cpp
+│   │   ├── FingerprintFunction.cpp
+│   │   ├── FingerprintManager.cpp
+│   │   └── include
+│   │       ├── FingerprintCommon.h
+│   │       ├── FingerprintFunction.h
+│   │       └── FingerprintManager.h
+│   ├── Message                                   //各类内外部消息处理模块
+│   │   ├── FingerprintMessage.cpp
+│   │   └── include
+│   │       └── FingerprintMessage.h
+│   ├── Notify                                   //消息上报模块
+│   │   ├── FingerprintNotify.cpp
+│   │   └── include
+│   │       └── FingerprintNotify.h
+│   ├── Perf                                     //性能管理模块，如提频绑核
+│   │   ├── include
+│   │   │   └── Perf.h
+│   │   └── Perf.cpp
+│   ├── Socket                                   //socket通信模块，后续会替换netlink方案
+│   │   ├── FingerprintSocket.cpp
+│   │   └── FingerprintSocket.h
+│   ├── Test                                     //调试方案测试模块
+│   │   ├── Android_ndk.mk
+│   │   ├── Application.mk
+│   │   ├── build_test.sh
+│   │   └── src
+│   │       ├── Main.cpp
+│   │       ├── TestCa.cpp
+│   │       └── TestDemo.cpp
+│   ├── Utils                                    //公共操作模块
+│   │   ├── include
+│   │   │   └── Utils.h
+│   │   └── Utils.cpp
+│   ├── vendor.oplus.hardware.biometrics.fingerprint@2.1-service.rc
+│   ├── VintXml
+│   │   └── manifest_oplus_fingerprint.xml
+│   └── VndCode                                 //厂家私有操作模块
+│       ├── include
+│       │   └── VndCode.h
+│       └── VndCode.cpp
+└── README
+
+
+2. 兼容移植说明（待更新）：
+   a. 配置xml增加仓库：
+      +  <project groups="open" name="oplus/secure/fingerprint" path="source/android/vendor/oplus/secure/biometrics/fingerprints/bsp" revision="r/feature/topic/os11.1.1"/>
+   b. kernel仓库：
+      + 对应项目defconfig中增加CONFIG定义
+      + drivers/input/Kconfig、drivers/input/Makefile中增加fingerprint_drivers/索引
+      + 创建drivers/input/fingerprint_drivers链接文件，采用相对链接到vendor/oplus/secure/biometrics/fingerprints/bsp/drivers目录
+        如高通平台 cd drivers/input/; ln -s ../../../../../vendor/oplus/secure/biometrics/fingerprints/bsp/drivers fingerprint_drivers
+   c. 配置vendor/仓库：
+      + oplus_common.mk中增加 -include vendor/oplus/secure/biometrics/fingerprints/bsp/config/config.mk
+      + 添加init.rc文件
+   d. 指纹selinux相关，现已经移动到公共目录，参考链接如下：
+      +
+
+
+3.完整移植的参考链接如下：
+

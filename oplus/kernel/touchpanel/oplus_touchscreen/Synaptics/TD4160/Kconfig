@@ -1,0 +1,8 @@
+
+config TOUCHPANEL_SYNAPTICS_TD4160
+#	default y
+	bool "TP td4160 IC enable or not for  OPLUS"
+	---help---
+	say Y to enable driver for Touchpanel using ilitek ilitek7807s
+
+

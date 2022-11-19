@@ -1,1 +1,1 @@
-../../../../vendor/oplus/kernel/oplus_performance/task_cpustats/task_cpustats.c
+../../oplus/kernel/oplus_performance/task_cpustats/task_cpustats.c
