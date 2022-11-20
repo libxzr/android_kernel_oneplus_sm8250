@@ -53,3 +53,5 @@ obj-y += soc/
 obj-y += dsp/
 obj-y += ipc/
 obj-y += asoc/
+
+KBUILD_CFLAGS += -Wno-unused-function
