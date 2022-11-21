@@ -1,0 +1,15 @@
+// Copyright 2022 The Android Open Source Project
+package {
+    default_applicable_licenses: ["external_dtc_license"],
+}
+
+cc_fuzz {
+    name: "libfdt_fuzzer",
+    srcs: [
+        "libfdt_fuzzer.cpp",
+    ],
+    static_libs: [
+        "libfdt",
+    ],
+    host_supported: true,
+}
