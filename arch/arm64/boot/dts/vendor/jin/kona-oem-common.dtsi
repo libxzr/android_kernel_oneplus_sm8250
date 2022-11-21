@@ -1,0 +1,6 @@
+/* DTB: Platform related generic modifications */
+#include "../qcom/kona.dtsi"
+
+/ {
+
+};

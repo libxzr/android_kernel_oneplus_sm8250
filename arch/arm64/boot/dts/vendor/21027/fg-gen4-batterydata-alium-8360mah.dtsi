@@ -1,0 +1,124 @@
+qcom,5482924_oplus_oslo_8360mah_averaged_masterslave_nov3rd2021 {
+	qcom,profile-revision = <24>;
+	/* #5482924_OPLUS_Oslo_8360mAH_averaged_MasterSlave_Nov3rd2021*/
+	qcom,max-voltage-uv = <4450000>;
+	qcom,nom-batt-capacity-mah = <8360>;
+	qcom,fg-cc-cv-threshold-mv = <4350>;
+	qcom,batt-id-kohm = <68>;
+	qcom,battery-beta = <4250>;
+	qcom,therm-room-temp = <100000>;
+	qcom,battery-type = "5482924_oplus_oslo_8360mah_averaged_masterslave_nov3rd2021";
+	qcom,therm-coefficients = <0x2318 0xd0c 0xdaf7 0xc556 0x848d>;
+	qcom,therm-center-offset = <0x70>;
+	qcom,therm-pull-up = <100>;
+	qcom,rslow-normal-coeffs = <0x13 0x0d 0x19 0x03>;
+	qcom,rslow-low-coeffs = <0xbc 0x0b 0xa6 0x1a>;
+	qcom,checksum = <0xF281>;
+	qcom,gui-version = "PM855GUI - 1.0.0.14";
+	qcom,fg-profile-data = [
+		 09 00 7F DB
+		 42 D5 2D DA
+		 E2 D5 00 00
+		 61 AC 7C 81
+		 00 00 B8 9A
+		 16 94 E5 87
+		 15 00 13 0D
+		 19 03 9A 05
+		 E2 F3 CE 07
+		 32 00 22 EA
+		 92 E4 38 E3
+		 5F 0A 21 DA
+		 99 BD E1 23
+		 5D 03 4C C2
+		 60 00 46 00
+		 45 00 40 00
+		 34 00 35 00
+		 47 00 49 00
+		 46 00 53 00
+		 53 00 60 00
+		 3C 00 38 00
+		 4F 00 42 00
+		 3E 00 85 00
+		 58 64 4B 00
+		 55 00 5C 08
+		 60 00 56 00
+		 5A 00 8A 10
+		 6C 10 60 00
+		 AA 28 7B 50
+		 64 68 5A 0A
+		 62 00 D8 00
+		 DE 1F 02 0D
+		 27 03 9C 05
+		 5F 1C 87 0B
+		 86 0D C3 22
+		 20 17 1C 43
+		 B5 55 53 02
+		 67 12 A8 1F
+		 52 05 F2 0A
+		 C0 05 CE 1C
+		 37 FA 5A 05
+		 23 0B 4F 17
+		 B4 23 E6 44
+		 90 53 70 12
+		 C4 1F 4A DD
+		 ED CA CA CD
+		 C7 1C D5 C3
+		 4C 04 2E 82
+		 55 17 C0 83
+		 C3 84 D4 83
+		 7C 90 09 80
+		 F1 02 90 0D
+		 CF DA AA FD
+		 00 F8 24 D3
+		 76 D5 0A 08
+		 90 EB D2 C5
+		 16 18 10 00
+		 D4 E5 58 03
+		 3C 04 FB 04
+		 CE 07 32 00
+		 3D 03 4C 05
+		 08 04 A3 02
+		 FA 05 6E 03
+		 B7 03 A2 03
+		 54 04 60 00
+		 3E 00 44 00
+		 46 64 47 00
+		 4C 00 40 08
+		 41 00 47 00
+		 49 00 3C 10
+		 50 10 45 00
+		 5B 28 5C 50
+		 61 68 72 09
+		 4B 00 53 00
+		 63 08 61 00
+		 46 00 54 00
+		 53 10 62 10
+		 58 00 6C 20
+		 86 40 4C 58
+		 62 0F 72 00
+		 5D 00 3B 08
+		 D8 00 3A 20
+		 22 05 ED 0A
+		 CE 0D C5 1C
+		 94 23 75 45
+		 C5 52 18 18
+		 11 03 82 05
+		 CB 02 67 12
+		 3F 0A 13 20
+		 0E 05 1D 03
+		 94 05 BF 1C
+		 3B 03 BD 05
+		 8B 02 7F 18
+		 9A 03 57 04
+		 96 02 67 00
+		 83 20 89 04
+		 7F 03 3B 05
+		 EA 1C 1B 02
+		 BF 05 93 02
+		 87 18 0F 03
+		 63 05 16 03
+		 7C 00 92 00
+		 C0 00 FA 00
+		 EF 20 00 00
+	];
+};

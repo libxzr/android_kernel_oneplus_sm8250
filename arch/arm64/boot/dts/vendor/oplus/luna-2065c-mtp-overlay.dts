@@ -1,0 +1,54 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include "luna-oem-common-overlay.dtsi"
+#include "charge/oplus_charge_luna.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Litomagnus MTP";
+	compatible = "qcom,lito-mtp", "qcom,lito", "qcom,mtp";
+	qcom,msm-id = <400 0x20000>, <440 0x20000>;
+	qcom,board-id = <8 0>;
+};
+
+/*
+ * overriding adsp-fw-names with empty string
+ * to allow default adsp img load
+ */
+&adsp_loader {
+	adsp-fw-names="";
+};
+
+/ {
+	oplus,dtsi_no = <0x2065C>;
+};
+
+&spmi_bus {
+	qcom,pm8150@0 {
+		qcom,power-on@800 {
+			qcom,pon_2 {
+				linux,code = <KEY_VOLUMEUP>;
+			};
+//add for hard_reset time
+			qcom,pon_3 {
+				qcom,pon-type = <3>;
+				qcom,support-reset = <1>;
+				qcom,s1-timer = <8000>;
+				qcom,s2-timer = <500>;
+				qcom,s2-type = <4>;
+				qcom,pull-up;
+			};
+		};
+	};
+};
+
+&sdhc_2 {
+	cd-gpios = <&tlmm 69 GPIO_ACTIVE_LOW>;
+	status = "disable";
+};

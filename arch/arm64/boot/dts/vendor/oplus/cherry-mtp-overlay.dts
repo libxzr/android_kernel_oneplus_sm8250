@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+/dts-v1/;
+/plugin/;
+
+#include "kunlun-v2-mtp-overlay.dtsi"
+#include "oplus_charge.dtsi"
+#include "kunlun_nfc/kunlun-nfc-pn557.dtsi"
+#include "cherry.dtsi"
+#include "storage/cherry-stg.dtsi"
+
+/ {
+	oplus,dtsi_no = <20811>;
+    oplus,pcb_range = <22  54>;
+};

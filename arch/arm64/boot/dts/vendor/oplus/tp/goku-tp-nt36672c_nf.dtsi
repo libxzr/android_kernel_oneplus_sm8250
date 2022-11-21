@@ -1,0 +1,63 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+
+#include "goku_tp_firmware.dtsi"
+
+&qupv3_se7_spi {
+	status = "ok";
+	Novatek20267@0 {
+		status = "ok";
+		compatible = "novatek,nf_nt36672c";
+		reg = <0>;
+		chip-num = <1>;
+		chip-name = "NF_NT36672C";
+
+		spi-max-frequency = <12000000>; //4800000,9600000,15000000,19200000
+		interrupt-parent = <&tlmm>;
+		interrupts = <5 0x0>;
+		irq-gpio = <&tlmm 5 0x2002>;
+		reset-gpio = <&tlmm 4 0x00>;
+		cs-gpio = <&tlmm 9 0x00>;
+		//lcd-reset-gpio = <&tlmm 85 0x00>;
+
+		touchpanel,max-num-support = <10>;
+		touchpanel,tx-rx-num = <16 36>;
+		touchpanel,panel-coords = <1080 2400>;
+		touchpanel,display-coords = <1080 2400>;
+		touchpanel,touchmajor-limit = <0 54>;
+
+		touchpanel,smooth-level = <255 0 96 192 223 254>;
+		touchpanel,sensitive-level = <255 20 15 10 6 3>;
+
+		panel_type = <7>;
+		tp_type = <9>;
+		platform_support_project = <20267 20268>;
+		platform_support_project_dir = <20267 20267>;
+		firmware_name = "0xBD372DN00", "0xBD372DN00";
+		platform_support_project_commandline = "default_commandline", "default_commandline";
+		platform_support_project_external_name = "BD372DN", "BD372DN";
+
+		/*pinctrl-names = "default";
+		pinctrl-0 = <&ts_nf_int_active &ts_nf_reset_active>;*/
+
+		incell_screen;
+		fw_edge_limit_support;
+		black_gesture_support;
+		charger_pump_support;
+		headset_pump_support;
+		esd_handle_support;
+		black_gesture_test_support;
+		game_switch_support;
+		noflash_support;
+		lcd_trigger_load_tp_fw_support;
+		smart_gesture_support;
+		pressure_report_support;
+		fw_update_app_support;
+		health_monitor_v2_support;
+		irq_need_dev_resume_ok;
+
+		touchpanel,button-type = <4>;
+	};
+};

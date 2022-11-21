@@ -1,0 +1,144 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+
+&soc {
+        //#ifdef OPLUS_FEATURE_SENSOR_DRIVER
+        sensor_fb: sensor_fb {
+            compatible = "oplus,sensor-feedback";
+            master-id  = <2>;
+            smem-id    = <606>;
+        };
+        /*enum sensor_id { OPLUS_ACCEL,OPLUS_GYRO,OPLUS_MAG,OPLUS_LIGHT,OPLUS_PROXIMITY,OPLUS_SAR,OPLUS_CT,OPLUS_BAROMETER,SENSORS_NUM};*/
+        oplus_sensor: oplus_sensor {
+                compatible = "oplus,sensor-devinfo";
+                als-row-coe = <1000>;
+                /*enum {LSM6DSM = 0x01, BMI160 = 0x02, LSM6DS3 = 0x04, BMI260 = 0x08};*/
+                gsensor@0 {
+                        sensor-name = <0x02>;//BMI160
+                        sensor-direction = <4>;
+                        sensor-index = <0>;//source num
+                        sensor-type = <0>;//OPLUS_ACCEL
+                        gyro_factor = <9730>;
+                };
+                gsensor@1 {
+                        sensor-name = <0x04>;//LSM6DS3
+                        sensor-direction = <4>;
+                        sensor-index = <1>;//source num
+                        sensor-type = <0>;//OPLUS_ACCEL
+                };
+                /* enum {AKM0991X = 0x01, MMC5603 = 0x02};*/
+                msensor@0 {
+                        sensor-name = <0x01>;//AKM09918
+                        sensor-direction = <1>;
+                        sensor-index = <0>;
+                        sensor-type = <2>;//OPLUS_MAG
+                        parameter-number= <18>;
+                        soft-mag-parameter = <10000 0 0 0 0 0 0 0 10000 0 0 0 0 0 0 0 10000 0>;//e00 sign e01 sign...
+                };
+                msensor@1 {
+                        sensor-name = <0x02>;//MMC5603
+                        sensor-direction = <1>;
+                        sensor-index = <1>;
+                        sensor-type = <2>;//OPLUS_MAG
+                        parameter-number= <18>;
+                        soft-mag-parameter = <9967 0 723 0 306 0 625 0 8483 0 34 0 191 0 1086 1 9692 0>;//e00 sign e01 sign...
+                };
+                /*enum {STK3A5X=0x01,TCS3701=0x02,TCS3408=0x04,STK326X};*/
+                /*enum {NORMAL=0x01,UNDER_LCD=0x02,VIRTUAL_UNDER_LCD=0x03}*/
+                lsensor@0 {
+                        sensor-name = <0x01>;//STK3A5X
+                        sensor-index = <0>;
+                        sensor-type = <3>;//OPLUS_ALS
+                        bus-number = <5>;
+                        irq-number = <111>;
+                        als-type = <1>;//NORMAL
+                        is-unit-device = <1>;
+                        is-als-dri = <1>;
+                        als-factor = <1000>;
+                        is_als_initialed = <0>;
+                        als_buffer_length = <8>;
+                        als_ratio_type = <1>;
+                        coef_a     = <8765>;
+                        coef_b     = <53740>;
+                        coef_c     = <1213>;
+                        coef_d     = <3956>;
+                        coef_e     = <8081>;
+                        coef_ratio = <5000>;
+                        ps_waittime  = <0x82>;
+                        als_waittime = <0x40>;
+                };
+                psensor@0 {
+                        sensor-name = <0x01>;//STK3A5X
+                        sensor-index = <0>;
+                        sensor-type = <4>;//OPLUS_PROXIMITY
+                        bus-number = <5>;
+                        irq-number = <111>;
+                        ps-cail-type = <1>;
+                        ps-type = <1>;
+                        is_ps_initialzed = <0>;
+                        low_step = <300>;
+                        high_step = <400>;
+                        low_limit = <600>;
+                        high_limit = <1050>;
+                        dirty_low_step = <300>;
+                        dirty_high_step = <400>;
+                        ps_dirty_limit = <1800>;
+                        ps_ir_limit = <2000>;
+                        ps_adjust_min = <0>;
+                        ps_adjust_max = <1850>;
+                        sampling_count = <5>;
+                        step_max = <400>;
+                        step_min = <100>;
+                        step_div = <2000>;
+                        anti_shake_delta = <70>;
+                        dynamic_cali_max = <2000>;
+                        raw2offset_radio = <1000>;
+                        offset_max = <60000>;
+                        offset_range_min = <0>;
+                        offset_range_max = <65535>;
+                        force_cali_limit = <2000>;
+                        cali_jitter_limit = <20>;
+                        cal_offset_margin = <3000>;
+                        parameter-number = <8>;
+                        sensor-reg       = <0x01 0x32
+                                            0x02 0x32
+                                            0x03 0x80
+                                            0xA1 0x76>; //override special reg
+                };
+                /*virtual sensor
+                enum sensor_algo_id {
+                        OPLUS_PICKUP_DETECT,
+                        OPLUS_LUX_AOD,
+                        OPLUS_TP_GESTURE,
+                        OPLUS_FP_DISPLAY,
+                        OPLUS_FREE_FALL,
+                        OPLUS_CAMERA_PROTECT,
+                        SENSOR_ALGO_NUM
+                }*/
+                pickup_detect {
+                        sensor-type = <0>; //OPLUS_PICKUP_DETECT
+                        is-virtual-sensor;
+                        is-need-prox = <1>;
+                        prox-type = <0>; // 0 - proximity; 1 - proximity_fake
+                };
+                lux_aod {
+                        sensor-type = <1>; //OPLUS_LUX_AOD
+                        is-virtual-sensor;
+                        thrd-low = <30>;
+                        thrd-high = <300>;
+                        als-type = <0>; // 0 - ambient_light; other - wise_light
+                };
+                fp_display {
+                        sensor-type = <3>; //OPLUS_FP_DISPLAY
+                        is-virtual-sensor;
+                        prox-type = <0>; // 0 - proximity; 1 - proximity_fake
+                };
+                free_fall {
+                        sensor-type = <4>; //OPLUS_FREE_FALL
+                        is-virtual-sensor;
+                };
+        };
+        //#endif /*OPLUS_FEATURE_SENSOR_DRIVER*/
+};

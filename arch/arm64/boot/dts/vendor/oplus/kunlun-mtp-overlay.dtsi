@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include "../qcom/lito-mtp.dtsi"
+#include "kunlun.dtsi"
+#include "lito-oem-common-mtp.dtsi"
+
+/ {
+        model = "Qualcomm Technologies, Inc. Lito MTP";
+        compatible = "qcom,lito-mtp", "qcom,lito", "qcom,mtp";
+        qcom,msm-id = <400 0x10000>, <440 0x10000>;
+        qcom,board-id = <8 0>;
+
+	/*we can add project id to this array,uefi can auto read it,if new project,we add to this array */
+	oem,project-id = <20111>;
+	oem,project-codename = "kunlun";
+	/*we can add hw id to this array,uefi can auto read it,if new hw,we add to this array  */
+	oem,hw-id = <11 >;
+};
+
+&ufsphy_mem {
+        vdda-phy-always-on;
+};
