@@ -27,7 +27,7 @@
 #subdir-y += ti
 #subdir-y += xilinx
 #subdir-y += zte
-subdir-y += qcom
+#subdir-y += qcom
 
 
 dtstree		:= $(srctree)/$(src)
