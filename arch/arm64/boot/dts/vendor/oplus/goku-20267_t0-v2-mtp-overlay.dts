@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include "kunlun-v2-mtp-overlay.dtsi"
+#include "charge/oplus_charge_goku.dtsi"
+#include "goku_nfc/goku-nfc-sn100f.dtsi"
+#include "tp/goku-tp-nt36672c_nf.dtsi"
+#include "tp/goku-keys.dtsi"
+#include "sensor/goku-sensor-20267.dtsi"
+#include "storage/goku-stg.dtsi"
+#include "fingerprint/goku-fingerprint-20267.dtsi"
+#include "goku_esim/goku-esim.dtsi"
+#include "hard_reset.dtsi"
+
+/ {
+	oplus,dtsi_no = <20267>;
+	oplus,pcb_range = <0  22>;
+};

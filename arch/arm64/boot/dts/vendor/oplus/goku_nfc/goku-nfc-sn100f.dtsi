@@ -1,0 +1,21 @@
+/**********************************************************************************
+* Copyright (c)  2008-2020  Guangdong oplus Mobile Comm Corp., Ltd
+* 
+* Description: oplus SN100F nfc dtsi
+* 
+* Version: 1.0
+* Date: 2020-10-15
+* Author: Weiwei.Deng
+* 
+* ------------------------------ Revision History: --------------------------------
+* <version>           <date>                <author>                            <desc>
+* Revision 1.0       2020-10-15            Weiwei.Deng           Created for goku_T0 SN100F nfc dtsi
+***********************************************************************************/
+&soc {
+	//add for nfc_chipset
+	nfc_chipset {
+		compatible = "oplus-nfc-chipset";
+		chipset-20267 = "SN100T";
+		chipset-20268 = "SN100T";
+	};
+};

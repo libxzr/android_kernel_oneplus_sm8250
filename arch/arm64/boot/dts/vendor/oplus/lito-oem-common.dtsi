@@ -1,0 +1,102 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+#include "kunlun_camera/lito-camera.dtsi"
+#include "kunlun_camera/lito-v2-camera.dtsi"
+/ {
+        reserved-memory {
+                qtee_apps_region@81e00000 {
+                        no-map;
+                        //#ifndef OPLUS_FEATURE_FINGERPRINT
+                        //reg = <0x0 0x81e00000 0x0 0x2600000>;
+                        //#else
+                        reg = <0x0 0x81e00000 0x0 0x6800000>;
+                        //#endif /* OPLUS_FEATURE_FINGERPRINT */
+                };
+
+// #ifdef OPLUS_FEATURE_FINGERPRINT
+                pil_camera_region@86000000 {
+                        reg = <0x0 0x9b800000 0x0 0x500000>;
+                };
+
+                pil_npu_region@86500000 {
+                        reg = <0x0 0x9bd00000 0x0 0x500000>;
+                };
+
+                pil_video_region@86a00000 {
+                        reg = <0x0 0x9c200000 0x0 0x500000>;
+                };
+
+                pil_cvp_region@86f00000 {
+                        reg = <0x0 0x9c700000 0x0 0x500000>;
+                };
+
+                pil_cdsp_region@87400000 {
+                        reg = <0x0 0x9cc00000 0x0 0x1e00000>;
+                };
+// #endif
+                //#ifdef OPLUS_FEATURE_FINGERPRINT
+                //#ifdef FEATURE_OPLUS_NV_BACKUP
+                //add for oem share mem mapping virtual addr fail
+                uio_mem: uio_mem_region {
+                        compatible = "removed-dma-pool";
+                        reg = <0x0 0x9ea00000 0x0 0x200000>;
+                };
+
+                uio_oem: uio_oem_region {
+                        compatible = "removed-dma-pool";
+                        reg = <0x0 0x9ec00000 0x0 0x100000>;
+                };
+                //#endif /* FEATURE_OPLUS_NV_BACKUP */
+                //#endif /* OPLUS_FEATURE_FINGERPRINT */
+
+                param_mem: param_mem@0xCC200000 {
+                    reg = <0 0xCC200000 0 0x00100000>;
+                    label = "param_mem";
+                };
+
+
+                ramoops: ramoops@0xB7E000000 {
+			        compatible = "ramoops";
+			        reg = <0 0xB7E00000 0 0x00400000>;
+			        record-size =  <0x40000>; //256x1024
+			        console-size = <0x40000>;
+			        ftrace-size = <0x40000>;
+			        pmsg-size = <0x200000>;
+			        devinfo-size = <0x01000>;
+			        ecc-size = <0x0>;
+		       };
+// #ifdef OPLUS_BUG_STABILITY
+// Add for get current xlb_uefi log, add reserved size 1M for kernelboot xbl uefi
+// xbl_uefi_mem address get from boot_images Core.dsc.inc file: PcdEmbeddedFdBaseAddress + SERIAL_BUFFER_OFFSET,0x9FC00000+0x186f7000=0xB82f7000
+// kernel boot log: 0xB8200000 ~ 0xB82f7000
+		kboot_uboot_logmem: kboot_uboot_logmem@0xB8200000 {
+			reg = <0x0 0xB8200000 0x0 0x100000>;
+			compatible = "oplus,xbl_uefi_kbootlog";
+			xbluefi-offset = <0xF7000>;
+			no-map;
+		};
+// #endif
+		};
+
+		shell_front {
+			compatible = "oplus,shell-temp";
+		};
+
+		shell_frame {
+			compatible = "oplus,shell-temp";
+		};
+
+		shell_back {
+			compatible = "oplus,shell-temp";
+		};
+
+        aliases {
+                i2c2 = &qupv3_se9_i2c;
+        };
+};
+
+
+
+

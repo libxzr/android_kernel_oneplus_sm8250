@@ -1,0 +1,57 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+/* #ifdef OPLUS_ARCH_EXTENDS */
+#include "kunlun-lito-audio-overlay.dtsi"
+/* #endif OPLUS_ARCH_EXTENDS */
+
+&soc {
+    //#ifdef OPLUS_FEATURE_TP_BASIC
+	oplus_sim_detect {
+		compatible = "oplus, sim_detect";
+		Hw,sim_det = <&tlmm 82 0>;
+	};
+    //#endif /* OPLUS_FEATURE_TP_BASIC */
+    //#ifdef OPLUS_FEATURE_DEVICE_LOG
+	qcom,memshare {
+		compatible = "qcom,memshare";
+
+		qcom,client_1 {
+			compatible = "qcom,memshare-peripheral";
+			qcom,peripheral-size = <0x0>;
+			qcom,client-id = <0>;
+			qcom,allocate-boot-time;
+			label = "modem";
+		};
+
+		qcom,client_2 {
+			compatible = "qcom,memshare-peripheral";
+			qcom,peripheral-size = <0x0>;
+			qcom,client-id = <2>;
+			label = "modem";
+		};
+
+		mem_client_3_size: qcom,client_3 {
+			compatible = "qcom,memshare-peripheral";
+			qcom,peripheral-size = <0xF00000>;
+			qcom,client-id = <1>;
+			qcom,allocate-on-request;
+			label = "modem";
+		};
+	};
+    //#endif /* OPLUS_FEATURE_DEVICE_LOG */
+	midas_pdev {
+		compatible = "oplus,midas-pdev";
+	};
+};
+
+//#ifdef OPLUS_BUG_STABALITY
+&L5P {
+        reg =  /bits/ 16 <0x4400>;
+        regulator-min-microvolt = <1500000>;
+        regulator-max-microvolt = <1500000>;
+        //qcom,min-dropout-voltage = <300000>;
+        regulator-boot-on;
+};
+//#endif /*OPLUS_BUG_STABALITY*/

@@ -1,0 +1,193 @@
+#include <dt-bindings/msm/msm-camera.h>
+
+
+	&cam_cci0 {
+		i2c_freq_400Khz_cci0: qcom,i2c_fast_mode {
+			hw-scl-stretch-en = <1>;
+			/*#else*/
+			//hw-scl-stretch-en = <0>;
+			/*#endif*/
+		};
+		i2c_freq_1Mhz_cci0: qcom,i2c_fast_plus_mode {
+
+			hw-scl-stretch-en = <1>;
+			/*#else*/
+			//hw-scl-stretch-en = <0>;
+			/*#endif*/
+		};
+	};
+&soc {
+	qcom,cam_smmu {
+		msm_cam_smmu_icp {
+			/* suraj.chennoji@Camera, CSLALLOCHW crash issue, Corrected the address
+			mapping for dma addr pool for icp which caused, QC Case#04275326*/
+			/* qcom,iommu-dma-addr-pool = <0xda00000 0xace00000>; */
+			qcom,iommu-dma-addr-pool = <0x10c00000 0xee300000>;
+			iova-region-discard = <0xdff00000 0x300000>;
+			icp_iova_mem_map: iova-mem-map {
+				iova-mem-region-io {
+					/* IO region is approximately 3.7 GB */
+					iova-region-name = "io";
+					iova-region-start = <0x10c00000>;
+					iova-region-len = <0xee300000>;
+					iova-region-id = <0x3>;
+					iova-region-discard = <0xdff00000 0x300000>;
+					status = "ok";
+				};
+			};
+		};
+	};
+	pinctrl@f000000 {
+			cci0_active {
+					config {
+					drive-strength = <6>; /* 2 MA */
+					};
+			};
+			cci0_suspend {
+					config {
+						//bias-pull-down; /* PULL DOWN */
+						bias-disable;
+						output-low;
+						drive-strength = <6>; /* 2 MA */
+					};
+			};
+
+			cci1_suspend {
+					config {
+						//bias-pull-down; /* PULL DOWN */
+						bias-disable;
+						output-low;
+					};
+			};
+			cci2_suspend {
+					config {
+						//bias-pull-down; /* PULL DOWN */
+						bias-disable;
+						output-low;
+					};
+			};
+			/* Camera GPIOs  CCI*/
+			cam_sensor_mclk0_active {
+				config {
+					drive-strength = <6>; /* 2 MA */
+				};
+			};
+
+			cam_sensor_mclk0_suspend {
+				config {
+					drive-strength = <6>; /* 2 MA */
+				};
+			};
+			cam_sensor_mclk1_active {
+				config {
+					drive-strength = <6>; /* 2 MA */
+				};
+			};
+			cam_sensor_mclk1_suspend {
+				config {
+					drive-strength = <6>; /* 2 MA */
+				};
+			};
+			cam_sensor_mclk2_active {
+				config {
+					drive-strength = <4>; /* 2 MA */
+				};
+			};
+			cam_sensor_mclk2_suspend {
+				config {
+                    drive-strength = <4>; /* 2 MA */
+				};
+			};
+			cam_sensor_mclk3_active {
+				config {
+				drive-strength = <6>; /* 2 MA */
+				};
+			};
+
+			cam_sensor_mclk3_suspend {
+				config {
+					drive-strength = <6>; /* 2 MA */
+				};
+			};
+			cam_sensor_mclk4_active {
+				config {
+					drive-strength = <6>; /* 2 MA */
+				};
+			};
+			cam_sensor_mclk4_suspend {
+				config {
+					drive-strength = <6>; /* 2 MA */
+				};
+			};
+
+                cam_sensor_active_rear_aux {
+                        /* RESET REARAUX,DVDD ELDO */
+                        mux {
+                                pins = "gpio21";
+                        };
+
+                        config {
+                                pins = "gpio21";
+                        };
+                };
+
+                cam_sensor_suspend_rear_aux {
+                        /* RESET REARAUX,DVDD ELDO */
+                        mux {
+                                pins = "gpio21";
+                        };
+
+                        config {
+                                pins = "gpio21";
+                        };
+                };
+
+                cam_sensor_active_triple_rear_aux {
+                        mux {
+                                pins = "gpio23";
+                        };
+
+                        config {
+                                pins = "gpio23";
+                        };
+                };
+
+                cam_sensor_suspend_triple_rear_aux {
+                        mux {
+                                pins = "gpio23";
+                        };
+
+                        config {
+                                pins = "gpio23";
+                        };
+                };
+
+                cam_sensor_active_rear_aux2 {
+                        mux {
+                                pins = "gpio29";
+                        };
+
+                        config {
+                                pins = "gpio29";
+                        };
+                };
+
+                cam_sensor_suspend_rear_aux2 {
+                        mux {
+                                pins = "gpio29";
+                        };
+
+                        config {
+                                pins = "gpio29";
+                        };
+                };
+
+                cam_sensor_active_3 {
+                        status = "disabled";
+                };
+
+                cam_sensor_suspend_3 {
+                        statue = "disabled";
+                };
+       };
+};

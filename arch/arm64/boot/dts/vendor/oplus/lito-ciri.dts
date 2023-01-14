@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+/dts-v1/;
+
+#include "../qcom/litomagnus.dtsi"
+#include "lito-oem-common.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Litomagnus SoC";
+	compatible = "qcom,lito";
+	qcom,board-id = <8 0>;
+        oplus,dtsi_no = <20127>;
+        oplus,pcb_range = <0  54>;
+};

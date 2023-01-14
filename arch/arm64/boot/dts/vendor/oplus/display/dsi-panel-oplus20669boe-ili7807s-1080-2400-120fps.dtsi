@@ -1,0 +1,238 @@
+&mdss_mdp {
+	dsi_oplus20669boe_ili7807s_1080_2400_120fps_vid: qcom,mdss_dsi_oplus20669boe_ili7807s_1080_2400_120fps_vid {
+		qcom,mdss-dsi-panel-name =
+		  "20669 boe ili7807s fhd tft lcd panel with DSC";
+		qcom,mdss-dsi-panel-type = "dsi_video_mode";
+		qcom,mdss-dsi-virtual-channel-id = <0>;
+		qcom,mdss-dsi-stream = <0>;
+		qcom,mdss-dsi-bpp = <24>;
+		qcom,mdss-dsi-color-order = "rgb_swap_rgb";
+		qcom,mdss-dsi-underflow-color = <0xff>;
+		qcom,mdss-dsi-border-color = <0>;
+
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+
+		qcom,mdss-dsi-traffic-mode = "burst_mode";
+		qcom,mdss-dsi-lane-map = "lane_map_0123";
+		qcom,mdss-dsi-bllp-eof-power-mode;
+		qcom,mdss-dsi-bllp-power-mode;
+		qcom,mdss-dsi-lane-0-state;
+		qcom,mdss-dsi-lane-1-state;
+		qcom,mdss-dsi-lane-2-state;
+		qcom,mdss-dsi-lane-3-state;
+		qcom,mdss-pan-physical-width-dimension = <69>;
+		qcom,mdss-pan-physical-height-dimension = <150>;
+		qcom,mdss-dsi-lp11-init;
+		qcom,mdss-dsi-dma-trigger = "trigger_sw";
+		qcom,mdss-dsi-mdp-trigger = "none";
+		qcom,mdss-dsi-reset-sequence = <1 5>, <0 3>, <1 10>;
+		qcom,mdss-dsi-te-pin-select = <1>;
+		qcom,mdss-dsi-wr-mem-start = <0x2c>;
+		qcom,mdss-dsi-wr-mem-continue = <0x3c>;
+		qcom,mdss-dsi-te-dcs-command = <1>;
+		qcom,mdss-dsi-te-check-enable;
+		qcom,mdss-dsi-te-using-te-pin;
+		//qcom,mdss-dsi-panel-hdr-enabled;
+		//qcom,mdss-dsi-panel-hdr-color-primaries = <15000 15500 34000
+		//	16000 13250 34500 7500 3000>;
+		//qcom,mdss-dsi-panel-peak-brightness = <4300000>;
+		//qcom,mdss-dsi-panel-blackness-level = <1023>;
+
+		qcom,mdss-dsi-display-timings {
+			timing@0{
+				//qcom,mdss-dsi-panel-clockrate = <1107000000>;
+				qcom,mdss-mdp-transfer-time-us = <7000>;
+				qcom,mdss-dsi-panel-framerate = <60>; /* 60 FPS */
+				qcom,mdss-dsi-panel-width = <1080>;
+				qcom,mdss-dsi-panel-height = <2400>;
+				qcom,mdss-dsi-h-front-porch = <129>;
+				qcom,mdss-dsi-h-back-porch = <130>;
+				qcom,mdss-dsi-h-pulse-width = <5>;
+				qcom,mdss-dsi-h-sync-skew = <0>;
+				qcom,mdss-dsi-h-sync-pulse = <0>;
+				qcom,mdss-dsi-v-back-porch = <33>;
+				qcom,mdss-dsi-v-front-porch = <2497>;
+				qcom,mdss-dsi-v-pulse-width = <2>;
+				qcom,mdss-dsi-h-left-border = <0>;
+				qcom,mdss-dsi-h-right-border = <0>;
+				qcom,mdss-dsi-v-top-border = <0>;
+				qcom,mdss-dsi-v-bottom-border = <0>;
+				qcom,mdss-dsi-panel-jitter = <0x4 0x1>;
+
+
+				qcom,mdss-dsi-on-command = [
+					39 01 00 00 00 00 04 FF 78 07 06
+					29 01 00 00 00 00 02 08 20
+					29 01 00 00 00 00 02 10 B0
+					29 01 00 00 00 00 02 11 07
+					29 01 00 00 00 00 02 48 0F
+					29 01 00 00 00 00 02 4D 80
+					29 01 00 00 00 00 02 4E 40
+					29 01 00 00 00 00 02 C7 05
+					39 01 00 00 00 00 04 FF 78 07 05
+					29 01 00 00 00 00 02 7E 07
+
+					39 01 00 00 00 00 04 FF 78 07 03
+					29 01 00 00 00 00 02 83 20
+					29 01 00 00 00 00 02 84 00
+					29 01 00 00 00 00 02 88 DB
+					29 01 00 00 00 00 02 89 EA
+					29 01 00 00 00 00 02 8A EC
+					29 01 00 00 00 00 02 8B ef
+					29 01 00 00 00 00 02 B3 E9
+					29 01 00 00 00 00 02 B4 D9
+					29 01 00 00 00 00 02 B5 B0
+					29 01 00 00 00 00 02 AC FA
+					29 01 00 00 00 00 02 AD F0
+					29 01 00 00 00 00 02 AE DB
+					29 01 00 00 00 00 02 8C C2
+					29 01 00 00 00 00 02 8D C3
+					29 01 00 00 00 00 02 8E C4
+					29 01 00 00 00 00 02 8F C5
+					29 01 00 00 00 00 02 90 DC
+					29 01 00 00 00 00 02 91 DD
+					29 01 00 00 00 00 02 92 E2
+					29 01 00 00 00 00 02 93 E3
+					29 01 00 00 00 00 02 94 E4
+					29 01 00 00 00 00 02 95 E5
+					29 01 00 00 00 00 02 96 98
+					29 01 00 00 00 00 02 97 99
+					29 01 00 00 00 00 02 98 9A
+					29 01 00 00 00 00 02 99 9B
+					29 01 00 00 00 00 02 9A B7
+					29 01 00 00 00 00 02 9B B8
+					29 01 00 00 00 00 02 9C C0
+					29 01 00 00 00 00 02 9D E2
+					29 01 00 00 00 00 02 9E C1
+					29 01 00 00 00 00 02 9F C2
+
+					39 01 00 00 00 00 04 FF 78 07 00
+					29 01 00 00 00 00 03 51 0F FF
+					29 01 00 00 00 00 02 53 24
+					29 01 00 00 00 00 02 55 01
+					29 01 00 00 00 00 02 35 00
+					05 01 00 00 46 00 01 11
+
+					39 01 00 00 00 00 04 FF 78 07 01
+					39 01 00 00 00 00 02 A0 4C
+					39 01 00 00 00 00 02 C0 0C
+
+					39 01 00 00 00 00 04 FF 78 07 02
+					39 01 00 00 00 00 02 46 00
+					39 01 00 00 00 00 02 4F 01
+
+					//Gamma optimization
+					39 01 00 00 00 00 04 FF 78 07 08
+					39 01 00 00 00 00 20 E0 00 00 1D 49 00 88 B6 D9 15 12 3C 7A 25 AE F8 2F
+											2A 69 A6 CF 3F 01 23 52 3F 6A 8C BC 0F D8 D9
+					39 01 00 00 00 00 20 E1 00 00 1D 49 00 88 B6 D9 15 12 3C 7A 25 AE F8 2F
+											2A 69 A6 CF 3F 01 23 52 3F 6A 8C BC 0F D8 D9
+
+					39 01 00 00 00 00 04 FF 78 07 0E
+					39 01 00 00 00 00 02 B0 21
+					39 01 00 00 00 00 02 C0 12
+
+					39 01 00 00 00 00 04 FF 78 07 1E
+					39 01 00 00 00 00 02 00 3A
+					39 01 00 00 00 00 02 A4 1D
+					39 01 00 00 00 00 02 A5 5A
+					39 01 00 00 00 00 02 A6 31
+					39 01 00 00 00 00 02 A7 33
+
+					39 01 00 00 00 00 04 FF 78 07 00
+					05 01 00 00 0A 00 01 29
+					];
+				qcom,mdss-dsi-off-command = [
+					39 01 00 00 00 00 04 FF 78 07 00
+					05 01 00 00 0A 00 01 28
+					05 01 00 00 78 00 01 10];
+				qcom,mdss-dsi-post-panel-on-command =[
+					39 01 00 00 00 00 04 FF 78 07 00
+				];
+				qcom,mdss-dsi-cabc-off-command = [
+					39 01 00 00 00 00 04 FF 78 07 00
+					15 01 00 00 00 00 02 53 2C
+					15 01 00 00 00 00 02 55 00];
+				qcom,mdss-dsi-cabc-1-command = [
+					39 01 00 00 00 00 04 FF 78 07 00
+					15 01 00 00 00 00 02 53 2C
+					15 01 00 00 00 00 02 55 01];
+				qcom,mdss-dsi-cabc-2-command = [
+					39 01 00 00 00 00 04 FF 78 07 00
+					15 01 00 00 00 00 02 53 2C
+					15 01 00 00 00 00 02 55 02];
+				qcom,mdss-dsi-cabc-3-command = [
+					39 01 00 00 00 00 04 FF 78 07 00
+					15 01 00 00 00 00 02 53 2C
+					15 01 00 00 00 00 02 55 03];
+
+				qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-off-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-post-panel-on-command-state="dsi_lp_mode";
+				qcom,mdss-dsi-cabc-off-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-cabc-1-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-cabc-2-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-cabc-3-command-state = "dsi_lp_mode";
+
+				qcom,compression-mode = "dsc";
+				qcom,mdss-dsc-slice-height = <8>;
+				qcom,mdss-dsc-slice-width = <540>;
+				qcom,mdss-dsc-slice-per-pkt = <2>;
+				qcom,mdss-dsc-bit-per-component = <8>;
+				qcom,mdss-dsc-bit-per-pixel = <8>;
+				qcom,mdss-dsc-block-prediction-enable;
+			};
+		};
+	};
+};
+
+&dsi_oplus20669boe_ili7807s_1080_2400_120fps_vid {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <4095>;
+	qcom,mdss-dsi-bl-normal-max-level = <3215>;
+	qcom,mdss-brightness-normal-max-level = <3215>;
+	qcom,mdss-brightness-default-level = <891>;
+	qcom,platform-te-gpio = <&tlmm 23 0>;
+	qcom,platform-reset-gpio = <&pm6150l_gpios 9 0>;
+
+	oplus,mdss-dsi-vendor-name = "ILI7807S";
+	oplus,mdss-dsi-manufacture = "BOE";
+	oplus,lcd-cabc-support;
+	qcom,ulps-enabled;
+	qcom,dsi-select-clocks = "mux_byte_clk0", "mux_pixel_clk0",
+				"src_byte_clk0", "src_pixel_clk0",
+				"shadow_byte_clk0", "shadow_pixel_clk0";
+	qcom,mdss-dsi-t-clk-post = <0x0F>;
+	qcom,mdss-dsi-t-clk-pre = <0x3B>;
+
+	qcom,dsi-supported-dfps-list = <60 90 120 45>;
+	qcom,mdss-dsi-pan-enable-dynamic-fps;
+	qcom,mdss-dsi-pan-fps-update = "dfps_immediate_porch_mode_vfp";
+	//oplus,dfps-idle-off;
+
+	//qcom,dsi-dyn-clk-enable;
+	//qcom,dsi-dyn-clk-list = <1107924480 1117157184>;
+
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
+	qcom,mdss-dsi-panel-status-command = [06 01 00 01 05 00 02 0A 00
+	                                      06 01 00 01 05 00 02 0D 00];
+	qcom,mdss-dsi-panel-status-command-state = "dsi_lp_mode";
+	qcom,mdss-dsi-panel-status-value = <0x9C 0x00>;
+	qcom,mdss-dsi-panel-on-check-value = <0x9C 0x00>;
+	qcom,mdss-dsi-panel-status-read-length = <1 1>;
+
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings = [00 24 0A 0A 26 24 0A
+				0A 07 02 04 00];
+
+			qcom,display-topology = <1 1 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};

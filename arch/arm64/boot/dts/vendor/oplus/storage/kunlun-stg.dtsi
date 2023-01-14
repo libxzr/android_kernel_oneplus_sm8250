@@ -1,0 +1,12 @@
+&sdhc_1 {
+//#ifdef OPLUS_FEATURE_EMMC_DRIVER
+        status = "disabled";
+//#endif
+};
+
+&sdhc_2 {
+//#ifdef OPLUS_FEATURE_EMMC_DRIVER
+        status = "disabled";
+//#endif
+};
+

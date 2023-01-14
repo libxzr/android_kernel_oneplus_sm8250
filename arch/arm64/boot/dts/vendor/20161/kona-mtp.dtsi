@@ -1,0 +1,2709 @@
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+#include "kona-pmic-overlay.dtsi"
+#include "kona-sde-display.dtsi"
+#include "camera/kona-camera-sensor-mtp.dtsi"
+#include "kona-audio-overlay.dtsi"
+#include "kona-thermal-overlay.dtsi"
+
+&qupv3_se12_2uart {
+	status = "ok";
+};
+
+&pm8150a_amoled {
+	status = "ok";
+};
+
+&qupv3_se6_4uart {
+	status = "ok";
+};
+/* #ifdef OPLUS_ARCH_EXTENDS */
+/* delete for audio pa
+&dai_mi2s2 {
+	qcom,msm-mi2s-tx-lines = <1>;
+	pinctrl-names = "default", "sleep";
+	pinctrl-0 = <&tert_mi2s_sck_active &tert_mi2s_ws_active
+			&tert_mi2s_sd0_active>;
+	pinctrl-1 = <&tert_mi2s_sck_sleep &tert_mi2s_ws_sleep
+			&tert_mi2s_sd0_sleep>;
+};
+*/
+/* #endif OPLUS_ARCH_EXTENDS */
+
+//#ifndef OPLUS_BUG_STABILITY
+/*&qupv3_se1_i2c {
+	status = "ok";
+	qcom,clk-freq-out = <1000000>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	nq@28 {
+		compatible = "qcom,nq-nci";
+		reg = <0x28>;
+		qcom,nq-irq = <&tlmm 111 0x00>;
+		qcom,nq-ven = <&tlmm 6 0x00>;
+		qcom,nq-firm = <&tlmm 110 0x00>;
+		qcom,nq-clkreq = <&tlmm 7 0x00>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <111 0>;
+		interrupt-names = "nfc_irq";
+		pinctrl-names = "nfc_active", "nfc_suspend";
+		pinctrl-0 = <&nfc_int_active &nfc_enable_active
+				&nfc_clk_req_active>;
+		pinctrl-1 = <&nfc_int_suspend &nfc_enable_suspend
+				&nfc_clk_req_suspend>;
+	};
+};
+*/
+//#else /* OPLUS_BUG_STABILITY */
+&qupv3_se1_i2c {
+	status = "ok";
+	//#ifndef OPLUS_BUG_STABILITY
+	//qcom,clk-freq-out = <1000000>;
+	//#endif /* OPLUS_BUG_STABILITY */
+	#address-cells = <1>;
+	#size-cells = <0>;
+	nq@28 {
+		compatible = "qcom,nq-nci";
+		reg = <0x28>;
+		qcom,nq-irq = <&tlmm 111 0x00>;
+		qcom,nq-ven = <&tlmm 83 0x00>;
+		qcom,nq-firm = <&tlmm 110 0x00>;
+		qcom,nq-clkreq = <&tlmm 7 0x00>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <111 0>;
+		interrupt-names = "nfc_irq";
+		pinctrl-names = "nfc_active", "nfc_suspend";
+		pinctrl-0 = <&nfc_int_active &nfc_enable_active
+				&nfc_clk_req_active>;
+		pinctrl-1 = <&nfc_int_suspend &nfc_enable_suspend
+				&nfc_clk_req_suspend>;
+	};
+};
+//#endif /* OPLUS_BUG_STABILITY */
+&ufsphy_mem {
+	compatible = "qcom,ufs-phy-qmp-v4";
+
+	vdda-phy-supply = <&pm8150_l5>;
+	vdda-phy-always-on;
+	vdda-pll-supply = <&pm8150_l9>;
+	vdda-phy-max-microamp = <89900>;
+	vdda-pll-max-microamp = <18800>;
+
+	status = "ok";
+};
+
+&ufshc_mem {
+	vdd-hba-supply = <&ufs_phy_gdsc>;
+	vdd-hba-fixed-regulator;
+	vcc-supply = <&pm8150_l17>;
+	vcc-voltage-level = <2504000 2950000>;
+	vcc-low-voltage-sup;
+	vccq-supply = <&pm8150_l6>;
+	vccq2-supply = <&pm8150_s4>;
+	vcc-max-microamp = <800000>;
+	vccq-max-microamp = <800000>;
+	vccq2-max-microamp = <800000>;
+
+	qcom,vddp-ref-clk-supply = <&pm8150_l6>;
+	qcom,vddp-ref-clk-max-microamp = <100>;
+	qcom,vccq-parent-supply = <&pm8150a_s8>;
+	qcom,vccq-parent-max-microamp = <210000>;
+
+	status = "ok";
+};
+
+&tlmm {
+	//#ifdef OPLUS_FEATRUE_ESIM
+	esim_gpio: esim_gpio {
+		mux {
+			pins = "gpio67";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio67";
+			bias-disable; /* NO pull */
+			drive-strength = <2>; /* 2 MA */
+			output-low;
+		};
+	};
+
+	esim_det_gpio: esim_det_gpio {
+		mux {
+			pins = "gpio70";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio70";
+			bias-disable; /* NO pull */
+			drive-strength = <2>; /* 2 MA */
+			output-high;
+		};
+	};
+	//#endif /* OPLUS_FEATRUE_ESIM */
+};
+
+&pm8150_gpios {
+	//#ifdef OPLUS_FEATRUE_DUAL_SIM_DETECT
+	sim2_det_no_pull: sim2_det_no_pull {
+			pins = "gpio1";
+			function = "normal";
+			input-enable;
+			bias-disable;
+	};
+
+	sim2_det_pull_high: sim2_det_pull_high {
+			pins = "gpio1";
+			function = "normal";
+			input-enable;
+			bias-pull-up;
+	};
+
+	sim2_det_pull_low: sim2_det_pull_low {
+			pins = "gpio1";
+			function = "normal";
+			input-enable;
+			bias-pull-down;
+	};
+	//#endif OPLUS_FEATRUE_DUAL_SIM_DETECT
+};
+
+&soc {
+	//#ifdef OPLUS_FEATURE_CONNFCSOFT
+	nfc_chipset {
+		compatible = "oplus-nfc-chipset";
+		chipset-20161 = "SN100T";
+                chipset-20351 = "SN100T";
+                chipset-20163 = "SN100T";
+	};
+	//#endif /* OPLUS_FEATURE_CONNFCSOFT */
+
+	gpio_keys {
+		compatible = "gpio-keys";
+		label = "gpio-keys";
+
+		pinctrl-names = "default";
+		//#ifdef OPLUS_FEATURE_TP_BASIC
+		pinctrl-0 = <&key_vol_up_default &key_vol_down_default>;
+		//#endif
+
+		vol_up {
+			label = "volume_up";
+			gpios = <&pm8150_gpios 6 GPIO_ACTIVE_LOW>;
+			linux,input-type = <1>;
+			linux,code = <KEY_VOLUMEUP>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;
+			linux,can-disable;
+		};
+		//#ifdef OPLUS_FEATURE_TP_BASIC
+		vol_down {
+			label = "volume_down";
+			gpios = <&pm8150_gpios  7 GPIO_ACTIVE_LOW>;
+			linux,input-type = <1>;
+			linux,code = <KEY_VOLUMEDOWN>;
+			gpio-key,wakeup;
+			debounce-interval = <15>;
+			linux,can-disable;
+		};
+		//#endif
+	};
+
+	qcom,qbt_handler {
+		compatible = "qcom,qbt-handler";
+//#ifdef OPLUS_FEATURE_FINGERPRINT
+		//qcom,ipc-gpio = <&tlmm 23 0>;
+//#endif /*OPLUS_FEATURE_FINGERPRINT*/
+//#ifndef OPLUS_FEATURE_CHG_BASIC
+		//pinctrl-names = "default";
+		//pinctrl-0 = <&key_home_default>;
+		//qcom,finger-detect-gpio = <&pm8150_gpios 1 0>;
+/*#endif*/
+	};
+
+	//#ifdef OPLUS_FEATURE_FINGERPRINT
+	oplus_fp_common {
+		compatible = "oplus,fp_common";
+		oplus,fp_gpio_num = <1>; /* the gpio number of fingerprint id used */
+		oplus,fp_gpio_0 = <&tlmm 9 0x0>;
+                pinctrl-names = "default";
+		pinctrl-0 = <&gpio_id2_default>;
+	        goodix_optical_G3S{
+			oplus,fp-id = <1>; /* fp id mapping table */
+			vendor-chip = <11>; /* please refer to the struct fp_vendor_t in oplus_fp_commmon.n */
+			eng-menu = "-1,-1"; /* represents SNR, inclination test item in engineer menu, and 0/1 means off/on */
+			chip-name = "G_OPTICAL_G3S";  /* /proc/fp_id, will be displayed in engineer menu  */
+		};
+		goodix_optical_G6 {
+			oplus,fp-id = <0>; /* fp id mapping table */
+			vendor-chip = <11>; /* please refer to the struct fp_vendor_t in oplus_fp_commmon.n */
+			eng-menu = "-1,-1"; /* represents SNR, inclination test item in engineer menu, and 0/1 means off/on */
+			chip-name = "G_OPTICAL_G6";  /* /proc/fp_id, will be displayed in engineer menu  */
+		};
+	};
+	goodix_fp {
+		status = "ok";
+		compatible = "goodix,goodix_fp";
+		interrupt-parent = <&tlmm>;
+		interrupts = <23 0>;
+		power-mode = <1> ; /*please refer to the struct fp_power_mode_t in oplus_fp_commmon.n ,0: power mode not set, 1: ldo power, 2: gpio power, 3: auto power */
+		ldo-supply = <&pm8150_l16>;
+		ldo-config = <3300000 3300000 150000>;
+		goodix,gpio_irq = <&tlmm 23 0x1>;
+		goodix,gpio_reset = <&tlmm 68 0x0>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&gpio_goodix_irq_default>;
+		notify_tpinfo_flag = <1>;
+		power-num = <1>;
+		power_source_1 {
+			power-mode = <1>;
+			power-name = "ldo";
+			power-config = "ldo-config";
+			delay-time = <0>;
+		};
+	};
+	//#endif /*OPLUS_FEATURE_FINGERPRINT*/
+
+	// #ifdef VENDOR_EDIT
+	oplus_secure_common {
+		compatible = "oplus,secure_common";
+        oplus,sec_reg_num = <0x7805E8>;
+        oplus,sec_en_anti_reg = <0x7801F4>;
+        oplus,sec_override1_reg = <0x7860C0>;
+        oplus,override1_en_value = <0x1>;
+	};
+	//#endif //VENDOR_EDIT
+	//#ifdef OPLUS_FEATURE_SENSOR_SMEM
+	/*enum sensor_id { ACCEL,GYRO,MAG,LIGHT,PROXIMITY,SAR,CT,BAROMETER,SENSORS_NUM};*/
+        sensor_fb: sensor_fb {
+            compatible = "oplus,sensor-feedback";
+            master-id  = <3>;
+            smem-id    = <608>;
+        };
+	oplus_sensor {
+		compatible = "oplus,sensor-devinfo";
+		als-row-coe = <160>;
+		/*enum {LSM6DSM = 0x01, BMI160 = 0x02, LSM6DS3 = 0x04,BMI260 = 0x08, LSM6DSO = 0x10};*/
+		gsensor@0 {
+			sensor-name = <0x20>;//ICM4X6XX
+			sensor-direction = <7>;
+			sensor-index = <0>;//source num
+			sensor-type = <0>;//OPLUS_ACCEL
+			use-sois = <1>; //Use for TDK-sensor, <1>:S-OIS, <0>:tele ois ic
+		};
+		/* enum {AKM0991X = 0x01, MMC5603 = 0x02};*/
+		msensor@0 {
+			sensor-name = <0x1>;//AKM0991X
+			sensor-direction = <0>;
+			sensor-index = <0>;
+			sensor-type = <2>;//MAG
+			parameter-number= <18>;
+			//sensor-parameter = <2>;//0-useless;other- to differ special parameter
+			soft-mag-parameter = <9194 0 1530 0 117 1 1508 0 9538 0 220 1 1150 0 1311 1 10396 0>;//e00 sign e01 sign ...
+		};
+		msensor@1 {
+			sensor-name = <0x2>;//MMC5603
+			sensor-direction = <0>;
+			sensor-index = <1>;
+			sensor-type = <2>;//MAG
+			parameter-number= <18>;
+			soft-mag-parameter = <10000 0 0 0 0 0 0 0 10000 0 0 0 0 0 0 0 10000 0>;//e00 sign e01 sign ...
+
+		};
+		/*enum {STK3A5X=0x01,TCS3701=0x02,TCS3408=0x04};*/
+		lsensor@0 {
+			sensor-name = <0x2>;//TCS3701
+			sensor-index = <0>;
+			sensor-type = <3>;//LIGHT
+			als-type = <2>;//<1-normal;2-under screen;3-normal needed compensation>
+			is-unit-device = <1>;//<1-alsps unit device;0-separate device>
+			is-als-dri = <0>;//<0-polling 1-irq>
+			als-factor = <160>;
+			is_als_initialed = <0>;
+			als_buffer_length = <10>;
+			bus-number = <5>;
+			irq-number = <129>;
+			use_lb_algo = <1>;
+
+		};
+		psensor@0 {
+			sensor-name = <0x2>;//TCS3701
+			sensor-index = <0>;
+			sensor-type = <4>;//PROXIMITY
+			bus-number = <5>;
+			irq-number = <129>;
+			ps-type = <1>;
+			low_step = <300>;
+			high_step = <400>;
+			low_limit = <400>;
+			high_limit = <600>;
+			dirty_low_step = <100>;
+			dirty_high_step = <150>;
+			ps_dirty_limit = <1020>;
+			ps_ir_limit = <500>;
+			ps_adjust_min = <0>;
+			ps_adjust_max = <600>;
+			sampling_count = <5>;
+			step_max = <400>;
+			step_min = <100>;
+			step_div = <1500>;
+			anti_shake_delta = <80>;
+			dynamic_cali_max = <1024>;
+			raw2offset_radio = <20800>;
+			offset_max = <250>;
+			offset_range_min = <0xFFFFFF01>;// -255
+			offset_range_max = <255>;
+			force_cali_limit = <2000>;
+			cali_jitter_limit = <20>;
+			cal_offset_margin = <80>;
+
+		};
+		/* enum {tcs3408 = 0x01  stk37600 = 0x02} */
+		cctrsensor@0 {
+			decoupled-driver = <1>; //0 - tcs3408 driver; 1 - oplus_cct driver
+			sensor-name = <0x1>; //tcs3408
+			sensor-index = <0>;
+			sensor-type = <7>; //CCT_REAR
+			bus-number = <4>;
+			publish-sensors = <0x7>; //bit[0] - als, bit[1] - rgb, bit[2] - flicker
+			is-ch-dri = <0>;
+			timer-size = <25>; //ms
+			fac-cali-sensor = <0x2>; //0x1 - als, 0x2 - rgb, 0x4, flicker
+		};
+		/*virtual sensor
+		enum sensor_algo_id {
+			PICKUP_DETECT,
+			LUX_AOD,
+			TP_GESTURE,
+			FP_DISPLAY,
+			FREE_FALL,
+			CAMERA_PROTECT,
+			SENSOR_ALGO_NUM
+		}*/
+		pickup_detect {
+			sensor-type = <0>;//PICKUP_DETECT
+			is-virtual-sensor;
+			is-need-prox = <1>;//0 - disable; 1 - enable
+			prox-type = <0>;//prox_type: 0 - proximity; 1 - proximity_fake
+		};
+		lux_aod {
+			sensor-type = <1>; //LUX_AOD
+			is-virtual-sensor;
+			thrd-low = <12>;
+			thrd-high = <50>;
+			als-type = <1>; // 0 - ambient_light; 1 - wise_light
+		};
+		fp_display {
+			sensor-type = <3>;//FP_DISPLAY
+			is-virtual-sensor;
+			prox-type = <0>; //  0 - proximity; 1 - proximity_fake
+		};
+		free_fall {
+			sensor-type = <4>;//FREE_FALL
+			is-virtual-sensor;
+		};
+	};
+	//#endif /*OPLUS_FEATURE_SENSOR_SMEM*/
+	
+	//#ifdef OPLUS_FEATURE_TP_BASIC
+	devinfo {
+		compatible = "oplus-devinfo";
+/*#ifdef OPLUS_FEATURE_TP_BASIC*/
+		/*pinctrl-names = "active", "sleep";
+		  pinctrl-0 = <&hw_id_active>;
+		  pinctrl-1 = <&hw_id_sleep>;*/
+/*endif OPLUS_FEATURE_TP_BASIC*/
+		io-channels= <&pm8150l_vadc ADC_GPIO1>;
+		io-channel-names= "vph_pwr_voltage_sub";
+
+		main-sub {
+			compatible = "hw-match, main-sub";
+			use_pmic_adc;
+			adc_ranges = <0 80
+						81 180
+						181 300
+						301 420
+						421 550
+						551 650
+						651 760
+						761 850
+						851 950
+						951 1050
+						1051 1150
+						1151 1300>;
+			aboard-patterns = <0 0 1 1>;
+
+			/*main board*/
+			match-projects = <20161 20163 20351 20352>;
+
+			/*rf type*/
+			//rf_match_support;
+			//rf-patterns = <0>;
+		};
+/*#ifdef OPLUS_FEATURE_TP_BASIC*/
+		/*device_0 {
+			compatible = "hw, devices";
+			label = "distribution";
+			//hw-id0 = <&pm8150_gpios 1 0>;
+			hw-combs = <1 0>;
+			hw-names = "Standard", "Pro";
+		};*/
+/*endif OPLUS_FEATURE_TP_BASIC*/
+	};
+
+	//#ifdef OPLUS_FEATURE_TP_BASIC
+	oplus_rf_cable {
+		compatible = "oplus,rf_cable";
+		interrupt-parent = <&tlmm>;
+		rf_cable_support_num = <1>;
+		rf,cable0-gpio = <&tlmm 84 0>;
+		rf,cable-support-timer = <0>;
+		pinctrl-names = "rf_cable_active";
+		pinctrl-0 = <&rf_cable0_active>;
+	};
+	//#endif /* OPLUS_FEATURE_TP_BASIC */
+
+	/*#ifdef OPLUS_FEATURE_TP_BASIC*/
+	colorctrl_v2 {
+		compatible = "oplus,color-ctrl_v2";
+
+		coloring-supply = <&pm8150_l1>;
+		fade-supply = <&L2P>;
+
+		enable_coloring_gpio = <&tlmm 11 GPIO_ACTIVE_LOW>;
+		enable_fade_gpio = <&pm8150l_gpios 9 GPIO_ACTIVE_LOW>;
+
+		platform_support_project = <20163>;
+
+		gpio-sleep_en = <&pm8150b_gpios 5 GPIO_ACTIVE_LOW>;
+		gpio-si_in_1 = <&pm8150l_gpios 8 GPIO_ACTIVE_LOW>;
+		gpio-si_in_2 = <&pm8150l_gpios 11 GPIO_ACTIVE_LOW>;
+
+		gpio-adc_on = <&pm8150_gpios 10 GPIO_ACTIVE_LOW>;
+		gpio-oa_en  = <&tlmm 8 GPIO_ACTIVE_LOW>;
+		io-channels = <&pm8150l_vadc ADC_GPIO3_DIV3>;
+		io-channel-names = "colorctrl_voltage_adc";
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&enable_coloring_default &enable_fade_default &sleep_en_default &si_in_1_default
+				&si_in_2_default &adc_on_default &oa_en_default &colorctrl_adc_default>;
+
+		/*para parse*/
+		/*2h:7200s to fade and 24h:86400s to color*/
+		fade_recharge_waitime = <7200>;
+		coloring_recharge_waitime = <43200>;
+
+		wait_check_time = <100 4900>; /*<V1, V2>*/
+		/* recharge need to judge voltage*/
+		fade_open_circuit_vol = <1090 1300 1300>;
+		red_open_circuit_vol  = <1350 1570 1570>;
+		/*froce back to colored state*/
+		reset_ftm_voltage = <1350 1550 1650>;
+		/*effect check*/
+		fade_to_red_check_volt = <1650 1820 1820>;
+		fade_to_red_retry_cnt = <5>;
+
+		red_to_fade_check_volt = <980 1780 1820>;
+		red_to_fade_retry_cnt = <5>;
+
+		temperature_thd_offect = <5000>;
+		/*temperature_thd:<-5000 0 5000 10000 15000 20000 35000 45000 60000 70000>; +5000*/
+		temperature_thd = <0 5000 10000 15000 20000 25000 40000 50000 65000 75000>;
+
+		/*coloring_charge_para_1: <voltage charge_time recharge_virtual_vol recharge_time>*/
+		red_para_1_format = <9 6>;
+		red_charge_para_1 = <0 5000 0 8000 350 17000	/*(-5, 0]*/
+			0 10000 0 5000 350 5000 		/*( 0, 5]*/
+			0  7000 0 4000 350 3000 		/*( 5,10]*/
+			0  6000 0 3500 350 3000 		/*(10,15]*/
+			0  5000 0 3000 350 3000 		/*(15,20]*/
+			0  4000 0 2000 350 3000			/*(20,35]*/
+			0  5000 0 2000 350 1000			/*(35,45]*/
+			0  4500 0 1500 350 1000			/*(45,60]*/
+			0  3000 0 1500   0    0>;		/*(60,70]*/
+
+		/*fade_charge_para_1: <voltage charge_time recharge_vol recharge_time>*/
+		fade_para_1_format = <9 4>;
+		fade_charge_para_1 = <1100 26000 900 11000	/*(-5, 0]*/
+			1100 16000 900 8000			/*( 0, 5]*/
+			1100 12000 900 7000			/*( 5,10]*/
+			1100 10000 900 5000			/*(10,15]*/
+			1100  8000 900 4500			/*(15,20]*/
+			1100  7000 900 4000			/*(20,35]*/
+			1100  6000 900 3500			/*(35,45]*/
+			1100  5000 900 3000			/*(45,60]*/
+			 900  6000 900 3000>;			/*(60,70]*/
+
+		/*coloring_charge_para_2: <voltage charge_time recharge_virtual_vol recharge_time>*/
+		red_para_2_format = <9 4>;
+		red_charge_para_2 = <0 14000 0 5000	/*(-5, 0]*/
+			0   8000 0 4000			/*( 0, 5]*/
+			0   6000 0 3000			/*( 5,10]*/
+			0   6000 0 3000			/*(10,15]*/
+			0   5000 0 2000			/*(15,20]*/
+			0   5000 0 2000			/*(20,35]*/
+			0   4000 0 2000			/*(35,45]*/
+			0   3000 0 2000			/*(45,60]*/
+			0   3000 0 0000>;		/*(60,70]*/
+
+		/*fade_charge_para_2: <voltage charge_time recharge_vol recharge_time>*/
+		fade_para_2_format = <9 4>;
+		fade_charge_para_2 = <1000 24000 900 7000	/*(-5, 0]*/
+			1100 16000 900 6000			/*( 0, 5]*/
+			1100 12000 900 5000			/*( 5,10]*/
+			1100 10000 900 4000			/*(10,15]*/
+			1100  7000 900 3000			/*(15,20]*/
+			1100  6000 900 3000			/*(20,35]*/
+			1100  6000 900 3000			/*(35,45]*/
+			1100  5000 900 3000			/*(45,60]*/
+			 900  6000 000 0000>;			/*(60,70]*/
+
+		thermal_zone_device_names = "4g-5g-pa-therm-usr","battery","sc_mos_temp-usr","skin-msm-therm-usr","skin-therm-usr";
+		thermal_zone_device_weight = <15581 13992 22142 11487 9569 14045>; /* x*10000*/
+		thermal_zone_device_weight_sigh_bit = <1 1 0 1 0 0>;
+
+		colorctrl_v2_support;
+		ec_step_voltage_support;
+
+		/*EVT_1 parameter*/
+		evt1_fade_open_circuit_vol = <1200 1350 1450>;
+		evt1_red_to_fade_check_volt = <1100 1780 1820>;
+		evt1_temperature_thd_offect = <15000>;
+		evt1_temperature_thd = <10000 15000 20000 25000 30000 50000 60000 85000>;
+		evt1_red_para_1_format = <7 4>;
+		evt1_red_charge_para_1 = <350 10000 0 4000	/*(-5, 0]*/
+			350 9000 0 4000			/*( 0, 5]*/
+			350 8000 0 4000			/*( 5,10]*/
+			350 6000 0 3000			/*(10,15]*/
+			350 6000 0 3000			/*(15,35]*/
+			350 4000 0 3000			/*(35,45]*/
+			350 3000 0 3000>;		/*(45,70]*/
+		evt1_fade_para_1_format = <7 4>;
+		evt1_fade_charge_para_1 = <1100 12000 900 4000	/*(-5, 0]*/
+			1100 10000 900 4000			/*( 0, 5]*/
+			1100 10000 900 4000			/*( 5,10]*/
+			1100  8000 900 3000			/*(10,15]*/
+			1100  8000 900 3000			/*(15,35]*/
+			1100  6000 900 3000			/*(35,45]*/
+			800  8000 900 3000>;			/*(45,70]*/
+
+	};
+	/*#endif OPLUS_FEATURE_TP_BASIC*/
+	oplus_sim_detect {
+		compatible = "oplus, sim_detect";
+		Hw,sim_det = "modem_det";
+	};
+
+	//#ifdef OPLUS_FEATRUE_ESIM
+	oplus-gpio {
+		compatible = "oplus,oplus-gpio";
+		pinctrl-names = "default", "sim2_det_no_pull", "sim2_det_pull_high", "sim2_det_pull_low";
+		pinctrl-0 = <&esim_gpio &esim_det_gpio &sim2_det_no_pull>;
+                pinctrl-1 = <&sim2_det_no_pull>;
+                pinctrl-2 = <&sim2_det_pull_high>;
+                pinctrl-3 = <&sim2_det_pull_low>;
+		oplus,oplus-gpio-esim = <&tlmm 67 0>;
+		oplus,oplus-esim-det = <&tlmm 70 0>;
+                oplus,oplus-sim2-det = <&pm8150_gpios 1 0>;
+                oplus,uim-reset-pin = "modem_solution";
+	};
+	//#endif /* OPLUS_FEATRUE_ESIM */
+	feedback_fb {
+		compatible = "oplus,haptic-feedback";
+	};
+};
+
+/*#ifdef OPLUS_FEATURE_TP_BASIC*/
+&L2P {
+	regulator-min-microvolt = <528000>;
+	regulator-max-microvolt = <1504000>;
+	qcom,min-dropout-voltage = <10000>;
+};
+&tlmm {
+	colorctrl_enable_coloring_default{
+		enable_coloring_default: enable_coloring_default {
+			 mux {
+				 pins = "gpio11";
+				 function = "gpio";
+			 };
+
+			 config {
+				 pins = "gpio11";
+				 drive-strength = <8>;
+				 bias-disable = <0>;
+				 output-low;
+			 };
+		 };
+	};
+	colorctrl_oa_en_default{
+		oa_en_default: oa_en_default {
+			mux {
+				pins = "gpio8";
+				function = "gpio";
+		       };
+
+		       config {
+			       pins = "gpio8";
+			       drive-strength = <8>;
+			       bias-disable = <0>;
+			       output-low;
+		       };
+	       };
+	};
+};
+&pm8150l_gpios {
+        colorctrl_enable_fade_default {
+                enable_fade_default: enable_fade_default {
+                        pins = "gpio9";//GPIO 9
+                        function = "normal";
+                        bias-disable; //No Pull
+                        power-source = <0>;
+                        output-low; //digital output, no invert
+                        qcom,drive-strength = <3>; //LOW strength
+                        drive-push-pull;//CMOS
+                };
+        };
+};
+&pm8150_gpios {
+	colorctrl_adc_on_default {
+		adc_on_default: adc_on_default {
+			pins = "gpio10";//GPIO 10
+			function = "normal";
+			bias-disable; //No Pull
+			power-source = <0>;
+			output-low; //digital output, no invert
+			qcom,drive-strength = <3>; //LOW strength
+			drive-push-pull;//adc on
+		};
+	};
+};
+/*#endif OPLUS_FEATURE_TP_BASIC*/
+
+//#ifdef OPLUS_FEATURE_TP_BASIC
+&pm8150b_gpios {
+    colorctrl_sleep_en_default {
+        sleep_en_default: sleep_en_default {
+					pins = "gpio5";//GPIO 5
+					function = "normal";
+					bias-disable; //No Pull
+					power-source = <0>;
+					output-low; //digital output, no invert
+					qcom,drive-strength = <3>; //LOW strength
+					drive-push-pull;//CMOS
+        };
+    };
+};
+&pm8150l_gpios {
+	colorctrl_enable_vm_default {
+		enable_vm_default: enable_vm_default {
+			pins = "gpio9";//GPIO 9
+			function = "normal";
+			bias-disable; //No Pull
+			power-source = <0>;
+			output-low; //digital output, no invert
+			qcom,drive-strength = <3>; //LOW strength
+			drive-push-pull;//CMOS
+		};
+	};
+	colorctrl_si_in_1_default {
+		si_in_1_default: si_in_1_default {
+			pins = "gpio8";//GPIO 8
+			function = "normal";
+			bias-disable; //No Pull
+			power-source = <0>;
+			output-low; //digital output, no invert
+			qcom,drive-strength = <3>; //LOW strength
+			drive-push-pull;//CMOS
+		};
+	};
+	colorctrl_si_in_2_default {
+		si_in_2_default: si_in_2_default {
+			pins = "gpio11";//GPIO 11
+			function = "normal";
+			bias-disable; //No Pull
+			power-source = <0>;
+			output-low; //digital output, no invert
+			qcom,drive-strength = <3>; //LOW strength
+			drive-push-pull;//CMOS
+		};
+	};
+	colorctrl_adc {
+		colorctrl_adc_default: colorctrl_adc_default {
+			pins = "gpio7"; /* GPIO 7 */
+			function = "normal"; /* normal */
+			bias-high-impedance; /* DISABLE GPIO7 for ADC*/
+		};
+	};
+};
+//#endif /* OPLUS_FEATURE_TP_BASIC */
+
+/*&qupv3_se13_i2c {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	status = "ok";
+	qcom,i2c-touch-active = "st,fts";
+
+	st_fts@49 {
+		compatible = "st,fts";
+		reg = <0x49>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <39 0x2008>;
+		vdd-supply = <&pm8150a_l1>;
+		avdd-supply = <&pm8150_l13>;
+		pinctrl-names = "pmx_ts_active", "pmx_ts_suspend";
+		pinctrl-0 = <&ts_active>;
+		pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+		st,irq-gpio = <&tlmm 39 0x2008>;
+		st,reset-gpio = <&tlmm 38 0x00>;
+		st,regulator_dvdd = "vdd";
+		st,regulator_avdd = "avdd";
+		st,x-flip = <1>;
+		st,y-flip = <1>;
+		panel = <&dsi_sw43404_amoled_cmd &dsi_sw43404_amoled_video
+			 &dsi_sw43404_amoled_fhd_plus_cmd>;
+	};
+};
+*/
+//#ifdef OPLUS_FEATURE_TP_BASIC
+&qupv3_se13_i2c {
+	status = "okay";
+	s6sy792_20161@48 {
+		compatible = "sec-s6sy792";
+		reg = <0x48>;
+		chip-name = "S6SY792";
+
+		/* Interrupt && Irq-gpio */
+		interrupt-parent = <&tlmm>;
+		interrupts = <39 0x2008>;
+
+		/* Power Config */
+		vdd_2v8-supply = <&pm8150a_l11>;
+		vcc_1v8-supply = <&pm8150a_l1>;
+		vdd_2v8_volt = <3008000>;
+
+		/* Other HW Resource */
+		irq-gpio = <&tlmm 39 0x2008>;
+		reset-gpio = <&tlmm 38 0x1>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&ts_int_active &ts_reset_active>;
+
+		touchpanel,max-num-support = <10>;
+		touchpanel,tx-rx-num = <16 36>;
+		touchpanel,panel-coords = <5400 12000>;
+		touchpanel,display-coords = <1080 2400>;
+		touchpanel,touchmajor-limit = <160 270>;
+		touchpanel,stop-filter-set = <25>;
+		touchpanel,smooth-level = <255 1 2 4 5 6>;
+		touchpanel,smooth-level-charging = <255 6 8 9 10 11>;
+		touchpanel,sensitive-level = <255 18 13 9 5 1>;
+		touchpanel,sensitive-level-charging = <255 20 16 13 10 3>;
+		touchpanel,single-optimized-time = <8>;
+
+		project_id = <20161>;
+		vid_len = <2>;
+		tp_type = <8>;
+		// type of tp_dev ,TP-SAMSUNG = 8;
+		platform_support_project = <20161 20351 20352 20163>;
+		platform_support_project_dir = <20161 20161 20161 20161>;
+		platform_support_project_commandline = "mdss_dsi_oplus20135samsung_amb655xl08_1080_2400_cmd","mdss_dsi_oplus20135samsung_amb655xl08_1080_2400_cmd",
+				"mdss_dsi_oplus20135samsung_amb655xl08_1080_2400_cmd","mdss_dsi_oplus20135samsung_amb655xl08_1080_2400_cmd";
+
+		prevention,curved_screen_V2;
+		prevention,grip_disable_level = <6>;
+		prevention,updelay_time_ms = <30>;
+		prevention,makeup_cnt_weight = <4 1 2 2 2>;
+		prevention,large_corner_range = <600 1500>;
+		prevention,large_corner_judge_condition = <500 100 500 6 6>;
+		prevention,trx_reject_condition = <8 7 7>;
+		prevention,trx_strict_reject_condition = <8 6 6>;
+		prevention,large_judge_time_ms = <500 50 30>;
+		prevention,large_exit_condition = <8 8 2>;
+		prevention,single_channel_width = <160 160>;
+		prevention,normal_tap_condition = <10 300>;
+		prevention,long_edge_condition = <200 100 180 70>;
+		prevention,long_strict_edge_condition = <160 60>;
+		prevention,long_fingerhold_condition = <50 6 4 4>;
+		prevention,short_edge_condition = <200 100 180 80>;
+		prevention,short_strict_edge_condition = <160 60>;
+		prevention,large_strict_exit_condition = <4 4>;
+		prevention,top_corner_config = <250 750 240>;
+		prevention,edge_swipe_config = <150 500>;
+
+		/* SW Support Feature Control */
+		health_monitor_v2_support;
+		black_gesture_support;
+		charger_pump_support;
+		fw_update_app_support;
+		smart_gesture_support;
+		game_switch_support;
+		kernel_grip_support;
+		fingerprint_underscreen_support;
+		headset_pump_support;
+		pressure_report_support;
+		irq_need_dev_resume_ok;
+		sec_kernel_grip_para = <21000>;
+		auto_test_need_cal_support;
+		control_smooth_flag;
+		exception_upload_support;
+
+		/*
+		 *Virtual Key Config:
+		 *1:touchpanel,button-type: <virtualkey_type  supportted_button-map>
+		 *virtualkey_type:
+		 *Type 1: using board_properties
+		 *Type 2: using same IC (button zone&& touch zone are seprate)
+		 *Type 3: using diffrent IC (button zone&& touch zone are seprate)
+		 *Type 4: No need of virtual key process
+		 *supportted_button-map:select|menu|home|back
+		 *
+		 *2:touchpanel,button-map
+		 *type (X1,Y1)(X2,Y2)(X3,Y3)(Width_X,Hight_Y)--Only when button-type is 0
+		 */
+		touchpanel,button-type = <4>;
+		touchpanel.button-TRx = <0 0>;
+	};
+
+	synaptics20135@20 {
+		compatible = "synaptics-s3706";
+		reg = <0x20>;
+		chip-name = "S3706";
+
+		/* Interrupt && Irq-gpio */
+		interrupt-parent = <&tlmm>;
+		interrupts = <39 0x2008>;
+
+		/* Power Config */
+		vdd_2v8-supply = <&pm8150_l13>;
+		vcc_1v8-supply = <&pm8150a_l1>;
+		vdd_2v8_volt = <3008000>;
+
+		/* Other HW Resource */
+		irq-gpio = <&tlmm 39 0x2008>;
+		reset-gpio = <&tlmm 38 0x1>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&ts_int_active &ts_reset_active>;
+
+		touchpanel,max-num-support = <10>;
+		touchpanel,tx-rx-num = <16 34>;
+		touchpanel,panel-coords = <1080 2340>;
+		touchpanel,display-coords = <1080 2340>;
+		touchpanel,touchmajor-limit = <0 54>;
+		project_id = <20135>;
+
+                vid-len = <2>;
+                tp_type = <8>;
+                // type of tp_dev ,TP-SAMSUNG = 8;
+
+                platform_support_project = <20135 20137 20139 20235>;
+
+                platform_support_project_dir = <20135 20135 20135 20135>;
+
+                platform_support_project_commandline = "mdss_dsi_oplus19161samsung_ams655ug04_1080_2400_cmd", "mdss_dsi_oplus19161samsung_ams655ug04_1080_2400_cmd",
+					"mdss_dsi_oplus19161samsung_ams655ug04_1080_2400_cmd", "mdss_dsi_oplus19161samsung_ams655ug04_1080_2400_cmd";
+
+		/* SW Support Feature Control */
+		black_gesture_support;
+		fw_edge_limit_support;
+		fw_corner_limit_support;
+		pressure_report_support;
+		//spurious_fingerprint_support;
+		charger_pump_support;
+		game_switch_support;
+		face_detect_support;
+		smart_gesture_support;
+		fw_update_app_support;
+		fingerprint_underscreen_support;
+		rt155_fdreplace_rt59_support;
+		report_120hz_support;
+		/*
+		 *Virtual Key Config:
+		 *1:touchpanel,button-type: <virtualkey_type  supportted_button-map>
+		 *virtualkey_type:
+		 *Type 1: using board_properties
+		 *Type 2: using same IC (button zone&& touch zone are seprate)
+		 *Type 3: using diffrent IC (button zone&& touch zone are seprate)
+		 *Type 4: No need of virtual key process
+		 *supportted_button-map:select|menu|home|back
+		 *
+		 *2:touchpanel,button-map
+		 *type (X1,Y1)(X2,Y2)(X3,Y3)(Width_X,Hight_Y)--Only when button-type is 0
+		 */
+		touchpanel,button-type = <4>;
+		touchpanel.button-TRx = <0 0>;
+	};
+};
+//#endif /*OPLUS_FEATURE_TP_BASIC*/
+
+&vendor {
+	bluetooth: bt_qca6390 {
+		compatible = "qca,qca6390";
+		pinctrl-names = "default";
+		pinctrl-0 = <&bt_en_sleep>;
+		qca,bt-reset-gpio = <&tlmm 21 0>; /* BT_EN */
+		qca,wl-reset-gpio = <&tlmm 20 0>; /* WL_EN */
+		qca,bt-vdd-aon-supply = <&pm8150_s6>;
+//#ifdef OPLUS_ARCH_EXTENDS
+		//qca,bt-vdd-dig-supply = <&pm8009_s2>;
+//#endif /* OPLUS_ARCH_EXTENDS */
+		qca,bt-vdd-rfa1-supply = <&pm8150_s5>;
+		qca,bt-vdd-rfa2-supply = <&pm8150a_s8>;
+//#ifdef OPLUS_FEATURE_FINGERPRINT
+		//qca,bt-vdd-asd-supply = <&pm8150_l16>;
+//#endif /*OPLUS_FEATURE_FINGERPRINT*/
+
+		qca,bt-vdd-aon-voltage-level = <950000 950000>;
+//#ifdef OPLUS_ARCH_EXTENDS
+		//qca,bt-vdd-dig-voltage-level = <950000 952000>;
+//#endif /* OPLUS_ARCH_EXTENDS */
+		qca,bt-vdd-rfa1-voltage-level = <1900000 1900000>;
+		qca,bt-vdd-rfa2-voltage-level = <1350000 1350000>;
+		qca,bt-vdd-asd-voltage-level = <3024000 3304000>;
+
+		qca,bt-vdd-asd-current-level = <10000>;
+	};
+
+	kona_mtp_batterydata: qcom,battery-data {
+		qcom,batt-id-range-pct = <15>;
+		#include "fg-gen4-batterydata-alium-3600mah.dtsi"
+		#include "fg-gen4-batterydata-ascent-3450mah.dtsi"
+	};
+
+	extcon_usb1: extcon_usb1 {
+		compatible = "linux,extcon-usb-gpio";
+//#ifndef OPLUS_FEATURE_CHG_BASIC
+		//vbus-gpio = <&pm8150_gpios 10 GPIO_ACTIVE_HIGH>;
+/*#endif*/
+		id-gpio = <&tlmm 91 GPIO_ACTIVE_HIGH>;
+//#ifndef OPLUS_FEATURE_CHG_BASIC
+		//vbus-out-gpio = <&pm8150_gpios 9 GPIO_ACTIVE_HIGH>;
+
+		//pinctrl-names = "default";
+		//pinctrl-0 = <&usb2_vbus_det_default
+		//	     &usb2_id_det_default
+		//	     &usb2_vbus_boost_default>;
+/*#endif*/
+	};
+};
+
+&vreg_hap_boost {
+	status = "ok";
+};
+
+&pm8150b_haptics {
+	vdd-supply = <&vreg_hap_boost>;
+};
+
+&pm8150b_vadc {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	vph_pwr@83 {
+		reg = <ADC_VPH_PWR>;
+		label = "vph_pwr";
+		qcom,pre-scaling = <1 3>;
+	};
+
+	conn_therm@4f {
+		reg = <ADC_AMUX_THM3_PU2>;
+		label = "conn_therm";
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+		qcom,pre-scaling = <1 1>;
+	};
+
+	chg_sbux@99 {
+		reg = <ADC_SBUx>;
+		label = "chg_sbux";
+		qcom,pre-scaling = <1 3>;
+	};
+
+	mid_chg_div6@1e {
+		reg = <ADC_MID_CHG_DIV6>;
+		label = "chg_mid";
+		qcom,pre-scaling = <1 6>;
+	};
+
+	usb_in_i_uv@7 {
+		reg = <ADC_USB_IN_I>;
+		label = "usb_in_i_uv";
+		qcom,pre-scaling = <1 1>;
+	};
+
+	usb_in_v_div_16@8 {
+		reg = <ADC_USB_IN_V_16>;
+		label = "usb_in_v_div_16";
+		qcom,pre-scaling = <1 16>;
+	};
+	camera_flash_therm@4d {
+		reg = <ADC_GPIO3_PU2>;
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+	};
+
+//#ifdef OPLUS_FEATURE_CHG_BASIC
+	usb_supplementary_temp_adc@55 {
+		reg = <ADC_GPIO4_PU2>;
+		label = "usb_supplementary_temp_adc";
+		qcom,ratiometric;
+		qcom,pre-scaling = <1 1>;
+	};
+
+	sc_mos_temp@53 { //GPIO12
+		reg = <ADC_GPIO2_PU2>;
+		label = "sc_mos_temp";
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+		qcom,pre-scaling = <1 1>;
+	};
+//#endif
+
+};
+
+//#ifdef VENDOR_EDIT//Qingjun.Wang@BSP.Haptic,add 2020/03/17 for vib aw8697
+&qupv3_se11_i2c  {
+	status = "ok";
+	/* AWINIC AW8697 Haptic */
+	aw8697_haptic@5A {
+		compatible = "awinic,aw8697_haptic";
+		reg = <0x5A>;
+		reset-gpio = <&tlmm 72 0>;
+		irq-gpio = <&tlmm 47 0>;
+		status = "ok";
+		qcom,device_id = <815>;//19065
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&aw_irq_gpio_default>;
+	};
+	/* AWINIC AW8697 Haptic End */
+};
+//#endif
+
+&pm8150b_charger {
+	status = "ok";
+	qcom,sec-charger-config = <1>;
+	qcom,auto-recharge-soc = <98>;
+	io-channels = <&pm8150b_vadc ADC_MID_CHG_DIV6>,
+		      <&pm8150b_vadc ADC_USB_IN_I>,
+		      <&pm8150b_vadc ADC_SBUx>,
+		      <&pm8150b_vadc ADC_VPH_PWR>,
+		      <&pm8150b_vadc ADC_CHG_TEMP>,
+			  <&pm8150b_vadc ADC_GPIO3>,
+			  <&pm8150b_vadc ADC_AMUX_THM4_PU2>,
+			  <&pm8150b_vadc ADC_GPIO4_PU2>;
+//#else
+		      //<&pm8150b_vadc ADC_CHG_TEMP>;
+//#endif
+	io-channel-names = "mid_voltage",
+			   "usb_in_current",
+			   "sbux_res",
+			   "vph_voltage",
+			   "chg_temp",
+			   "chgID_voltage_adc",
+			   "usb_temp_adc",
+			   "usb_supplementary_temp_adc";
+//#else
+				///"chg_temp";
+//#endif
+	qcom,battery-data = <&kona_mtp_batterydata>;
+	qcom,step-charging-enable;
+	qcom,sw-jeita-enable;
+	qcom,wd-bark-time-secs = <16>;
+	qcom,suspend-input-on-debug-batt;
+	qcom,fcc-stepping-enable;
+	qcom,smb-internal-pull-kohm = <0>;
+};
+
+&pm8150b_fg {
+//#ifndef OPLUS_FEATURE_CHG_BASIC
+//	status = "ok";
+//#else
+	status = "disabled";
+///#endif
+	qcom,battery-data = <&kona_mtp_batterydata>;
+	qcom,hold-soc-while-full;
+	qcom,linearize-soc;
+	qcom,five-pin-battery;
+	qcom,cl-wt-enable;
+	qcom,soc-scale-mode-en;
+	qcom,force-calib-level = <130>;
+	/* ESR fast calibration */
+	qcom,fg-esr-timer-chg-fast = <0 7>;
+	qcom,fg-esr-timer-dischg-fast = <0 7>;
+	qcom,fg-esr-timer-chg-slow = <0 96>;
+	qcom,fg-esr-timer-dischg-slow = <0 96>;
+	qcom,fg-esr-cal-soc-thresh = <26 230>;
+	qcom,fg-esr-cal-temp-thresh = <10 40>;
+};
+
+&qupv3_se15_i2c {
+	#address-cells = <1>;
+	#size-cells = <0>;
+#include "smb1390.dtsi"
+
+	halo,hl6111r@25 {
+		compatible = "halo,hl6111r";
+		reg = <0x25>;
+		status = "ok";
+	};
+};
+
+/*
+&smb1390 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&smb_stat_default>;
+	status = "ok";
+};
+*/
+//#endif
+
+&smb1390_charger {
+	io-channels = <&pm8150b_vadc ADC_AMUX_THM2>;
+	io-channel-names = "cp_die_temp";
+	qcom,parallel-output-mode = <2>;
+	qcom,min-ilim-ua = <750000>;
+	status = "ok";
+};
+
+&smb1390_slave {
+	status = "ok";
+};
+
+&smb1390_slave_charger {
+	status = "ok";
+};
+
+&pm8150_vadc {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	vph_pwr@83 {
+		reg = <ADC_VPH_PWR>;
+		label = "vph_pwr";
+		qcom,pre-scaling = <1 3>;
+	};
+
+	vcoin@85 {
+		reg = <ADC_VCOIN>;
+		label = "vcoin";
+		qcom,pre-scaling = <1 3>;
+	};
+
+	xo_therm@4c {
+		reg = <ADC_XO_THERM_PU2>;
+		label = "xo_therm";
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+		qcom,pre-scaling = <1 1>;
+	};
+
+	skin_therm@4d {
+		reg = <ADC_AMUX_THM1_PU2>;
+		label = "skin_therm";
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+		qcom,pre-scaling = <1 1>;
+	};
+
+	pa_therm1@4e {
+		reg = <ADC_AMUX_THM2_PU2>;
+		label = "pa_therm1";
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+		qcom,pre-scaling = <1 1>;
+	};
+};
+
+&pm8150l_vadc {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	vph_pwr@83 {
+		reg = <ADC_VPH_PWR>;
+		label = "vph_pwr";
+		qcom,pre-scaling = <1 3>;
+	};
+//#ifdef VENDOR_EDIT
+	4g_5g_pa_therm@4d {
+		reg = <ADC_AMUX_THM1_PU2>;
+		label = "4g-5g-pa-therm-usr";
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+		qcom,pre-scaling = <1 1>;
+	};
+// #endif
+	skin_msm_therm@4e {
+		reg = <ADC_AMUX_THM2_PU2>;
+		label = "skin_msm_therm";
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+		qcom,pre-scaling = <1 1>;
+	};
+
+	pa_therm2@4f {
+		reg = <ADC_AMUX_THM3_PU2>;
+		label = "pa_therm2";
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+		qcom,pre-scaling = <1 1>;
+	};
+/*#ifdef OPLUS_FEATURE_TP_BASIC*/
+	colorctrl_voltage_adc {
+		reg = <ADC_GPIO3_DIV3>;
+		label = "colorctrl_voltage_adc";
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+		qcom,avg-samples = <2>;
+		qcom,pre-scaling = <1 3>;
+	};
+/*#endif OPLUS_FEATURE_TP_BASIC*/
+};
+
+&pm8150b_adc_tm {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	io-channels = <&pm8150b_vadc ADC_AMUX_THM3_PU2>,
+			<&pm8150b_vadc ADC_GPIO3_PU2>,
+			<&pm8150b_vadc ADC_GPIO2_PU2>;
+
+	conn_therm@4f {
+		reg = <ADC_AMUX_THM3_PU2>;
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+	};
+
+	camera_flash_therm@4d {
+		reg = <ADC_GPIO3_PU2>;
+		label = "camera_flash_therm";
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+		qcom,pre-scaling = <1 1>;
+	};
+
+	sc_mos_temp@53 {   //GPIO12
+		reg = <ADC_GPIO2_PU2>;
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+	};
+};
+
+&pm8150_adc_tm {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	io-channels = <&pm8150_vadc ADC_XO_THERM_PU2>,
+			<&pm8150_vadc ADC_AMUX_THM1_PU2>,
+			<&pm8150_vadc ADC_AMUX_THM2_PU2>;
+
+	xo_therm@4c {
+		reg = <ADC_XO_THERM_PU2>;
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+	};
+
+	skin_therm@4d {
+		reg = <ADC_AMUX_THM1_PU2>;
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+	};
+
+	pa_therm1@4e {
+		reg = <ADC_AMUX_THM2_PU2>;
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+	};
+};
+
+&pm8150l_adc_tm {
+	#address-cells = <1>;
+	#size-cells = <0>;
+//#ifdef VENDOR_EDIT
+	4g_5g_pa_therm@4d {
+		reg = <ADC_AMUX_THM1_PU2>;
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+	};
+// #endif
+	skin_msm_therm@4e {
+		reg = <ADC_AMUX_THM2_PU2>;
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+	};
+
+	pa_therm2@4f {
+		reg = <ADC_AMUX_THM3_PU2>;
+		qcom,ratiometric;
+		qcom,hw-settle-time = <200>;
+	};
+};
+
+&spmi_debug_bus {
+	status = "ok";
+};
+
+&dsi_sw43404_amoled_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <1023>;
+	qcom,mdss-brightness-max-level = <255>;
+	qcom,platform-te-gpio = <&tlmm 66 0>;
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	qcom,mdss-dsi-panel-test-pin = <&tlmm 46 0>;
+};
+
+&dsi_sw43404_amoled_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <1023>;
+	qcom,mdss-brightness-max-level = <255>;
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	qcom,mdss-dsi-panel-test-pin = <&tlmm 46 0>;
+};
+
+&dsi_sw43404_amoled_fhd_plus_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <1023>;
+	qcom,mdss-brightness-max-level = <255>;
+	qcom,platform-te-gpio = <&tlmm 66 0>;
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	qcom,mdss-dsi-panel-test-pin = <&tlmm 46 0>;
+};
+
+&dsi_sim_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+};
+
+&dsi_sim_vid {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+};
+
+&dsi_sim_dsc_375_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+};
+
+&dsi_sim_dsc_10b_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+};
+
+&dsi_dual_sim_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+};
+
+&dsi_dual_sim_vid {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+};
+
+&dsi_dual_sim_dsc_375_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+};
+
+&dsi_sim_sec_hd_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,panel-sec-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-sec-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <1023>;
+	qcom,platform-reset-gpio = <&tlmm 75 0>;
+	qcom,platform-sec-reset-gpio = <&tlmm 128 0>;
+};
+//#ifdef VENDOR_EDIT
+&sde_dsi {
+	qcom,dsi-default-panel = <&dsi_oplus19065_samsung_1440_3168_dsc_cmd>;
+};
+//#endif
+&thermal_zones {
+	conn-therm-usr {
+		polling-delay-passive = <0>;
+		polling-delay = <0>;
+		thermal-governor = "user_space";
+		thermal-sensors = <&pm8150b_adc_tm ADC_AMUX_THM3_PU2>;
+		wake-capable-sensor;
+		trips {
+			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+		};
+	};
+
+	xo-therm-usr {
+		polling-delay-passive = <0>;
+		polling-delay = <0>;
+		thermal-governor = "user_space";
+		thermal-sensors = <&pm8150_adc_tm ADC_XO_THERM_PU2>;
+		wake-capable-sensor;
+		trips {
+			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+		};
+	};
+
+	skin-therm-usr {
+		polling-delay-passive = <0>;
+		polling-delay = <0>;
+		thermal-governor = "user_space";
+		thermal-sensors = <&pm8150_adc_tm ADC_AMUX_THM1_PU2>;
+		wake-capable-sensor;
+		trips {
+			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+		};
+	};
+
+	mmw-pa1-usr {
+		polling-delay-passive = <0>;
+		polling-delay = <0>;
+		thermal-governor = "user_space";
+		thermal-sensors = <&pm8150_adc_tm ADC_AMUX_THM2_PU2>;
+		wake-capable-sensor;
+		trips {
+			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+		};
+	};
+
+//#ifdef VENDOR_EDIT
+	4g-5g-pa-therm-usr {
+		polling-delay-passive = <0>;
+		polling-delay = <0>;
+		thermal-governor = "user_space";
+		thermal-sensors = <&pm8150l_adc_tm ADC_AMUX_THM1_PU2>;
+		wake-capable-sensor;
+		trips {
+			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+		};
+	};
+// #endif
+
+	camera-therm-usr {
+		polling-delay-passive = <0>;
+		polling-delay = <0>;
+		thermal-governor = "user_space";
+		thermal-sensors = <&pm8150b_adc_tm ADC_GPIO3_PU2>;
+		wake-capable-sensor;
+		trips {
+			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+		};
+	};
+
+	skin-msm-therm-usr {
+		polling-delay-passive = <0>;
+		polling-delay = <0>;
+		thermal-governor = "user_space";
+		thermal-sensors = <&pm8150l_adc_tm ADC_AMUX_THM2_PU2>;
+		wake-capable-sensor;
+		trips {
+			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+			active-config1 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+		};
+	};
+
+	mmw-pa2-usr {
+		polling-delay-passive = <0>;
+		polling-delay = <0>;
+		thermal-governor = "user_space";
+		thermal-sensors = <&pm8150l_adc_tm ADC_AMUX_THM3_PU2>;
+		wake-capable-sensor;
+		trips {
+			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+		};
+	};
+
+	sc_mos_temp-usr {
+		polling-delay-passive = <0>;
+		polling-delay = <0>;
+		thermal-governor = "user_space";
+		thermal-sensors = <&pm8150b_adc_tm ADC_GPIO2_PU2>;
+		wake-capable-sensor;
+		trips {
+			active-config0 {
+				temperature = <125000>;
+				hysteresis = <1000>;
+				type = "passive";
+			};
+		};
+	};
+
+};
+
+&sdhc_2 {
+	vdd-supply = <&pm8150a_l9>;
+	qcom,vdd-voltage-level = <2800000 2960000>;
+	qcom,vdd-current-level = <200 800000>;
+
+	vdd-io-supply = <&pm8150a_l6>;
+	qcom,vdd-io-voltage-level = <1808000 2960000>;
+	qcom,vdd-io-current-level = <200 22000>;
+
+	pinctrl-names = "active", "sleep";
+	pinctrl-0 = <&sdc2_clk_on  &sdc2_cmd_on &sdc2_data_on &storage_cd>;
+	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &storage_cd>;
+
+	cd-gpios = <&tlmm 77 GPIO_ACTIVE_LOW>;
+//#ifdef VENDOR_EDIT
+	status = "disabled";
+//#else
+	//status = "ok";
+//#endif
+};
+
+&usb1 {
+	extcon = <&extcon_usb1>;
+};
+
+&wil6210 {
+	status = "disabled";
+};
+
+//#ifdef OPLUS_FEATURE_CHG_BASIC
+&pm8150b_gpios {
+      gpio7_adc {
+        gpio7_adc_default: gpio7_adc_default {
+        pins = "gpio7"; /* GPIO 7 */
+        function = "normal"; /* normal */
+        bias-high-impedance; /* DISABLE GPIO7 for ADC*/
+        };
+    };
+    gpio1_adc {
+        gpio1_adc_default: gpio1_adc_default {
+        pins = "gpio1"; /* GPIO 1 */
+        function = "normal"; /* normal */
+        bias-high-impedance; /* DISABLE GPIO1 for ADC*/
+        };
+    };
+    gpio8_adc {
+        gpio8_adc_default: gpio8_adc_default {
+        pins = "gpio8"; /* GPIO 8 */
+        function = "normal"; /* normal */
+        bias-high-impedance; /* DISABLE GPIO8 for ADC*/
+        };
+    };
+
+    gpio12_adc {
+        gpio12_adc_default: gpio12_adc_default {
+        pins = "gpio12"; /* GPIO 12 */
+        function = "normal"; /* normal */
+        bias-high-impedance; /* DISABLE GPIO12 for ADC*/
+        };
+    };
+
+};
+// #endif
+//#ifdef VENDOR_EDIT
+&pm8150l_gpios {
+    gpio5_adc {
+        gpio5_adc_default: gpio5_adc_default {
+        pins = "gpio5"; /* GPIO 5 */
+        function = "normal"; /* normal */
+        bias-high-impedance; /* DISABLE GPIO5 for ADC*/
+        };
+    };
+};
+//#endif
+
+&pm8150_gpios {
+	dischg_enable: dischg_enable {
+		pins = "gpio9"; /* GPIO 9 */
+		function = "normal"; /* normal */
+		bias-disable; //No Pull
+		power-source = <0>;//VIN0 3.3
+		output-high; //digital output, no invert
+		qcom,drive-strength = <3>; //LOW strength
+		//drive-push-pull;//CMOS
+	};
+
+	dischg_disable: dischg_disable {
+		pins = "gpio9"; /* GPIO 9 */
+		function = "normal"; /* normal */
+		bias-disable; //No Pull
+		power-source = <0>;//VIN0 3.3
+		output-low; //digital output, no invert
+		qcom,drive-strength = <3>; //LOW strength
+		//drive-push-pull;//CMOS
+	};
+
+	mps_otg_en_active: mps_otg_en_active {
+		pins = "gpio3"; /* GPIO 3 */
+		function = "normal"; /* normal */
+		bias-disable; //No Pull
+		power-source = <0>;//VIN1 1.8
+		output-high; //digital output, no invert
+		qcom,drive-strength = <3>; //LOW strength
+		//drive-push-pull;//CMOS
+	};
+	mps_otg_en_sleep: mps_otg_en_sleep {
+		pins = "gpio3"; /* GPIO 3 */
+		function = "normal"; /* normal */
+		bias-disable; //No Pull
+		power-source = <0>;//VIN1 1.8
+		output-low; //digital output, no invert
+		qcom,drive-strength = <3>; //LOW strength
+		//drive-push-pull;//CMOS
+	};
+	mps_otg_en_default: mps_otg_en_default {
+		pins = "gpio3"; /* GPIO 3 */
+		function = "normal"; /* normal */
+		bias-disable; //No Pull
+		power-source = <0>;//VIN1 1.8
+		output-low; //digital output, no invert
+		qcom,drive-strength = <3>; //LOW strength
+		//drive-push-pull;//CMOS
+	};
+
+	hw_id_active: hw_id_active {
+		pins = "gpio1"; /* GPIO 1 */
+		function = "normal"; /* normal */
+		input-enable;
+		bias-pull-up;
+		power-source = <0>;
+	};
+
+	hw_id_sleep: hw_id_sleep {
+		pins = "gpio1"; /* GPIO 1 */
+		function = "normal"; /* normal */
+		input-enable;
+		bias-pull-down;
+		power-source = <0>;	/* 1.8V input supply */
+	};
+};
+
+&qupv3_se5_i2c {
+	status = "okay";
+	qcom,clk-freq-out = <400000>;
+	qcom,noise-rjct-scl = <3>;
+	qcom,noise-rjct-sda = <3>;
+
+	mp2650-charger@5c {
+		status = "okay";
+		compatible = "oplus,mp2650-charger";
+		reg = <0x5c 0>;
+
+		qcom,mps_otg_en-gpio = <&pm8150_gpios 3 0x00>;
+		pinctrl-names = "mps_otg_en_active", "mps_otg_en_sleep", "mps_otg_en_default";
+		pinctrl-0 = <&mps_otg_en_active>;
+		pinctrl-1 = <&mps_otg_en_sleep>;
+		pinctrl-2 = <&mps_otg_en_default>;
+
+	};
+};
+
+&qupv3_se16_i2c {
+	status = "okay";
+	qcom,clk-freq-out = <100000>;
+
+//#ifdef OPLUS_FEATURE_CHG_BASIC//Fanhong.Kong@ProDrv.CHG,add 2018/04/20 for SVOOC
+
+	da9313-divider@68 {
+		status = "okay";
+		compatible = "oplus,da9313-divider";
+		reg = <0x68 0>;
+	};
+//#endif /*OPLUS_FEATURE_CHG_BASIC*/
+
+	bq27541-battery@55 {
+		status = "okay";
+		compatible = "oplus,bq27541-battery";
+		reg = <0x55>;
+		qcom,modify-soc-smooth;
+		qcom,modify-soc-calibration;
+		qcom,batt_bq28z610;
+		//qcom,bq28z610_need_balancing;
+	};
+
+	rk826_fastcg@0a{
+		status = "disabled";
+		compatible = "oplus,rk826-fastcg";
+		reg = <0x0a 0>;
+		qcom,vooc-low-temp = <0>;
+		qcom,oplus_batt_4400mv;
+		qcom,support_vooc_by_normal_charger_path;
+		//qcom,vooc_fw_update_newmethod;
+		qcom,vooc-high-temp = <430>;
+		qcom,vooc-low-soc = <1>;
+		qcom,vooc-high-soc = <90>;
+		qcom,vooc-fw-type = <4>;
+		qcom,vooc_reply_mcu_bits = <7>;
+
+		qcom,vooc_multistep_adjust_current_support;
+		qcom,vooc_multistep_initial_batt_temp = <1000>;
+		qcom,vooc_strategy_normal_current = <0x0C>;
+		qcom,vooc_batt_over_high_temp = <440>;
+
+		qcom,vooc_strategy1_batt_high_temp0 = <400>;
+		qcom,vooc_strategy1_batt_high_temp1 = <420>;
+		qcom,vooc_strategy1_batt_high_temp2 = <430>;
+		qcom,vooc_strategy1_batt_low_temp2 = <420>;
+		qcom,vooc_strategy1_batt_low_temp1 = <410>;
+		qcom,vooc_strategy1_batt_low_temp0 = <390>;
+
+		qcom,vooc_strategy1_high_current0 = <0x09>;
+		qcom,vooc_strategy1_high_current1 = <0x07>;
+		qcom,vooc_strategy1_high_current2 = <0x05>;
+		qcom,vooc_strategy1_low_current2 = <0x07>;
+		qcom,vooc_strategy1_low_current1 = <0x09>;
+		qcom,vooc_strategy1_low_current0 = <0x0C>;
+		qcom,vooc_current_lvl = <1000
+					1500
+					2000
+					2500
+					3000
+					3500
+					4000
+					4500
+					5000
+					5500
+					6000
+					6500
+					7000
+					7500
+					8000
+					8500
+					9000
+					9500
+					10000
+					10500
+					11000
+					11500
+					12000
+					12500>;
+
+		pinctrl-names = "switch1_act_switch2_act", "switch1_sleep_switch2_sleep",
+						"switch1_act_switch3_act", "switch1_sleep_switch3_sleep",
+						"switch1_act_switch2_sleep", "switch1_sleep_switch2_act",
+						"clock_active","clock_sleep",
+						"data_active","data_sleep",
+						"reset_active","reset_sleep",
+						"vooc_asic_id_active","vooc_asic_id_sleep";
+//						"charging_switch1_ctr1_active","charging_switch1_ctr1_sleep";
+		pinctrl-0 = <&charging_switch1_active>;
+		pinctrl-1 = <&charging_switch1_sleep>;
+		pinctrl-2 = <&charging_switch1_active>;
+		pinctrl-3 = <&charging_switch1_sleep>;
+		pinctrl-4 = <&charging_switch1_active>;
+		pinctrl-5 = <&charging_switch1_sleep>;
+		pinctrl-6 = <&charging_clock_active>;
+		pinctrl-7 = <&charging_clock_sleep>;
+		pinctrl-8 = <&charging_data_active>;
+		pinctrl-9 = <&charging_data_sleep>;
+		pinctrl-10 = <&charging_reset_active>;
+		pinctrl-11 = <&charging_reset_sleep>;
+//		pinctrl-12 = <&charging_switch1_ctr1_active>;
+//		pinctrl-13 = <&charging_switch1_ctr1_sleep>;
+		pinctrl-12 = <&vooc_asic_id_active>;
+		pinctrl-13 = <&vooc_asic_id_sleep>;
+
+
+		qcom,charging_switch1-gpio 		= <&tlmm 82 0x00>;		//check
+		qcom,charging_switch1_ctr1-gpio 	= <&tlmm 119 0x00>;	//empty
+		//qcom,charging_switch2-gpio 		= <&tlmm 113 0x00>;
+		//qcom,charging_switch3-gpio 		= <&tlmm 38 0x00>;
+
+		qcom,charging_reset-gpio 		= <&tlmm 10 0x00>;		//check
+		qcom,charging_clock-gpio 		= <&tlmm 121 0x00>;		//check
+		qcom,charging_data-gpio 		= <&tlmm 122 0x00>;		//check
+		qcom,vooc_asic_id-gpio			= <&tlmm 64 0x00>;
+	};
+
+	rt5125-fastcg@0e{
+		status = "okay";
+		compatible = "oplus,rt5125-fastcg";
+		reg = <0x0e 0>;
+//		qcom,vooc-low-temp = <120>;
+		qcom,oplus_batt_4250mv;
+		qcom,vooc_fw_update_newmethod;
+		qcom,vooc-fw-type = <5>;
+		qcom,vooc_reply_mcu_bits = <7>;
+
+		qcom,vooc-low-temp = <0>;
+		qcom,support_vooc_by_normal_charger_path;
+		qcom,vooc-high-temp = <430>;
+		qcom,vooc-low-soc = <1>;
+		qcom,vooc-high-soc = <90>;
+
+		qcom,vooc_cool_bat_volt = <3650>;
+		qcom,vooc_little_cool_bat_volt = <3550>;
+		qcom,vooc_normal_bat_volt = <3450>;
+		qcom,vooc_warm_bat_volt = <3350>;
+
+		qcom,vooc_cool_bat_suspend_volt = <3650>;
+		qcom,vooc_little_cool_bat_suspend_volt = <3550>;
+		qcom,vooc_normal_bat_suspend_volt = <3450>;
+		qcom,vooc_warm_bat_suspend_volt = <3350>;
+
+		qcom,vooc_multistep_adjust_current_support;
+		qcom,vooc_multistep_initial_batt_temp = <1000>;
+		qcom,vooc_strategy_normal_current = <0x0C>;
+
+		qcom,vooc-normal-to-little-cool-current = <0x05>;
+		qcom,vooc_batt_over_high_temp = <440>;
+		qcom,vooc_batt_over_low_temp = <45>;
+		qcom,vooc_over_high_or_low_current = <0x0>;
+
+		qcom,vooc_strategy1_batt_high_temp0 = <400>;
+		qcom,vooc_strategy1_batt_high_temp1 = <420>;
+		qcom,vooc_strategy1_batt_high_temp2 = <430>;
+		qcom,vooc_strategy1_batt_low_temp2 = <420>;
+		qcom,vooc_strategy1_batt_low_temp1 = <410>;
+		qcom,vooc_strategy1_batt_low_temp0 = <390>;
+
+		qcom,vooc_strategy1_high_current0 = <0x09>;//max current
+		qcom,vooc_strategy1_high_current1 = <0x07>;//
+		qcom,vooc_strategy1_high_current2 = <0x05>;//
+		qcom,vooc_strategy1_low_current2 = <0x07>;//
+		qcom,vooc_strategy1_low_current1 = <0x09>;//
+		qcom,vooc_strategy1_low_current0 = <0x0C>;//
+/*
+		qcom,vooc_strategy2_batt_up_temp1 = <375>;
+		qcom,vooc_strategy2_batt_up_down_temp2 = <360>;
+		qcom,vooc_strategy2_batt_up_temp3 = <390>;
+		qcom,vooc_strategy2_batt_up_down_temp4 = <400>;
+		qcom,vooc_strategy2_batt_up_temp5 = <410>;
+		qcom,vooc_strategy2_batt_up_temp6 = <415>;
+		qcom,vooc_strategy2_high0_current = <0x05>;
+		qcom,vooc_strategy2_high1_current = <0x04>;
+		qcom,vooc_strategy2_high2_current = <0x03>;
+		qcom,vooc_strategy2_high3_current = <0x02>;
+*/
+		qcom,vooc_current_lvl = <1000
+					1500
+					2000
+					2500
+					3000
+					3500
+					4000
+					4500
+					5000
+					5500
+					6000
+					6500
+					7000
+					7500
+					8000
+					8500
+					9000
+					9500
+					10000
+					10500
+					11000
+					11500
+					12000
+					12500>;
+		
+
+		pinctrl-names = "switch1_act_switch2_act", "switch1_sleep_switch2_sleep",
+						"switch1_act_switch3_act", "switch1_sleep_switch3_sleep",
+						"switch1_act_switch2_sleep", "switch1_sleep_switch2_act",
+						"clock_active","clock_sleep",
+						"data_active","data_sleep",
+						"reset_active","reset_sleep",
+						"vooc_asic_id_active","vooc_asic_id_sleep";
+//						"charging_switch1_ctr1_active","charging_switch1_ctr1_sleep";
+		pinctrl-0 = <&charging_switch1_active>;
+		pinctrl-1 = <&charging_switch1_sleep>;
+		pinctrl-2 = <&charging_switch1_active>;
+		pinctrl-3 = <&charging_switch1_sleep>;
+		pinctrl-4 = <&charging_switch1_active>;
+		pinctrl-5 = <&charging_switch1_sleep>;
+		pinctrl-6 = <&charging_clock_active>;
+		pinctrl-7 = <&charging_clock_sleep>;
+		pinctrl-8 = <&charging_data_active>;
+		pinctrl-9 = <&charging_data_sleep>;
+		pinctrl-10 = <&charging_reset_active>;
+		pinctrl-11 = <&charging_reset_sleep>;
+		pinctrl-12 = <&vooc_asic_id_active>;
+		pinctrl-13 = <&vooc_asic_id_sleep>;
+
+		qcom,charging_switch1-gpio 		= <&tlmm 82 0x00>;		//check
+		qcom,charging_switch1_ctr1-gpio 	= <&tlmm 119 0x00>;	//empty
+		//qcom,charging_switch2-gpio 		= <&tlmm 113 0x00>;
+		//qcom,charging_switch3-gpio 		= <&tlmm 38 0x00>;
+
+		qcom,charging_reset-gpio 		= <&tlmm 10 0x00>;		//check
+		qcom,charging_clock-gpio 		= <&tlmm 121 0x00>;		//check
+		qcom,charging_data-gpio 		= <&tlmm 122 0x00>;		//check
+		qcom,vooc_asic_id-gpio			= <&tlmm 64 0x00>;
+
+		qcom,vooc-max-input-volt-support = <10000>;     //10V
+		qcom,vooc-max-input-current-support = <6500>;   //6A
+
+		qcom,parse_fw_from_dt;
+		vooc,firmware_data = [
+			e8 05 00 20 31 01 00 00 39 01 00 00 3b 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+			00 00 00 00 00 00 00 00 00 00 00 00 3d 01 00 00 00 00 00 00 00 00 00 00 3f 01 00 00 41 01 00 00
+			81 04 00 00 bd 09 00 00 b1 07 00 00 43 01 00 00 9d 09 00 00 ed 03 00 00 51 08 00 00 65 08 00 00
+			89 09 00 00 c5 07 00 00 d9 07 00 00 2d 03 00 00 0d 06 00 00 21 06 00 00 35 06 00 00 43 01 00 00
+			55 06 00 00 43 01 00 00 ed 07 00 00 00 f0 02 f8 00 f0 3e f8 0c a0 30 c8 08 38 24 18 2d 18 a2 46
+			67 1e ab 46 54 46 5d 46 ac 42 01 d1 00 f0 30 f8 7e 46 0f 3e 0f cc b6 46 01 26 33 42 00 d0 fb 1a
+			a2 46 ab 46 33 43 18 47 7c 28 00 00 9c 28 00 00 10 3a 02 d3 78 c8 78 c1 fa d8 52 07 01 d3 30 c8
+			30 c1 01 d5 04 68 0c 60 70 47 00 00 00 23 00 24 00 25 00 26 10 3a 01 d3 78 c1 fb d8 52 07 00 d3
+			30 c1 00 d5 0b 60 70 47 1f b5 1f bd 10 b5 10 bd 00 f0 d8 f8 11 46 ff f7 f7 ff 01 f0 2d fe 00 f0
+			f0 f8 03 b4 ff f7 f2 ff 03 bc 00 f0 f7 f8 00 00 07 48 80 47 07 48 00 47 fe e7 fe e7 fe e7 fe e7
+			fe e7 fe e7 04 48 05 49 03 4a 05 4b 70 47 00 00 4d 08 00 00 8d 00 00 00 e8 01 00 20 e8 05 00 20
+			e8 01 00 20 00 22 03 09 8b 42 2c d3 03 0a 8b 42 11 d3 00 23 9c 46 4e e0 03 46 0b 43 3c d4 00 22
+			43 08 8b 42 31 d3 03 09 8b 42 1c d3 03 0a 8b 42 01 d3 94 46 3f e0 c3 09 8b 42 01 d3 cb 01 c0 1a
+			52 41 83 09 8b 42 01 d3 8b 01 c0 1a 52 41 43 09 8b 42 01 d3 4b 01 c0 1a 52 41 03 09 8b 42 01 d3
+			0b 01 c0 1a 52 41 c3 08 8b 42 01 d3 cb 00 c0 1a 52 41 83 08 8b 42 01 d3 8b 00 c0 1a 52 41 43 08
+			8b 42 01 d3 4b 00 c0 1a 52 41 41 1a 00 d2 01 46 52 41 10 46 70 47 5d e0 ca 0f 00 d0 49 42 03 10
+			00 d3 40 42 53 40 00 22 9c 46 03 09 8b 42 2d d3 03 0a 8b 42 12 d3 fc 22 89 01 12 ba 03 0a 8b 42
+			0c d3 89 01 92 11 8b 42 08 d3 89 01 92 11 8b 42 04 d3 89 01 3a d0 92 11 00 e0 89 09 c3 09 8b 42
+			01 d3 cb 01 c0 1a 52 41 83 09 8b 42 01 d3 8b 01 c0 1a 52 41 43 09 8b 42 01 d3 4b 01 c0 1a 52 41
+			03 09 8b 42 01 d3 0b 01 c0 1a 52 41 c3 08 8b 42 01 d3 cb 00 c0 1a 52 41 83 08 8b 42 01 d3 8b 00
+			c0 1a 52 41 d9 d2 43 08 8b 42 01 d3 4b 00 c0 1a 52 41 41 1a 00 d2 01 46 63 46 52 41 5b 10 10 46
+			01 d3 40 42 00 2b 00 d5 49 42 70 47 63 46 5b 10 00 d3 40 42 01 b5 00 20 c0 46 c0 46 02 bd 70 47
+			70 47 70 47 75 46 00 f0 25 f8 ae 46 05 00 69 46 53 46 c0 08 c0 00 85 46 18 b0 20 b5 ff f7 32 ff
+			60 bc 00 27 49 08 b6 46 00 26 c0 c5 c0 c5 c0 c5 c0 c5 c0 c5 c0 c5 c0 c5 c0 c5 40 3d 49 00 8d 46
+			70 47 10 b5 04 46 c0 46 c0 46 20 46 ff f7 09 ff 10 bd 00 00 00 48 70 47 84 01 00 20 01 49 18 20
+			ab be fe e7 26 00 02 00 70 47 00 00 03 48 00 68 01 21 09 03 88 43 01 49 08 60 70 47 00 70 00 40
+			10 b5 01 20 11 49 c8 62 06 20 00 f0 a9 f8 4b 20 c0 01 00 f0 a5 f8 72 b6 00 20 00 f0 51 fa 0b 48
+			40 68 01 28 01 d1 00 24 00 e0 01 24 06 20 00 f0 97 f8 00 20 05 49 88 62 62 b6 06 20 00 f0 90 f8
+			4b 20 c0 01 00 f0 8c f8 20 46 10 bd 00 03 0a 42 00 b5 02 46 00 2a 03 d0 00 20 13 49 c8 62 02 e0
+			01 20 11 49 c8 62 4b 20 c0 01 00 f0 79 f8 72 b6 01 20 0d 49 88 62 06 20 00 f0 72 f8 06 20 00 f0
+			6f f8 06 20 00 f0 6c f8 00 20 07 49 88 62 62 b6 06 20 00 f0 65 f8 4b 20 c0 01 00 f0 61 f8 01 20
+			01 49 c8 62 00 bd 00 00 00 03 0a 42 06 48 c0 69 c1 b2 06 48 c1 70 06 48 00 68 01 21 89 04 88 43
+			03 49 08 60 70 47 00 00 00 30 00 40 7d 01 00 20 00 70 00 40 f0 b5 07 46 0d 46 14 46 00 26 00 f0
+			a5 f8 aa 20 00 f0 ce f8 06 46 01 2e 00 d0 22 e0 38 46 00 f0 c7 f8 06 46 01 2e 00 d0 1b e0 00 f0
+			95 f8 ab 20 00 f0 be f8 06 46 01 2e 00 d0 12 e0 06 e0 01 20 00 f0 54 f8 20 70 64 1c 68 1e c5 b2
+			01 2d f6 dc 00 20 00 f0 4b f8 20 70 64 1c 00 f0 95 f8 01 20 f0 bd 00 f0 91 f8 00 20 fa e7 00 00
+			05 49 09 68 01 22 d2 05 91 43 03 4a 11 60 03 49 89 69 c8 b2 70 47 00 00 00 70 00 40 00 30 00 40
+			00 e0 40 1e 00 28 fc d1 70 47 f0 b5 07 46 0c 46 15 46 00 26 00 f0 5a f8 aa 20 00 f0 83 f8 06 46
+			01 2e 00 d0 17 e0 38 46 00 f0 7c f8 06 46 01 2e 00 d0 10 e0 09 e0 28 78 6d 1c 00 f0 73 f8 06 46
+			01 2e 00 d0 07 e0 60 1e c4 b2 00 2c f3 d1 00 f0 55 f8 01 20 f0 bd 00 f0 51 f8 00 20 fa e7 00 00
+			1c b5 04 46 00 21 01 91 08 21 00 91 1e e0 68 46 00 79 40 06 01 0e 01 91 72 b6 00 20 00 f0 70 f9
+			06 20 ff f7 bd ff 10 48 41 68 68 46 00 79 01 43 c9 b2 01 91 00 20 0c 49 88 62 62 b6 04 20 ff f7
+			af ff 68 46 00 78 40 1e c1 b2 00 91 68 46 00 78 00 28 dc d1 4b 20 c0 01 ff f7 a2 ff 20 46 ff f7
+			17 ff 68 46 00 79 1c bd 00 03 0a 42 00 b5 01 20 00 f0 46 f9 00 20 00 f0 43 f9 0c 20 ff f7 90 ff
+			72 b6 00 20 04 49 c8 62 0c 20 ff f7 89 ff 00 20 01 49 88 62 62 b6 00 bd 00 03 0a 42 00 b5 00 20
+			07 49 88 62 c8 62 06 20 ff f7 7a ff 00 20 00 f0 27 f9 06 20 ff f7 74 ff 01 20 00 f0 21 f9 00 bd
+			00 03 0a 42 30 b5 04 46 08 25 15 e0 72 b6 e0 11 0d 49 c8 62 06 20 ff f7 63 ff 00 20 00 f0 10 f9
+			06 20 ff f7 5d ff 00 bf 60 06 04 0e 00 20 06 49 88 62 68 1e c5 b2 62 b6 00 2d e7 d1 00 20 02 49
+			88 62 ff f7 9d fe 30 bd 00 03 0a 42 03 48 00 68 01 21 c9 02 88 43 01 49 08 60 70 47 00 70 00 40
+			03 48 00 68 01 21 89 02 88 43 01 49 08 60 70 47 00 70 00 40 05 48 00 68 01 21 49 02 88 43 03 49
+			08 60 01 20 02 49 08 70 70 47 00 00 00 70 00 40 11 00 00 20 10 b5 10 48 00 68 80 21 88 43 0e 49
+			08 60 0e 48 00 78 00 28 0c d1 0d 48 00 68 40 08 40 00 40 1c 0a 49 08 60 00 20 0a 49 08 70 01 20
+			06 49 08 70 08 48 00 78 02 28 02 d1 00 f0 ae f9 01 e0 00 f0 fd fc 10 bd 00 70 00 40 69 00 00 20
+			00 10 00 40 32 00 00 20 5b 00 00 20 c2 06 d2 0e 01 21 91 40 01 4a 11 60 70 47 00 00 00 e1 00 e0
+			10 b5 00 28 19 da 1a 4a 03 07 1b 0f 08 3b 9b 08 9b 00 d2 58 83 07 dc 0e ff 23 a3 40 9a 43 8b 07
+			1b 0e 84 07 e4 0e a3 40 1a 43 11 4b 04 07 24 0f 08 3c a4 08 a4 00 1a 51 18 e0 0e 4a 03 23 1b 02
+			d2 18 83 08 9b 00 d2 58 83 07 dc 0e ff 23 a3 40 9a 43 8b 07 1b 0e 84 07 e4 0e a3 40 1a 43 05 4b
+			03 24 24 02 1b 19 84 08 a4 00 1a 51 10 bd 00 00 1c ed 00 e0 00 e1 00 e0 10 b5 00 28 19 da 1a 4a
+			03 07 1b 0f 08 3b 9b 08 9b 00 d2 58 83 07 dc 0e ff 23 a3 40 9a 43 8b 07 1b 0e 84 07 e4 0e a3 40
+			1a 43 11 4b 04 07 24 0f 08 3c a4 08 a4 00 1a 51 18 e0 0e 4a 03 23 1b 02 d2 18 83 08 9b 00 d2 58
+			83 07 dc 0e ff 23 a3 40 9a 43 8b 07 1b 0e 84 07 e4 0e a3 40 1a 43 05 4b 03 24 24 02 1b 19 84 08
+			a4 00 1a 51 10 bd 00 00 1c ed 00 e0 00 e1 00 e0 03 48 00 68 01 21 49 05 88 43 01 49 08 60 70 47
+			00 70 00 40 03 48 00 68 01 21 89 03 88 43 01 49 08 60 70 47 00 70 00 40 03 48 00 68 01 21 49 03
+			88 43 01 49 08 60 70 47 00 70 00 40 03 48 00 68 20 21 88 43 01 49 08 60 70 47 00 00 00 70 00 40
+			01 46 00 20 00 29 0d d1 07 e0 01 22 0d 4b 9a 62 40 1c 0d 4a 90 42 00 d9 03 e0 0a 4a 12 68 00 2a
+			f3 d0 0d e0 07 e0 01 22 06 4b da 62 40 1c 06 4a 90 42 00 d9 03 e0 03 4a 52 68 00 2a f3 d0 00 bf
+			70 47 00 00 00 03 0a 42 50 c3 00 00 70 47 00 00 03 48 00 68 01 21 49 04 88 43 01 49 08 60 70 47
+			00 70 00 40 10 b5 3b 48 00 68 01 21 09 04 88 43 38 49 08 60 38 48 00 88 00 28 05 d0 36 48 00 88
+			40 1e 35 49 08 80 15 e0 7d 20 c0 00 32 49 08 80 32 48 00 88 00 28 04 d0 30 48 00 88 40 1e 2f 49
+			08 80 2f 48 00 88 00 28 04 d0 2d 48 00 88 40 1e 2b 49 08 80 2b 48 00 68 00 28 04 d0 29 48 00 68
+			40 1e 28 49 08 60 28 48 00 68 00 28 04 d0 26 48 00 68 40 1e 24 49 08 60 24 48 00 68 00 28 04 d0
+			22 48 00 68 40 1e 21 49 08 60 21 48 00 78 00 28 04 d0 1f 48 00 78 40 1e 1d 49 08 70 1d 48 00 68
+			00 28 04 d0 1b 48 00 68 40 1e 1a 49 08 60 1a 48 00 68 00 28 04 d0 18 48 00 68 40 1e 16 49 08 60
+			16 48 00 78 40 1c 15 49 08 70 08 46 00 78 c8 28 0e dd 00 20 08 70 12 48 00 78 00 28 05 d0 00 20
+			01 f0 a0 f9 01 20 0f 49 08 70 01 20 0c 49 08 70 10 bd 00 00 00 70 00 40 34 00 00 20 36 00 00 20
+			38 00 00 20 3c 00 00 20 40 00 00 20 44 00 00 20 48 00 00 20 4c 00 00 20 50 00 00 20 32 00 00 20
+			1f 00 00 20 10 00 00 20 03 48 00 68 01 21 c9 03 88 43 01 49 08 60 70 47 00 70 00 40 0f 20 05 49
+			c8 60 05 48 00 68 01 21 c9 04 88 43 02 49 08 60 70 47 00 00 00 60 00 40 00 70 00 40 03 48 00 68
+			01 21 89 05 88 43 01 49 08 60 70 47 00 70 00 40 30 b4 74 46 64 1e 25 78 64 1c ab 42 04 d3 63 5d
+			5b 00 e3 18 30 bc 18 47 1d 46 f8 e7 10 b5 fe 48 00 78 08 28 0b da 01 f0 5b f9 fc 49 fa 4a 12 78
+			88 54 f9 48 00 78 40 1c f7 49 08 70 10 bd f6 48 00 78 08 28 26 d1 09 20 f3 49 08 70 01 f0 50 fc
+			f2 48 00 78 01 28 1e d1 f0 48 40 78 00 28 1a d1 ee 48 80 78 01 28 16 d1 ec 48 c0 78 c0 00 eb 49
+			09 79 89 00 08 43 e9 49 49 79 49 00 08 43 e7 49 89 79 08 43 e6 49 08 70 e6 48 00 78 00 28 6d d1
+			e5 49 08 70 6a e0 e1 48 00 78 01 28 1e d1 df 48 40 78 00 28 1a d1 dd 48 80 78 00 28 16 d1 db 48
+			c0 78 c0 00 d9 49 09 79 89 00 08 43 d7 49 49 79 49 00 08 43 d5 49 89 79 08 43 d5 49 08 70 00 20
+			d4 49 08 70 02 20 d4 49 08 70 47 e0 cf 48 40 78 01 28 1e d1 cd 48 80 78 00 28 1a d1 cb 48 c0 78
+			01 28 16 d1 c9 48 00 79 c0 00 c8 49 49 79 89 00 08 43 c6 49 89 79 49 00 08 43 c4 49 c9 79 08 43
+			c3 49 08 70 c3 48 00 78 00 28 01 d1 c2 49 08 70 8c e7 be 48 40 78 01 28 1e d1 bc 48 80 78 00 28
+			1a d1 ba 48 c0 78 00 28 16 d1 b8 48 00 79 c0 00 b6 49 49 79 89 00 08 43 b4 49 89 79 49 00 08 43
+			b2 49 c9 79 08 43 b2 49 08 70 00 20 b1 49 08 70 02 20 b1 49 08 70 69 e7 01 f0 76 fc af 48 00 78
+			00 28 14 d1 ae 49 c8 70 08 71 48 71 88 71 c8 71 08 72 48 72 ab 48 00 78 02 28 09 d1 a4 48 00 78
+			00 07 00 0e a8 49 08 70 01 20 a5 49 48 71 00 e2 a4 48 00 78 01 28 0a d1 a3 48 00 78 9c 49 09 78
+			08 43 a1 49 08 70 01 20 9d 49 48 71 f1 e1 9f 48 00 78 05 28 16 d1 9a 48 80 7a 99 49 c8 70 08 46
+			c0 7a 08 71 08 46 00 7b 48 71 08 46 40 7b 88 71 08 46 80 7b c8 71 08 46 c0 7b 08 72 08 46 00 7c
+			48 72 d6 e1 91 48 00 78 04 28 09 d1 88 48 00 78 00 07 00 0c 8e 49 08 80 01 20 89 49 48 71 c8 e1
+			8a 48 00 78 03 28 0b d1 81 48 00 78 00 02 88 49 09 88 08 43 86 49 08 80 01 20 81 49 48 71 b8 e1
+			82 48 00 78 02 28 0b d1 79 48 00 78 00 01 80 49 09 88 08 43 7e 49 08 80 01 20 79 49 48 71 a8 e1
+			7a 48 00 78 01 28 15 d1 79 48 00 88 70 49 09 78 08 43 77 49 08 80 00 f0 2d fb 01 20 70 49 48 71
+			74 48 00 88 72 49 09 88 88 42 90 d1 01 20 72 49 08 70 8e e1 71 48 00 78 00 28 4c d0 6f 48 00 78
+			40 1e c1 00 08 1a 6e 49 09 68 08 5c 64 49 c8 70 6a 48 00 78 40 1e c1 00 08 1a 69 49 09 68 40 18
+			40 78 5f 49 08 71 65 48 00 78 40 1e c1 00 08 1a 63 49 09 68 40 18 80 78 59 49 48 71 5f 48 00 78
+			40 1e c1 00 08 1a 5e 49 09 68 40 18 c0 78 54 49 88 71 5a 48 00 78 40 1e c1 00 08 1a 58 49 09 68
+			40 18 00 79 4e 49 c8 71 54 48 00 78 40 1e c1 00 08 1a 53 49 09 68 40 18 40 79 49 49 08 72 4f 48
+			00 78 40 1e c1 00 08 1a 4d 49 09 68 40 18 80 79 43 49 48 72 3d e1 3e 48 00 78 09 28 0c d1 00 20
+			40 49 08 70 41 49 08 70 44 49 08 70 00 f0 ba ff 01 20 44 49 08 70 79 e6 00 20 3a 49 08 70 3b 49
+			08 70 3e 49 08 70 32 48 00 78 03 00 ff f7 50 fe 0e 08 0b 86 a0 d3 e6 22 22 22 22 22 22 f0 ee 22
+			01 f0 72 fb 62 e6 38 48 00 78 00 28 13 d0 37 48 00 78 00 28 06 d1 01 20 29 49 c8 70 08 71 08 72
+			48 72 02 e0 01 20 26 49 88 71 30 48 00 78 c0 43 2e 49 08 70 fc e0 2e 48 00 78 00 28 0e d0 01 20
+			1f 49 c8 70 08 71 48 71 88 71 c8 71 08 72 48 72 27 48 00 78 40 1e 26 49 08 70 e9 e0 25 48 00 68
+			25 49 88 42 01 da 00 24 07 e0 22 49 09 68 22 4a 88 1a 0a 21 ff f7 e0 f9 04 46 60 06 c0 0f 10 49
+			c8 70 a0 06 c0 0f 08 71 e0 06 c0 0f 48 71 20 07 c0 0f 88 71 60 07 c0 0f c8 71 a0 07 c0 0f 08 72
+			e0 07 c0 0f 48 72 c3 e0 1c 00 00 20 14 00 00 20 1e 00 00 20 5c 00 00 20 5b 00 00 20 1d 00 00 20
+			6c 00 00 20 20 00 00 20 21 00 00 20 23 00 00 20 26 00 00 20 28 00 00 20 2a 00 00 20 24 00 00 20
+			00 00 00 20 13 00 00 20 31 00 00 20 5a 00 00 20 54 00 00 20 0c 00 00 20 4c 0d 00 00 09 21 08 20
+			01 f0 ee fc 78 49 08 70 08 46 00 78 02 28 03 d1 01 20 76 49 08 71 0a e0 73 48 00 78 01 28 03 d1
+			72 49 08 71 48 71 02 e0 01 20 70 49 48 71 7f e0 6f 48 00 78 40 06 c0 0f 6c 49 c8 70 6c 48 00 78
+			80 06 c0 0f 08 71 6a 48 00 78 c0 06 c0 0f 48 71 67 48 00 78 00 07 c0 0f 88 71 65 48 00 78 40 07
+			c0 0f c8 71 62 48 00 78 80 07 c0 0f 08 72 60 48 00 78 c0 07 c0 0f 48 72 00 20 5e 49 08 70 5c 48
+			00 78 64 21 48 43 ff 30 2d 30 5b 49 08 80 0a 20 5a 49 08 70 4c e0 5a 48 00 78 00 28 07 d0 00 20
+			58 49 08 70 56 48 00 78 40 1e 55 49 08 70 55 48 00 78 4e 49 c8 70 01 20 48 71 39 e0 03 20 52 49
+			08 70 01 20 49 49 08 71 88 71 31 e0 18 e0 ff e7 4e 48 00 78 00 28 03 d0 4d 48 00 78 00 28 00 d1
+			26 e0 4a 48 00 78 40 1e 48 49 08 70 06 20 49 49 08 70 00 f0 e1 fe 48 49 08 70 00 f0 51 f9 17 e0
+			46 48 00 78 40 1c 46 49 08 70 44 48 00 78 80 1c 44 49 08 70 44 48 00 78 34 49 c8 70 43 48 00 78
+			08 71 43 48 00 78 48 71 42 48 00 78 88 71 00 bf 00 bf 2e 49 40 4a 12 78 88 5c 01 f0 b7 f9 3e 48
+			00 78 40 1c 3c 49 08 70 08 46 00 78 09 28 49 dd 04 20 00 f0 3b fb 01 f0 7d f9 00 20 36 49 08 70
+			36 49 08 70 36 49 08 70 27 48 00 78 00 28 05 d0 25 48 00 78 40 1e 24 49 08 70 33 e0 25 48 00 78
+			00 28 05 d0 23 48 00 78 40 1e 22 49 08 70 29 e0 23 48 00 78 00 28 0a d0 21 48 00 78 40 1e 20 49
+			08 70 20 48 00 78 40 1e 1e 49 08 70 1a e0 25 48 00 78 02 28 02 d0 04 28 13 d1 0a e0 0a 48 00 78
+			01 28 05 d1 20 48 00 78 01 28 01 d1 00 f0 3a fe 07 e0 01 20 0e 49 08 70 00 f0 6e fe 1b 49 08 70
+			00 bf 00 bf 00 bf f1 e4 68 00 00 20 6c 00 00 20 55 00 00 20 54 00 00 20 5e 00 00 20 60 00 00 20
+			5c 00 00 20 12 00 00 20 20 00 00 20 22 00 00 20 2e 00 00 20 23 00 00 20 30 00 00 20 04 00 00 20
+			24 00 00 20 25 00 00 20 06 00 00 20 07 00 00 20 08 00 00 20 09 00 00 20 1d 00 00 20 1c 00 00 20
+			1f 00 00 20 1e 00 00 20 2b 00 00 20 2f 00 00 20 10 b5 4c 48 00 78 08 28 0b da 00 f0 09 fe 4a 49
+			48 4a 12 78 88 54 47 48 00 78 40 1c 45 49 08 70 10 bd 44 48 00 78 08 28 40 d1 09 20 41 49 08 70
+			01 f0 fe f8 40 48 00 78 01 28 18 d1 3e 48 40 78 00 28 14 d1 3c 48 80 78 01 28 10 d1 3a 48 c0 78
+			c0 00 39 49 09 79 89 00 08 43 37 49 49 79 49 00 08 43 35 49 89 79 08 43 34 49 08 70 1e e0 32 48
+			40 78 01 28 18 d1 30 48 80 78 00 28 14 d1 2e 48 c0 78 01 28 10 d1 2c 48 00 79 c0 00 2a 49 49 79
+			89 00 08 43 28 49 89 79 49 00 08 43 26 49 c9 79 08 43 26 49 08 70 bb e7 01 f0 76 f9 24 48 00 78
+			00 28 21 d1 01 20 23 49 88 70 00 20 c8 70 08 71 48 71 88 71 c8 71 08 72 48 72 1c 48 00 78 04 28
+			02 d0 06 28 0c d1 07 e0 1b 48 00 78 19 49 c8 70 01 20 c8 71 48 72 06 e0 01 20 16 49 c8 70 02 e0
+			01 f0 52 f9 00 bf 00 bf 12 49 11 4a 12 78 88 5c 01 f0 ac f8 0e 48 00 78 40 1c 0d 49 08 70 08 46
+			00 78 09 28 0b dd 04 20 00 f0 30 fa 01 f0 72 f8 00 20 07 49 08 70 03 49 08 70 08 49 08 70 00 bf
+			76 e7 00 00 1c 00 00 20 14 00 00 20 1e 00 00 20 1d 00 00 20 6c 00 00 20 12 00 00 20 1f 00 00 20
+			28 48 00 78 40 02 28 49 09 78 49 00 08 43 27 49 08 80 24 48 00 78 40 06 c0 0f 25 49 48 71 21 48
+			00 78 80 06 c0 0f c8 72 1e 48 00 78 c0 06 c0 0f 08 72 1c 48 00 78 00 07 c0 0f 08 74 19 48 00 78
+			40 07 c0 0f 88 73 17 48 00 78 80 07 c0 0f 48 73 14 48 00 78 c0 07 c0 0f c8 71 13 48 00 78 40 06
+			c0 0f c8 70 10 48 00 78 80 06 c0 0f 08 73 0e 48 00 78 c0 06 c0 0f 08 71 0b 48 00 78 00 07 c0 0f
+			88 72 09 48 00 78 40 07 c0 0f 48 72 06 48 00 78 80 07 c0 0f c8 73 04 48 00 78 c0 07 c0 0f 88 71
+			70 47 00 00 2f 00 00 20 30 00 00 20 28 00 00 20 6c 00 00 20 03 48 00 88 03 49 08 40 01 49 08 80
+			70 47 00 00 26 00 00 20 fe fe 00 00 10 b5 01 46 00 22 0b 20 01 23 83 40 36 4c 23 60 00 bf 02 29
+			07 d1 35 48 00 68 8b 03 98 43 c0 18 32 4b 18 60 06 e0 31 48 00 68 01 23 db 03 98 43 2e 4b 18 60
+			03 29 08 d1 2c 48 00 68 01 23 9b 03 98 43 c0 18 29 4b 18 60 06 e0 28 48 00 68 01 23 9b 03 98 43
+			25 4b 18 60 04 29 07 d1 23 48 00 68 cb 02 98 43 c0 18 21 4b 18 60 06 e0 1f 48 00 68 01 23 5b 03
+			98 43 1d 4b 18 60 05 29 08 d1 1b 48 00 68 01 23 1b 03 98 43 c0 18 18 4b 18 60 06 e0 16 48 00 68
+			01 23 1b 03 98 43 14 4b 18 60 13 48 00 68 f0 23 98 43 0b 01 f0 24 23 40 18 43 0f 4b 18 60 18 46
+			00 68 02 23 98 43 80 1c 0b 4b 18 60 18 46 00 68 40 08 40 00 40 1c 18 60 06 e0 07 48 00 68 c0 07
+			c0 0f 00 28 00 d1 00 e0 f7 e7 00 bf 02 48 42 68 90 b2 10 bd 00 e1 00 e0 00 40 00 40 70 47 70 47
+			78 b5 05 46 00 26 0f e0 6a 46 02 21 28 46 ff f7 31 f8 01 28 00 d1 09 e0 4b 20 c0 01 ff f7 70 f8
+			00 20 00 90 70 1c c6 b2 03 2e ed db 00 bf 69 46 48 78 04 02 09 78 0c 43 06 2d 01 d1 01 48 24 18
+			20 46 78 bd 55 f5 ff ff fe b5 1f a0 00 68 02 90 00 20 00 90 21 e0 02 aa 02 21 3e 20 ff f7 55 f8
+			06 46 01 2e 11 d1 00 f0 f3 f8 01 aa 04 21 40 20 ff f7 00 f8 07 46 01 2f 00 d1 11 e0 4b 20 c0 01
+			ff f7 3e f8 00 20 01 90 03 e0 4b 20 c0 01 ff f7 37 f8 00 98 40 1c c0 b2 00 90 00 98 03 28 da db
+			00 bf 68 46 40 79 04 02 68 46 00 79 04 43 68 46 c0 79 05 02 69 46 89 79 0d 43 ac 42 01 da 28 46
+			fe bd 20 46 fc e7 00 00 71 00 00 00 00 b5 02 20 ff f7 1c ff 0f 49 88 42 0b db 03 20 ff f7 16 ff
+			0c 49 88 42 05 db 04 20 ff f7 10 ff 09 49 88 42 05 da 09 48 00 78 40 1c 07 49 08 70 02 e0 00 20
+			05 49 08 70 04 48 00 78 09 28 01 dd 01 20 00 bd 00 20 fc e7 41 08 00 00 59 00 00 20 10 b5 04 46
+			00 2c 02 d0 00 20 00 f0 6b fe 00 21 10 20 ff f7 33 f9 10 20 ff f7 ea f8 13 48 00 68 80 21 88 43
+			11 49 08 60 11 48 00 69 04 21 88 43 0f 49 08 61 08 46 00 69 40 08 40 00 40 1c 08 61 08 46 00 69
+			ff 21 81 31 88 43 80 30 08 49 08 61 08 46 00 69 49 15 88 43 40 18 05 49 08 61 00 2c 02 d0 01 20
+			00 f0 3e fe 10 bd 00 00 00 70 00 40 00 50 00 40 10 b5 04 46 00 2c 02 d0 00 20 00 f0 31 fe 00 21
+			0e 20 ff f7 f9 f8 0e 20 ff f7 b0 f8 13 48 00 68 01 21 49 02 88 43 11 49 08 60 11 48 00 68 04 21
+			88 43 0f 49 08 60 08 46 00 68 40 08 40 00 40 1c 08 60 08 46 00 68 ff 21 81 31 88 43 80 30 08 49
+			08 60 08 46 00 68 49 15 88 43 40 18 04 49 08 60 00 2c 02 d0 01 20 00 f0 03 fe 10 bd 00 70 00 40
+			00 50 00 40 08 b5 0a 20 00 90 01 e0 00 f0 06 f8 00 98 41 1e 00 91 00 28 f8 d1 08 bd 08 b5 05 48
+			00 90 00 e0 00 bf 00 98 41 1e 00 91 00 28 f9 d1 08 bd 00 00 ed 08 00 00 08 b5 2c 20 00 90 00 e0
+			00 bf 00 98 41 1e 00 91 00 28 f9 d1 08 bd 00 00 08 b5 05 48 00 90 00 e0 00 bf 00 98 41 1e 00 91
+			00 28 f9 d1 08 bd 00 00 37 02 00 00 10 b5 02 46 14 46 03 e0 ff f7 ec ff 60 1e c4 b2 00 2c f9 dc
+			10 bd 70 47 8a b0 00 20 09 90 00 26 00 27 08 90 07 90 06 90 05 90 04 90 03 90 02 90 e1 20 40 01
+			fe 49 08 80 c3 20 80 00 fd 49 08 80 fd 48 fe 49 08 60 fe 49 08 60 0a 20 fd 49 08 70 ec e2 01 f0
+			07 f9 fc 48 00 68 00 28 42 d1 58 20 00 f0 34 ff 05 46 f9 48 00 78 00 28 35 d1 1f 2d 05 d1 00 f0
+			01 fb 01 20 f4 49 08 70 20 e0 00 2d 02 d1 00 f0 bd fe 1b e0 0c 2d 04 d0 e8 48 00 88 ef 49 88 42
+			02 dd 3f 20 01 90 11 e0 01 2d 07 db 0b 2d 05 dc 68 1c 81 00 40 18 c0 b2 01 90 07 e0 0d 2d 05 db
+			19 2d 03 dc a8 00 28 18 c0 b2 01 90 e4 48 00 78 00 28 08 d1 e3 48 02 78 e3 48 00 78 01 99 00 f0
+			59 fe df 49 08 70 7d 20 00 01 da 49 08 60 a0 e2 d5 48 00 68 00 28 6e d1 0c 20 ff f7 51 fe 07 46
+			da 48 87 42 09 dd 0c 20 ff f7 4a fe 07 46 d7 48 87 42 02 dd 59 20 00 f0 69 fe 3c 46 00 bf ce 48
+			00 78 00 28 73 d1 d2 48 84 42 0a da 08 98 40 1c c0 b2 08 90 08 98 03 28 05 dd 54 20 00 f0 56 fe
+			01 e0 00 20 08 90 cb 48 84 42 0a dd 04 98 40 1c c0 b2 04 90 04 98 07 28 05 dd 59 20 00 f0 46 fe
+			01 e0 00 20 04 90 c4 48 00 78 01 28 53 d1 c3 48 00 68 c3 49 88 42 02 dd 05 20 07 90 25 e0 bf 48
+			00 68 bf 49 49 1f 88 42 02 dd 04 20 07 90 1c e0 ba 48 00 68 ba 49 14 39 88 42 02 dd 03 20 07 90
+			13 e0 b6 48 00 68 b6 49 1e 39 88 42 02 dd 02 20 07 90 0a e0 b1 48 00 68 b1 49 28 39 88 42 02 dd
+			01 20 07 90 01 e0 00 20 07 90 ae 48 84 42 03 dd 00 20 06 90 7a e0 bc e0 aa 48 64 38 84 42 02 dd
+			01 20 06 90 72 e0 a7 48 c8 38 84 42 02 dd 02 20 06 90 6b e0 a4 48 84 42 02 dd 03 20 06 90 65 e0
+			a1 48 c8 38 84 42 03 dd 04 20 06 90 5e e0 97 e0 05 20 06 90 5a e0 98 48 00 78 02 28 52 d1 97 48
+			00 68 97 49 88 42 02 dd 05 20 07 90 25 e0 93 48 00 68 93 49 49 1f 88 42 02 dd 04 20 07 90 1c e0
+			8e 48 00 68 8e 49 14 39 88 42 02 dd 03 20 07 90 13 e0 8a 48 00 68 8a 49 1e 39 88 42 02 dd 02 20
+			07 90 0a e0 85 48 00 68 85 49 28 39 88 42 02 dd 01 20 07 90 01 e0 00 20 07 90 82 48 64 30 84 42
+			02 dd 00 20 06 90 21 e0 7e 48 84 42 02 dd 01 20 06 90 1b e0 7b 48 64 38 84 42 02 dd 02 20 06 90
+			14 e0 79 48 64 30 84 42 02 dd 03 20 06 90 0d e0 75 48 64 38 84 42 02 dd 04 20 06 90 06 e0 05 20
+			06 90 03 e0 00 20 07 90 05 20 06 90 06 99 07 98 40 18 05 28 09 dd 03 98 40 1c c0 b2 03 90 03 98
+			05 28 02 dd 5a 20 00 f0 81 fd 68 48 00 88 84 42 11 dd 66 48 00 88 66 49 88 42 0c dd 65 48 00 78
+			00 28 05 d0 63 48 00 78 40 1e 62 49 08 70 02 e0 55 20 00 f0 6b fd 59 48 00 68 59 49 24 39 88 42
+			0f dd 5d 48 84 42 0c dd 49 48 00 78 40 1e 48 49 08 70 08 46 00 78 00 28 06 d1 55 20 00 f0 56 fd
+			02 e0 0a 20 42 49 08 70 7d 20 c0 00 3e 49 08 60 6f e1 52 48 00 68 00 28 6e d1 ff f7 45 fd 06 46
+			4f 48 86 42 03 dc 7d 20 00 01 86 42 0c da ff f7 3b fd 06 46 4a 48 86 42 03 dc 7d 20 00 01 86 42
+			02 da 59 20 00 f0 32 fd 3c 48 06 60 32 48 00 78 00 28 52 d1 2a 48 00 88 00 28 07 d1 32 48 00 78
+			3f 28 1e dd 3f 20 30 49 08 70 1a e0 24 48 00 88 ff 21 2d 31 88 42 07 da 2b 48 00 78 3f 28 10 dd
+			3f 20 29 49 08 70 0c e0 1d 48 00 88 ff 21 e1 31 88 42 06 da 24 48 00 78 32 28 02 dd 32 20 22 49
+			08 70 30 48 00 78 00 28 19 d1 24 48 00 68 24 49 28 39 88 42 07 dd 1c 48 00 78 3f 28 0f dd 3f 20
+			19 49 08 70 0b e0 1d 48 00 68 27 49 88 42 06 dd 15 48 00 78 3f 28 02 dd 3f 20 13 49 08 70 17 48
+			00 68 21 49 64 31 88 42 42 dd 0f 48 00 78 3f 28 58 dd 3f 20 0c 49 39 e0 8f e0 86 e0 36 00 00 20
+			38 00 00 20 20 4e 00 00 40 00 00 20 4c 00 00 20 61 00 00 20 44 00 00 20 31 00 00 20 1e 1c 00 00
+			54 00 00 20 2d 00 00 20 56 00 00 20 10 27 00 00 30 f8 ff ff 4c 1d 00 00 0a 00 00 20 0c 00 00 20
+			8a 11 00 00 1a 04 00 00 ee 02 00 00 5e 00 00 20 fc 08 00 00 60 00 00 20 e4 0c 00 00 3c 00 00 20
+			88 13 00 00 57 00 00 20 68 10 00 00 08 70 19 e0 62 48 00 68 21 21 c9 01 88 42 07 dd 60 48 00 78
+			3f 28 0f dd 3f 20 5e 49 08 70 0b e0 5b 48 00 68 5c 49 88 42 06 dd 5a 48 00 78 3f 28 02 dd 3f 20
+			57 49 08 70 58 48 00 78 00 28 09 d1 57 48 02 78 57 48 01 78 52 48 00 78 00 f0 4c fc 52 49 08 70
+			54 48 00 78 02 28 08 d1 4c 48 00 68 4d 49 d2 31 88 42 02 dd 5a 20 00 f0 69 fc 48 48 00 68 4e 49
+			88 42 02 dd 5a 20 00 f0 61 fc 44 48 00 68 4a 49 0a 39 88 42 0a dd 09 98 40 1c c0 b2 09 90 09 98
+			05 28 05 dd 5a 20 00 f0 51 fc 01 e0 00 20 09 90 ff 20 f5 30 41 49 08 60 6b e0 41 48 00 68 00 28
+			1f d1 06 20 ff f7 1c fc 04 46 3e 48 00 78 00 28 12 d1 00 2c 03 dd ff 20 f5 30 84 42 0a dd 05 98
+			40 1c c0 b2 05 90 05 98 02 28 05 dd 5c 20 00 f0 2d fc 01 e0 00 20 05 90 ff 20 f5 30 30 49 08 60
+			47 e0 31 48 00 68 00 28 1e d1 2e 48 00 78 00 28 0e d1 ff f7 5b fc 00 28 05 d0 00 20 00 f0 62 f8
+			01 20 28 49 08 70 19 20 40 01 27 49 08 60 30 e0 02 98 00 28 04 d1 5d 20 00 f0 7e fc 01 20 02 90
+			22 48 21 49 08 60 24 e0 21 48 00 78 00 28 20 d1 20 48 00 88 00 28 06 d1 1a 48 00 78 00 28 02 d1
+			5a 20 00 f0 f3 fb 1c 48 00 78 00 28 03 d0 59 20 00 f0 ec fb 0a e0 19 48 00 78 00 28 03 d1 18 48
+			00 78 01 28 02 dd 54 20 00 f0 e0 fb 14 20 10 49 08 70 2f 20 ff f7 ea fc 11 e5 00 00 0c 00 00 20
+			56 00 00 20 7c 10 00 00 54 00 00 20 2d 00 00 20 2c 00 00 20 62 00 00 20 94 11 00 00 3c 00 00 20
+			4c 00 00 20 31 00 00 20 50 00 00 20 10 27 00 00 48 00 00 20 36 00 00 20 13 00 00 20 10 00 00 20
+			5d 00 00 20 00 28 07 d0 07 49 09 6b 80 22 91 43 80 31 05 4a 11 63 05 e0 03 49 09 6b 80 22 91 43
+			01 4a 11 63 70 47 00 00 00 40 00 40 70 47 00 00 02 49 49 69 49 06 c8 0f 70 47 00 00 00 50 00 40
+			02 49 49 68 49 06 c8 0f 70 47 00 00 00 50 00 40 03 48 00 6b 00 06 c0 0f 01 21 48 40 70 47 00 00
+			00 40 00 40 00 b5 09 20 ff f7 e0 fa 01 49 08 60 00 bd 00 00 64 00 00 20 02 49 89 68 c8 b2 40 06
+			40 0e 70 47 00 10 00 40 18 48 40 69 80 21 88 43 16 49 48 61 08 46 80 69 88 61 15 48 00 68 01 21
+			c9 05 88 43 12 49 08 60 00 20 01 21 81 40 11 4a 11 60 00 bf 0d 48 00 68 fe 21 88 43 1c 30 0b 49
+			08 60 08 46 40 69 20 21 88 43 20 30 07 49 48 61 08 46 40 69 10 21 88 43 04 49 48 61 08 46 40 69
+			80 21 88 43 80 30 01 49 48 61 70 47 00 30 00 40 00 70 00 40 00 e1 00 e0 00 f0 26 fa 00 f0 b8 fc
+			00 f0 23 fa ff f7 c0 ff 00 20 ff f7 d1 fb 01 20 00 f0 06 fa 53 20 00 f0 27 fc 05 46 2d 07 2d 0f
+			00 2d 01 d1 0a 24 1a e0 01 2d 01 d1 3c 24 16 e0 02 2d 04 d1 82 24 01 20 dd 49 08 70 0f e0 03 2d
+			04 d1 aa 24 01 20 da 49 08 70 08 e0 04 2d 05 d1 ff 24 05 34 02 20 d6 49 08 70 00 e0 0a 24 32 2c
+			0b db 78 2c 09 da d3 48 d3 49 08 60 04 20 d3 49 08 70 02 20 d2 49 08 70 2b e0 78 2c 08 db a0 2c
+			06 da d0 48 cc 49 08 60 06 20 cc 49 08 70 20 e0 a0 2c 08 db fa 2c 06 da cb 48 c7 49 08 60 06 20
+			c6 49 08 70 15 e0 fa 2c 0a db ff 20 af 30 84 42 06 da c6 48 c0 49 08 60 06 20 c0 49 08 70 08 e0
+			c3 48 bd 49 08 60 04 20 bc 49 08 70 02 20 bc 49 08 70 ba 49 08 78 c1 0f 09 18 49 10 bd 4a 11 70
+			10 46 00 78 08 21 08 40 c0 10 bb 49 08 70 10 46 00 78 04 21 08 40 80 10 b8 49 08 70 10 46 00 78
+			02 21 08 40 40 10 b6 49 08 70 10 46 00 78 c0 07 c0 0f b4 49 08 70 00 f0 d9 fa 00 f0 ef fa 00 f0
+			f9 f9 00 f0 a1 f9 00 21 0b 20 fe f7 09 fc 00 20 ff f7 04 fb 00 bf ff f7 b4 fb 00 f0 05 fb 00 28
+			f9 d0 00 f0 cd fc 15 e0 00 f0 d2 fc a6 48 00 78 00 28 01 d0 00 f0 9a fa a4 48 00 78 01 28 04 d1
+			a3 48 00 78 01 28 00 d1 05 e0 a2 48 00 78 00 28 00 d1 00 e0 e8 e7 00 bf 01 20 9f 49 08 70 ff f7
+			4d fa 52 20 00 f0 e8 fa 05 46 01 20 9b 49 08 70 00 2d 01 d1 00 f0 7a fa 00 f0 aa fc 5e 20 00 f0
+			db fa 05 46 02 2d 01 d0 00 f0 70 fa 00 f0 a0 fc ff f7 38 fb 00 f0 9c fc 91 48 00 78 00 f0 cc fa
+			05 46 02 2d 01 d0 00 f0 61 fa 00 f0 91 fc 00 f0 8f fc 8b 48 00 78 00 28 03 d0 ff f7 45 fa 89 49
+			08 60 ff f7 1f fb 86 48 00 78 00 28 03 d0 2c 20 ff f7 16 fa c6 b2 55 2e 25 dd fa 2c 05 db 14 20
+			81 49 08 70 81 49 08 70 8a e0 a0 2c 05 db 0f 20 7d 49 08 70 7d 49 08 70 82 e0 78 2c 05 db 0b 20
+			79 49 08 70 79 49 08 70 7a e0 32 2c 05 db 0a 20 75 49 08 70 75 49 08 70 72 e0 0a 20 72 49 08 70
+			72 49 08 70 6c e0 4b 2e 25 dd fa 2c 05 db 1e 20 6d 49 08 70 6d 49 08 70 62 e0 a0 2c 05 db 19 20
+			69 49 08 70 69 49 08 70 5a e0 78 2c 05 db 14 20 65 49 08 70 65 49 08 70 52 e0 32 2c 05 db 0a 20
+			61 49 08 70 61 49 08 70 4a e0 0a 20 5e 49 08 70 5e 49 08 70 44 e0 32 2e 25 dd fa 2c 05 db 28 20
+			59 49 08 70 59 49 08 70 3a e0 a0 2c 05 db 28 20 55 49 08 70 55 49 08 70 32 e0 78 2c 05 db 1e 20
+			51 49 08 70 51 49 08 70 2a e0 32 2c 05 db 0f 20 4d 49 08 70 4d 49 08 70 22 e0 0a 20 4a 49 08 70
+			4a 49 08 70 1c e0 a0 2c 05 db 3f 20 46 49 08 70 46 49 08 70 14 e0 78 2c 05 db 32 20 42 49 08 70
+			42 49 08 70 0c e0 32 2c 05 db 19 20 3e 49 08 70 3e 49 08 70 04 e0 14 20 3b 49 08 70 3b 49 08 70
+			ff f7 80 fa ff f7 1e fe 58 20 00 f0 15 fa 01 20 37 49 08 70 2f 48 00 78 00 28 24 d1 22 e0 00 f0
+			d7 fb 34 48 00 68 00 28 0a d1 58 20 00 f0 04 fa 00 28 01 d1 00 f0 9a f9 2f 48 2e 49 08 60 11 e0
+			2e 48 00 78 00 28 0d d1 1f 48 00 78 00 28 03 d1 22 48 00 78 01 28 02 dd 54 20 00 f0 77 f9 14 20
+			26 49 08 70 db e7 0c e0 00 f0 b2 fb 16 48 00 78 00 28 03 d1 19 48 00 78 01 28 02 dd 54 20 00 f0
+			65 f9 ff f7 d5 fd 01 28 ee d0 ff f7 7b fa 00 00 0a 00 00 20 a8 28 00 00 00 00 00 20 04 00 00 20
+			62 00 00 20 c4 28 00 00 ee 28 00 00 18 29 00 00 8c 28 00 00 05 00 00 20 06 00 00 20 07 00 00 20
+			08 00 00 20 09 00 00 20 10 00 00 20 2a 00 00 20 25 00 00 20 5b 00 00 20 2b 00 00 20 5d 00 00 20
+			21 00 00 20 0c 00 00 20 55 00 00 20 56 00 00 20 12 00 00 20 44 00 00 20 70 17 00 00 48 00 00 20
+			00 28 06 d0 07 49 09 78 00 29 02 d1 05 49 08 70 07 e0 00 28 05 d1 03 49 09 78 00 29 01 d0 01 49
+			08 70 70 47 6a 00 00 20 70 47 00 b5 ff f7 6e fd 00 f0 a0 f8 00 f0 48 f8 00 f0 5c f8 00 f0 04 f8
+			ff f7 dd f8 00 bd 00 00 09 48 00 69 04 21 88 43 07 49 08 61 08 46 00 69 30 21 88 43 04 49 08 61
+			08 46 00 69 40 08 40 00 40 1c 08 61 70 47 00 00 00 50 00 40 09 48 00 69 40 08 40 00 07 49 08 61
+			08 46 00 69 04 21 88 43 00 1d 04 49 08 61 08 46 00 69 02 21 88 43 01 49 08 61 70 47 00 50 00 40
+			00 28 07 d0 07 49 09 69 02 22 91 43 89 1c 05 4a 11 61 05 e0 03 49 09 69 02 22 91 43 01 4a 11 61
+			70 47 00 00 00 50 00 40 09 48 00 68 04 21 88 43 07 49 08 60 08 46 00 68 30 21 88 43 10 30 04 49
+			08 60 08 46 00 68 40 08 40 00 40 1c 08 60 70 47 00 50 00 40 09 48 40 69 04 21 88 43 07 49 48 61
+			08 46 40 69 30 21 88 43 04 49 48 61 08 46 40 69 40 08 40 00 40 1c 48 61 70 47 00 00 00 50 00 40
+			09 48 40 69 02 21 88 43 07 49 48 61 08 46 40 69 40 08 40 00 48 61 08 46 40 69 04 21 88 43 00 1d
+			01 49 48 61 70 47 00 00 00 50 00 40 00 28 07 d0 07 49 49 69 02 22 91 43 89 1c 05 4a 51 61 05 e0
+			03 49 49 69 02 22 91 43 01 4a 51 61 70 47 00 00 00 50 00 40 09 48 40 68 04 21 88 43 07 49 48 60
+			08 46 40 68 30 21 88 43 20 30 04 49 48 60 08 46 40 68 40 08 40 00 40 1c 48 60 70 47 00 50 00 40
+			09 48 40 68 02 21 88 43 07 49 48 60 08 46 40 68 40 08 40 00 48 60 08 46 40 68 04 21 88 43 00 1d
+			01 49 48 60 70 47 00 00 00 50 00 40 00 28 07 d0 07 49 49 68 02 22 91 43 89 1c 05 4a 51 60 05 e0
+			03 49 49 68 02 22 91 43 01 4a 51 60 70 47 00 00 00 50 00 40 30 b5 03 46 10 48 04 78 10 48 00 78
+			98 42 01 dd 0e 48 03 70 0e 48 01 70 0e 48 02 70 91 42 00 da 0a 46 0a 48 00 78 90 42 02 dd 07 48
+			02 70 03 e0 06 48 00 78 04 4d 28 70 03 48 00 78 84 42 01 d0 05 20 30 bd 00 20 fc e7 55 00 00 20
+			56 00 00 20 2c 00 00 20 2d 00 00 20 10 b5 04 46 00 f0 3e fa 00 20 ff f7 45 fc ff f7 4b ff 20 46
+			00 f0 6a f8 00 f0 02 f8 10 bd 00 00 00 bf 04 48 04 49 c8 60 bf f3 4f 8f 00 bf 00 bf fe e7 00 00
+			04 00 fa 05 00 ed 00 e0 10 b5 07 48 00 78 02 28 09 d0 05 48 00 78 01 28 03 d1 02 20 02 49 08 70
+			01 e0 ff f7 e3 ff 10 bd 5d 00 00 20 10 b5 00 24 ff f7 e0 fe 00 bf 0d e0 00 20 ff f7 f1 fe 01 20
+			ff f7 d4 f8 01 20 ff f7 eb fe 03 20 ff f7 ce f8 60 1c c4 b2 1e 2c ef db 10 bd 00 00 07 20 01 21
+			81 40 0f 4a 11 60 00 bf 0e 48 40 68 7d 21 c9 01 08 46 0c 49 48 60 08 46 00 68 40 21 88 43 40 30
+			08 49 08 60 08 46 00 68 20 21 88 43 20 30 05 49 08 60 08 46 00 68 40 08 40 00 08 60 70 47 00 00
+			00 e1 00 e0 00 10 00 40 02 49 09 68 c8 07 c0 0f 70 47 00 00 00 10 00 40 fe b5 05 46 00 27 00 f0
+			c7 f9 01 95 00 20 3e 49 08 70 ff f7 29 ff ff f7 73 f8 00 20 ff f7 3a ff ff f7 54 f8 01 20 ff f7
+			35 ff 00 24 1f e0 37 48 00 78 00 28 03 d0 58 2d 01 d1 ff f7 bf fe 00 f0 ab f9 00 bf 30 48 00 78
+			00 28 fb d0 00 f0 a4 f9 06 20 01 1b 01 98 08 41 c0 07 c0 0f 00 90 00 98 ff f7 18 ff 00 20 28 49
+			08 70 60 1c c4 b2 07 2c dd db 00 f0 91 f9 00 24 28 e0 24 48 00 78 00 28 03 d0 58 2d 01 d1 ff f7
+			99 fe 00 f0 85 f9 00 bf 1d 48 00 78 00 28 fb d0 00 f0 7e f9 00 2c 03 d1 ff f7 cc fe ff f7 2c f8
+			00 20 17 49 08 70 ff f7 9b fb 06 46 06 2c 07 d0 00 2c 05 d0 05 20 01 1b 30 46 88 40 38 43 c7 b2
+			60 1c c4 b2 07 2c d4 db 00 f0 62 f9 00 bf 0c 48 00 78 00 28 fb d0 00 f0 5b f9 ff f7 c1 fe ff f7
+			0b f8 00 20 ff f7 d2 fe 00 20 05 49 08 70 fe f7 e9 ff fe f7 e7 ff 00 f0 4b f9 38 46 fe bd 00 00
+			11 00 00 20 10 00 00 20 fe b5 05 46 00 27 00 f0 3f f9 01 95 00 20 3c 49 08 70 ff f7 a1 fe fe f7
+			eb ff 00 20 ff f7 b2 fe fe f7 cc ff 01 20 ff f7 ad fe 00 24 1f e0 35 48 00 78 00 28 03 d0 58 2d
+			01 d1 ff f7 37 fe 00 f0 23 f9 00 bf 2e 48 00 78 00 28 fb d0 00 f0 1c f9 06 20 01 1b 01 98 08 41
+			c0 07 c0 0f 00 90 00 98 ff f7 90 fe 00 20 26 49 08 70 60 1c c4 b2 07 2c dd db 00 f0 09 f9 00 24
+			24 e0 22 48 00 78 00 28 03 d0 58 2d 01 d1 ff f7 11 fe 00 f0 fd f8 00 bf 1b 48 00 78 00 28 fb d0
+			00 f0 f6 f8 00 2c 03 d1 ff f7 44 fe fe f7 a4 ff 00 20 15 49 08 70 ff f7 13 fb 06 46 06 20 01 1b
+			30 46 88 40 38 43 c7 b2 60 1c c4 b2 07 2c d8 db 00 f0 de f8 00 bf 0c 48 00 78 00 28 fb d0 00 f0
+			d7 f8 ff f7 3d fe fe f7 87 ff 00 20 ff f7 4e fe 00 20 05 49 08 70 fe f7 65 ff fe f7 63 ff 00 f0
+			c7 f8 38 46 fe bd 00 00 11 00 00 20 10 00 00 20 00 20 2a 49 08 70 2a 49 08 70 2a 49 08 70 2a 49
+			08 70 01 20 29 49 08 70 00 20 48 70 88 70 28 49 08 70 28 49 08 70 28 49 08 70 28 49 08 70 03 20
+			27 49 08 70 00 20 27 49 08 70 27 49 08 70 27 49 08 70 27 49 08 80 40 1e 26 49 08 80 00 20 26 49
+			08 70 26 49 08 70 3f 20 25 49 08 70 25 49 08 70 00 20 25 49 08 70 25 49 08 70 25 49 08 70 3f 20
+			24 49 08 70 24 49 08 70 01 20 24 49 08 70 24 49 08 70 00 20 23 49 08 70 23 49 08 70 02 20 23 49
+			08 70 03 20 22 49 08 70 00 20 22 49 08 70 22 49 08 70 01 20 21 49 08 70 70 47 00 00 10 00 00 20
+			12 00 00 20 13 00 00 20 1c 00 00 20 6c 00 00 20 1d 00 00 20 1f 00 00 20 20 00 00 20 21 00 00 20
+			22 00 00 20 23 00 00 20 24 00 00 20 25 00 00 20 26 00 00 20 28 00 00 20 2a 00 00 20 2b 00 00 20
+			2c 00 00 20 2d 00 00 20 2e 00 00 20 31 00 00 20 54 00 00 20 55 00 00 20 56 00 00 20 57 00 00 20
+			58 00 00 20 59 00 00 20 5a 00 00 20 5b 00 00 20 5c 00 00 20 5d 00 00 20 62 00 00 20 0a 00 00 20
+			f3 b5 81 b0 0d 46 00 24 00 26 00 27 00 20 00 90 01 98 fe f7 3b fd 04 46 28 46 fe f7 37 fd 06 46
+			a4 1b 7d 27 ff 00 78 00 00 90 bc 42 01 da 00 20 fe bd 00 98 84 42 01 dd 02 20 f9 e7 01 20 f7 e7
+			5a 20 02 49 08 61 80 20 08 61 70 47 00 70 00 40 5a 20 05 49 08 61 08 46 00 69 40 21 88 43 40 30
+			01 49 08 61 70 47 00 00 00 70 00 40 00 00 00 01 01 01 00 01 00 00 01 01 01 00 00 00 00 01 00 01
+			00 01 01 00 00 01 01 00 00 00 01 00 01 00 00 01 00 00 01 01 01 00 00 00 00 01 00 01 00 01 01 00
+			00 01 01 00 00 01 00 01 00 00 00 01 00 00 01 01 01 00 00 00 01 01 01 01 00 01 01 00 01 00 00 01
+			00 00 00 01 00 01 01 01 01 00 01 01 00 00 00 01 00 01 00 00 00 01 00 01 00 00 01 00 00 00 01 01
+			01 01 00 01 01 00 01 00 00 01 00 00 00 01 00 01 01 01 01 00 01 01 00 00 00 01 00 01 00 00 00 01
+			00 01 00 00 01 00 00 00 01 01 01 01 00 01 01 00 01 00 00 01 00 00 00 01 00 01 01 01 01 00 01 01
+			00 00 00 00 64 29 00 00 00 00 00 20 6c 00 00 00 d0 00 00 00 d0 29 00 00 6c 00 00 20 7c 05 00 00
+			ec 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+			00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+			00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+			00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 00 01 06 01 05 fe d1 34 55 34
+		];
+
+		vooc_charge_strategy_30w {
+                    strategy_1 {
+                        capacity_range = <0 75>;
+                        temp_range = <120 160>;
+                        input_current = <4000 4450 0
+                            3000 4470 0
+                            2000 4480 0>;
+                    };
+                    strategy_2 {
+                        capacity_range = <0 75>;
+                        temp_range = <160 410>;
+                        input_current = <6000 4200 900
+                            5000 4200 0
+                            4500 4450 0
+                            4000 4450 0
+                            3000 4470 0
+                            2000 4480 0>;
+                    };
+                    strategy_3 {
+                        capacity_range = <0 75>;
+                        temp_range = <410 420>;
+                        input_current = <4000 4470 0
+                            2000 4480 0>;
+                    };
+                    strategy_4 {
+                        capacity_range = <0 75>;
+                        temp_range = <420 425>;
+                        input_current = <4000 4480 0>;
+                    };
+                    strategy_5 {
+                        capacity_range = <0 75>;
+                        temp_range = <425 435>;
+                        input_current = <3000 4480 0>;
+                    };
+                };
+
+                vooc_charge_strategy_65w {
+                    strategy_1 {
+                        capacity_range = <0 50>;
+                        temp_range = <120 160>;
+                        input_current = <6000 4200 0
+                            4000 4454 0
+                            2000 4494 0
+                            1500 4500 0>;
+                    };
+                    strategy_2 {
+                        capacity_range = <0 50>;
+                        temp_range = <160 370>;
+                        input_current = <6500 4200 0
+                            6000 4250 300
+                            5500 4300 400
+                            4500 4454 780
+                            3500 4454 0
+                            2000 4494 0
+                            1500 4500 0>;
+                    };
+                    strategy_3 {
+                        capacity_range = <0 90>;
+                        temp_range = <370 430>;
+                        input_current = <6500 4200 0
+                            6000 4250 300
+                            5500 4300 400
+                            4500 4454 780
+                            3500 4454 0
+                            2000 4494 0
+                            1600 4500 0>;
+                    };
+                };
+	};
+
+	stm8s_fastcg@26{
+
+		status = "disabled";
+		compatible = "oplus,stm8s-fastcg";
+		reg = <0x26>;
+		qcom,vooc-low-temp = <50>;
+		qcom,oplus_batt_4400mv;
+		qcom,support_vooc_by_normal_charger_path;
+		qcom,vooc_fw_update_newmethod;
+		qcom,vooc-high-temp = <430>;
+		qcom,vooc-low-soc = <1>;
+		qcom,vooc-high-soc = <90>;
+		qcom,vooc-fw-type = <0x27>;//6A
+
+		qcom,vooc_multistep_adjust_current_support;
+		qcom,vooc_multistep_initial_batt_temp = <310>;
+		qcom,vooc_strategy_normal_current = <0x06>;
+		qcom,vooc-normal-to-little-cool-current = <0x05>;
+		qcom,vooc_batt_over_high_temp = <440>;
+		qcom,vooc_batt_over_low_temp = <45>;
+		qcom,vooc_over_high_or_low_current = <0x0>;
+
+		qcom,vooc_strategy1_batt_high_temp0 = <425>;
+		qcom,vooc_strategy1_batt_high_temp1 = <430>;
+		qcom,vooc_strategy1_batt_high_temp2 = <435>;
+		qcom,vooc_strategy1_batt_low_temp2 = <420>;
+		qcom,vooc_strategy1_batt_low_temp1 = <415>;
+		qcom,vooc_strategy1_batt_low_temp0 = <400>;
+
+		qcom,vooc_strategy1_high_current0 = <0x04>;//4A
+		qcom,vooc_strategy1_high_current1 = <0x03>;//3A
+		qcom,vooc_strategy1_high_current2 = <0x02>;//2A
+		qcom,vooc_strategy1_low_current2 = <0x03>;//3A
+		qcom,vooc_strategy1_low_current1 = <0x04>;//4A
+		qcom,vooc_strategy1_low_current0 = <0x04>;//4A
+
+		qcom,vooc_strategy2_batt_up_temp1 = <375>;
+		qcom,vooc_strategy2_batt_up_down_temp2 = <380>;
+		qcom,vooc_strategy2_batt_up_temp3 = <390>;
+		qcom,vooc_strategy2_batt_up_down_temp4 = <400>;
+		qcom,vooc_strategy2_batt_up_temp5 = <410>;
+		qcom,vooc_strategy2_batt_up_temp6 = <415>;
+		qcom,vooc_strategy2_high0_current = <0x05>;
+		qcom,vooc_strategy2_high1_current = <0x04>;
+		qcom,vooc_strategy2_high2_current = <0x03>;
+		qcom,vooc_strategy2_high3_current = <0x02>;
+
+
+		pinctrl-names = "switch1_act_switch2_act", "switch1_sleep_switch2_sleep",
+						"switch1_act_switch3_act", "switch1_sleep_switch3_sleep",
+						"switch1_act_switch2_sleep", "switch1_sleep_switch2_act",
+						"clock_active","clock_sleep",
+						"data_active","data_sleep",
+						"reset_active","reset_sleep";
+		pinctrl-0 = <&charging_switch1_active>;
+		pinctrl-1 = <&charging_switch1_sleep >;
+		pinctrl-2 = <&charging_switch1_active>;
+		pinctrl-3 = <&charging_switch1_sleep >;
+		pinctrl-4 = <&charging_switch1_active>;
+		pinctrl-5 = <&charging_switch1_sleep>;
+		pinctrl-6 = <&charging_clock_active >;
+		pinctrl-7 = <&charging_clock_sleep >;
+		pinctrl-8 = <&charging_data_active >;
+		pinctrl-9 = <&charging_data_sleep >;
+		pinctrl-10 = <&charging_reset_active >;
+		pinctrl-11 = <&charging_reset_sleep >;
+
+		qcom,charging_switch1-gpio = <&tlmm 82 0x00>;
+		//qcom,charging_switch2-gpio = <&tlmm 113 0x00>;
+		//qcom,charging_switch3-gpio = <&tlmm 38 0x00>;
+
+		qcom,charging_reset-gpio = <&tlmm 10 0x00>;
+		qcom,charging_clock-gpio = <&tlmm 131 0x00>;
+		qcom,charging_data-gpio = <&tlmm 129 0x00>;
+	};
+};
+//#endif
+
+
+&pm8150b_charger {
+			//for smb5:
+			qcom,usb-icl-ua = <2000000>;
+			qcom,fcc-max-ua = <2000000>;
+			//qcom,fv-max-uv = <4373000>;
+			qcom,qc3-disable;
+			qcom,hvdcp-disable;
+			qcom,smart_charging_screenoff;
+			//io-channels = <&pm8150b_vadc ADC_GPIO3>;
+			//io-channel-names = "chgID_voltage_adc";
+			//qcom,otg-cl-ua = <2000000>;
+			qcom,float-option = <1>;
+			qcom,oplus-pps-usbpd-detection = <&pm8150b_pdphy>;
+
+			qcom,usbtemp_batttemp_gap = <17>;
+
+			//for oplus chg framework:
+			qcom,input_current_charger_ma = <2000>;
+			qcom,pd_input_current_charger_ma = <2000>;
+			qcom,qc_input_current_charger_ma = <2000>;
+
+			qcom,input_current_usb_ma = <500>;
+
+			qcom,input_current_cdp_ma = <1500>;
+			qcom,input_current_led_ma = <1200>;
+			qcom,input_current_led_ma_high = <1500>;
+			qcom,input_current_led_ma_warm = <1800>;
+			qcom,input_current_led_ma_normal = <2000>;
+			qcom,led_warm_bat_decidegc = <350>;
+			qcom,led_high_bat_decidegc = <370>;
+
+			qcom,input_current_camera_ma = <1200>;
+
+			qcom,input_current_vooc_led_ma_high = <1200>;
+			qcom,input_current_vooc_led_ma_warm = <1800>;
+			qcom,input_current_vooc_led_ma_normal = <3600>;
+			qcom,input_current_vooc_ma_normal = <3600>;
+			qcom,vooc_temp_bat_normal_decidegc = <350>;
+			qcom,input_current_vooc_ma_warm = <3200>;
+			qcom,vooc_temp_bat_warm_decidegc = <370>;
+			qcom,input_current_vooc_ma_high = <2200>;
+			qcom,vooc_temp_bat_hot_decidegc = <440>;
+
+			qcom,charger_current_vooc_ma_normal = <1800>;
+
+			qcom,chg_ctrl_by_calling;
+			qcom,input_current_calling_ma = <1500>;
+			//qcom,input_current_led_ma_overtemp = <900>;
+			qcom,overtemp_bat_decidegc = <350>;
+			qcom,iterm_disabled = <0>;
+			qcom,iterm_ma = <120>;
+			qcom,recharge-mv = <100>;
+			qcom,batt_capacity_mah = <4500>;/*typical capacity*/
+			//qcom,batt_capacity_mah = <4400>; /*rated capacity*/
+
+			qcom,removed_bat_decidegc = <190>;  /*<-19C*/
+
+			qcom,cold_bat_decidegc = <20>;  /*-2C~0C*/
+			qcom,temp_cold_vfloat_mv = <3980>;
+			qcom,temp_cold_fastchg_current_ma = <300>;
+
+			qcom,little_cold_bat_decidegc = <0>;	/*0C~5C*/
+			qcom,temp_little_cold_vfloat_mv = <4435>;
+			qcom,temp_little_cold_fastchg_current_ma_high = <1100>;
+			qcom,temp_little_cold_fastchg_current_ma_low = <1100>;
+			qcom,temp_little_cold_fastchg_current_ma = <1100>;
+			qcom,pd_temp_little_cold_fastchg_current_ma_high = <2000>;
+			qcom,pd_temp_little_cold_fastchg_current_ma_low = <1450>;
+			qcom,qc_temp_little_cold_fastchg_current_ma_high = <2000>;
+			qcom,qc_temp_little_cold_fastchg_current_ma_low = <1450>;
+
+			qcom,cool_bat_decidegc = <50>;	/*5C~12C*/
+			qcom,temp_cool_vfloat_mv = <4435>;
+			qcom,temp_cool_fastchg_current_ma_high = <1100>;
+			qcom,temp_cool_fastchg_current_ma_low = <1100>;
+			qcom,pd_temp_cool_fastchg_current_ma_high = <2000>;
+			qcom,pd_temp_cool_fastchg_current_ma_low = <2000>;
+			qcom,qc_temp_cool_fastchg_current_ma_high = <2000>;
+			qcom,qc_temp_cool_fastchg_current_ma_low = <2000>;
+
+			qcom,little_cool_bat_decidegc = <120>;	/*12C~16C*/
+			qcom,temp_little_cool_vfloat_mv = <4435>;
+			qcom,temp_little_cool_fastchg_current_ma = <1100>;
+			qcom,pd_temp_little_cool_fastchg_current_ma = <2000>;
+			qcom,qc_temp_little_cool_fastchg_current_ma = <2000>;
+
+			qcom,normal_bat_decidegc = <160>;	/*16C~45C*/
+			qcom,temp_normal_fastchg_current_ma = <1100>;
+			qcom,temp_normal_vfloat_mv = <4435>;
+			qcom,pd_temp_normal_fastchg_current_ma = <2000>;
+			qcom,qc_temp_normal_fastchg_current_ma = <2000>;
+
+			qcom,warm_bat_decidegc = <450>;		/*45C~53C*/ /*8pin Bat Vooc project need add 3 degree C*/
+			qcom,temp_warm_vfloat_mv = <4130>;
+			qcom,temp_warm_fastchg_current_ma = <600>;
+			qcom,pd_temp_warm_fastchg_current_ma = <600>;
+			qcom,qc_temp_warm_fastchg_current_ma = <600>;
+			qcom,temp_warm_fastchg_current_ma_led_on = <250>;
+
+			qcom,hot_bat_decidegc = <530>;
+
+			qcom,non_standard_vfloat_mv = <3980>;
+			qcom,non_standard_fastchg_current_ma = <512>;
+
+			qcom,short_c_bat_cv_mv = <4330>;
+			qcom,short_c_bat_vfloat_mv = <3800>;
+			qcom,short_c_bat_fastchg_current_ma = <512>;
+
+			qcom,cold_vfloat_sw_limit = <3930>;
+			qcom,little_cold_vfloat_sw_limit = <4385>;
+			qcom,cool_vfloat_sw_limit = <4385>;
+			qcom,little_cool_vfloat_sw_limit = <4385>;
+			qcom,normal_vfloat_sw_limit = <4385>;
+			qcom,warm_vfloat_sw_limit = <4080>;
+			qcom,non_standard_vfloat_sw_limit = <3930>;
+			qcom,short_c_bat_vfloat_sw_limit = <3750>;
+
+			qcom,max_chg_time_sec = <36000>;
+			qcom,charger_hv_thr = <9900>;
+			qcom,charger_recv_thr = <9500>;
+			qcom,charger_lv_thr = <3400>;
+			qcom,vbatt_full_thr = <4435>;
+			qcom,vbatt_hv_thr = <4600>;
+			qcom,vfloat_step_mv = <8>;
+			qcom,non_standard_vfloat_over_sw_limit = <3990>;
+			qcom,cold_vfloat_over_sw_limit = <3990>;
+			qcom,little_cold_vfloat_over_sw_limit = <4445>;
+			qcom,cool_vfloat_over_sw_limit = <4445>;
+			qcom,little_cool_vfloat_over_sw_limit = <4445>;
+			qcom,normal_vfloat_over_sw_limit = <4445>;
+			qcom,warm_vfloat_over_sw_limit = <4140>;
+
+			qcom,vbatt_power_off = <3300>;
+			qcom,vbatt_soc_1 = <3310>;
+			qcom,vooc_project = <3>;
+			qcom,vbatt_num = <2>;
+			qcom,ffc_support;
+			qcom,dual_ffc;
+			recharge_after_full;
+
+			qcom,normal_vterm_hw_inc = <18>;
+			qcom,non_normal_vterm_hw_inc = <18>;
+
+			qcom,ff1_normal_fastchg_ma = <550>;
+			qcom,ff1_warm_fastchg_ma = <550>;
+			qcom,ffc2_normal_fastchg_ma = <350>;/*12C~35c*/
+			qcom,ffc2_temp_warm_decidegc = <350>;
+			qcom,ffc2_warm_fastchg_ma = <350>;/*35C~40c*/
+			qcom,ffc2_temp_high_decidegc = <400>;
+			qcom,ffc2_temp_low_decidegc = <120>;
+			qcom,ffc2_exit_step_ma = <150>;
+			qcom,ff1_exit_step_ma = <150>;
+			qcom,ff1_warm_exit_step_ma = <150>;
+
+			qcom,ffc_normal_vfloat_sw_limit = <4445>;
+			qcom,ffc2_normal_vfloat_sw_limit = <4440>;
+			qcom,ffc2_warm_vfloat_sw_limit = <4435>;
+			qcom,ffc_temp_normal_vfloat_mv = <4500>;
+			qcom,ffc1_temp_normal_vfloat_mv = <4500>;
+			qcom,ffc2_temp_normal_vfloat_mv = <4500>;
+			qcom,ffc_normal_vfloat_over_sw_limit = <4500>;
+			qcom,ffc1_normal_vfloat_over_sw_limit = <4500>;
+			qcom,ffc2_normal_vfloat_over_sw_limit = <4500>;
+
+			qcom,default_iterm_ma = <120>;
+			qcom,default_temp_normal_fastchg_current_ma = <1100>;
+			qcom,default_normal_vfloat_sw_limit = <4385>;
+			qcom,default_temp_normal_vfloat_mv = <4435>;
+			qcom,default_normal_vfloat_over_sw_limit = <4445>;
+
+			qcom,default_temp_little_cool_fastchg_current_ma = <1100>;
+			qcom,default_little_cool_vfloat_sw_limit = <4385>;
+			qcom,default_temp_little_cool_vfloat_mv = <4435>;
+			qcom,default_little_cool_vfloat_over_sw_limit = <4445>;
+
+			///qcom,offset_temp = <30>;
+			//for control:
+			//qcom,suspend_after_full;
+			qcom,check_batt_full_by_sw;
+			qcom,external_gauge;
+			qcom,chg_ctrl_by_lcd;
+			qcom,chg_ctrl_by_vooc;
+			qcom,chg_ctrl_by_camera;
+			qcom,sw_vfloat_over_protect_enable;
+			qcom,lpd-disable;
+
+			//for PD9V or QC9V
+			qcom,vbatt_pdqc_to_5v_thr = <4100>;
+
+			qcom,vooc_show_ui_soc_decimal;
+			qcom,ui_soc_decimal_speedmin = <20>;//2A
+
+			qcom,chargerid_switch-gpio = <&tlmm 50 0x00>;
+			qcom,ship-gpio = <&tlmm 22 0x00>;
+			qcom,ccdetect-gpio = <&tlmm 14 0x00>;
+			//qcom,shortc-gpio = <&tlmm 43 0x00>;
+			qcom,dischg-gpio = <&pm8150_gpios 9 0x00>;
+			//qcom,charger_int-gpio = <&tlmm 15 0x00>;
+			//qcom,input_pg-gpio = <&tlmm 6 0x00>;
+			//qcom,charger_error-gpio = <&tlmm 118 0x00>;
+
+			pinctrl-names = "default",
+							"chargerid_switch_active", "chargerid_switch_sleep", "chargerid_switch_default",
+							"ship_active", "ship_sleep",
+							"ccdetect_active", "ccdetect_sleep",
+							"dischg_enable", "dischg_disable",
+							"gpio1_adc_default","gpio8_adc_default","gpio5_adc_default",
+							"charger_int_default",
+							"input_pg_default",
+							"charger_error_default","gpio12_adc_default";
+
+
+			pinctrl-0 = <&gpio7_adc_default>;
+			pinctrl-1 = <&chargerid_switch_active>;
+			pinctrl-2 = <&chargerid_switch_sleep>;
+			pinctrl-3 = <&chargerid_switch_default>;
+			pinctrl-4 = <&ship_active>;
+			pinctrl-5 = <&ship_sleep>;
+			pinctrl-6 = <&ccdetect_active>;
+			pinctrl-7 = <&ccdetect_sleep>;
+			pinctrl-8 = <&dischg_enable>;
+			pinctrl-9 = <&dischg_disable>;
+			pinctrl-10 = <&gpio1_adc_default>;
+			pinctrl-11 = <&gpio8_adc_default>;
+			pinctrl-12 = <&gpio5_adc_default>;
+			pinctrl-13 = <&charger_int_default>;
+			pinctrl-14 = <&input_pg_default>;
+			pinctrl-15 = <&charger_error_default>;
+			pinctrl-16 = <&gpio12_adc_default>;
+
+};
+&soc {
+	oplus,track-charge {
+		compatible = "oplus,track-charge";
+		track,fast_chg_break_t_thd = <1000>;
+		track,general_chg_break_t_thd = <200>;
+		track,voocphy_type = <4>;
+		track,wired_max_power = <65000>;
+		track,wired_fast_chg_scheme = <1>;
+	};
+};
+//#endif //OPLUS_FEATURE_CHG_BASIC
+

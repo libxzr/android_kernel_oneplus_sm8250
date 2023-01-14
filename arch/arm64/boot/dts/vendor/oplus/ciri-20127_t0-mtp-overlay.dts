@@ -1,0 +1,31 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include "ciri-oem-common-overlay.dtsi"
+#include "charge/oplus_charge_ciri.dtsi"
+#include "hard_reset.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Litomagnus MTP";
+	compatible = "qcom,lito-mtp", "qcom,lito", "qcom,mtp";
+	qcom,msm-id = <400 0x20000>, <440 0x20000>;
+	qcom,board-id = <8 0>;
+};
+
+/*
+ * overriding adsp-fw-names with empty string
+ * to allow default adsp img load
+ */
+&adsp_loader {
+	adsp-fw-names="";
+};
+
+/ {
+	oplus,dtsi_no = <20127>;
+};

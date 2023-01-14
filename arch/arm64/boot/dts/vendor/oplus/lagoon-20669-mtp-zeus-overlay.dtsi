@@ -1,0 +1,184 @@
+/ {
+};
+#include "zeus_camera/lagoon-camera-sensor-mtp.dtsi"
+&qupv3_se0_spi {
+       status = "ok";
+       novatek@1 {
+               compatible = "novatek,nf_nt36672c";
+               reg = <1>;
+               chip-name = "NF_NT36672C";
+               status = "ok";
+
+               //spi-max-frequency = <9600000>; //4800000,9600000,15000000,19200000
+               spi-max-frequency = <15000000>; //4800000,9600000,15000000,19200000
+               reset-gpio = <&tlmm 21 0x00>;
+               cs-gpio = <&tlmm 3 0x01>;
+               interrupt-parent = <&tlmm>;
+               interrupts = <22 0x0>;
+               irq-gpio = <&tlmm 22 0x2002>;
+               //lcd-reset-gpio = <&pm8150l_gpios 3 0>;
+               touchpanel,tx-rx-num = <16 36>;
+               touchpanel,max-num-support = <10>;
+               touchpanel,panel-coords = <1080 2400>;
+               touchpanel,display-coords = <1080 2400>;
+               touchpanel,touchmajor-limit = <0 54>;
+               tp_type = <6>;
+               platform_support_project = <20669 20751 20750>;
+               platform_support_project_dir = <20669 20669 20669>;
+               platform_support_project_commandline = "nt36672c", "nt36672c", "nt36672c";
+               pinctrl-names = "default", "suspend";
+               pinctrl-0 = <&ts_int_active &ts_reset_active>;
+               pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+
+               incell_screen;
+               irq_need_dev_resume_ok;
+               fw_edge_limit_support;
+               black_gesture_support;
+               charger_pump_support;
+               headset_pump_support;
+               //spurious_fingerprint_support;
+               //lcd_trigger_fp_check;
+               esd_handle_support;
+               black_gesture_test_support;
+               game_switch_support;
+               noflash_support;
+               lcd_trigger_load_tp_fw_support;
+               fw_update_in_probe_with_headfile;
+               smart_gesture_support;
+               new_set_irq_wake_support;
+               pressure_report_support;
+               fw_update_app_support;
+               touchpanel,button-type = <4>;
+
+       };
+       ilitek@2 {
+                compatible = "ilitek,ili7807s";
+                reg = <2>;
+                chip-name = "NF_ILI7807S";
+                status = "ok";
+
+                spi-max-frequency = <15000000>;    //4800000,9600000,15000000,19200000
+                reset-gpio = <&tlmm 21 0x00>;
+                cs-gpio = <&tlmm 3 0x01>;
+                interrupt-parent = <&tlmm>;
+                interrupts = <22 0x0>;
+                irq-gpio = <&tlmm 22 0x2002>;
+
+                touchpanel,max-num-support = <10>;
+                touchpanel,tx-rx-num = <16 36>;
+                touchpanel,panel-coords = <1080 2400>;
+                touchpanel,display-coords = <1080 2400>;
+                touchpanel,touchmajor-limit = <0 54>;
+                tp_type = <3>;
+                platform_support_project = <20669 20751 20750>;
+                platform_support_project_dir = <20669 20669 20669>;
+                platform_support_project_commandline = "ili7807s", "ili7807s", "ili7807s";
+                pinctrl-names = "default", "suspend";
+                pinctrl-0 = <&ts_int_active &ts_reset_active>;
+                pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+
+                incell_screen;
+                irq_need_dev_resume_ok;
+                fw_edge_limit_support;
+                black_gesture_support;
+                charger_pump_support;
+                headset_pump_support;
+                esd_handle_support;
+                //spurious_fingerprint_support;
+                //lcd_trigger_fp_check;
+                black_gesture_test_support;
+                noflash_support;
+                smart_gesture_support;
+                fw_update_app_support;
+                game_switch_support;
+                pressure_report_support;
+                new_set_irq_wake_support;
+                lcd_trigger_load_tp_fw_support;
+                fw_update_in_probe_with_headfile;
+
+                touchpanel,button-type = <4>;
+        };
+};
+
+&thermal_soc_cooling_maps {
+        /delete-node/ soc_cpu6;
+        /delete-node/ soc_cpu7;
+};
+
+&L1P {
+	reg =  /bits/ 16 <0x4000>;
+	regulator-min-microvolt = <1050000>;
+	regulator-max-microvolt = <1104000>;
+	/* Reduced the headroom by 16mV for AHC */
+	qcom,min-dropout-voltage = <209000>;
+	regulator-boot-on;
+};
+
+&L2P {
+	reg =  /bits/ 16 <0x4100>;
+	regulator-min-microvolt = <1050000>;
+	regulator-max-microvolt = <1104000>;
+	/* Reduced the headroom by 16mV for AHC */
+	qcom,min-dropout-voltage = <209000>;
+	regulator-boot-on;
+};
+
+&L3P {
+	reg =  /bits/ 16 <0x4200>;
+	regulator-min-microvolt = <2800000>;
+	regulator-max-microvolt = <2904000>;
+	qcom,min-dropout-voltage = <128000>;
+	regulator-boot-on;
+};
+
+&L4P {
+	reg =  /bits/ 16 <0x4300>;
+	regulator-min-microvolt = <2800000>;
+	regulator-max-microvolt = <2800000>;
+	qcom,min-dropout-voltage = <96000>;
+	regulator-boot-on;
+};
+
+&L5P {
+	reg =  /bits/ 16 <0x4400>;
+	regulator-min-microvolt = <1500000>;
+	regulator-max-microvolt = <2800000>;
+	qcom,min-dropout-voltage = <300000>;
+	regulator-boot-on;
+};
+
+&L6P {
+	reg =  /bits/ 16 <0x4500>;
+	regulator-min-microvolt = <1800000>;
+	regulator-max-microvolt = <1800000>;
+	/* Reduced the headroom by 16mV for AHC */
+	qcom,min-dropout-voltage = <56000>;
+	regulator-boot-on;
+};
+
+&L7P {
+	reg =  /bits/ 16 <0x4600>;
+	regulator-min-microvolt = <2800000>;
+	regulator-max-microvolt = <2800000>;
+	qcom,min-dropout-voltage = <120000>;
+	regulator-boot-on;
+};
+//#ifdef CONFIG_OPLUS_FEATURE_SDCARD
+&sdhc_2 {
+	vdd-supply = <&L9E>;
+	qcom,vdd-voltage-level = <2960000 2960000>;
+	qcom,vdd-current-level = <0 800000>;
+
+	vdd-io-supply = <&L6E>;
+	qcom,vdd-io-voltage-level = <1800000 2950000>;
+	qcom,vdd-io-current-level = <0 22000>;
+
+	pinctrl-names = "active", "sleep";
+	pinctrl-0 = <&sdc2_clk_on  &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
+	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
+
+	cd-gpios = <&tlmm 94 GPIO_ACTIVE_HIGH>;
+
+	status = "ok";
+};
+//#endif /* CONFIG_OPLUS_FEATURE_SDCARD */

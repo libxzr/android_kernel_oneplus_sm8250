@@ -1,0 +1,13 @@
+/dts-v1/;
+
+#include "../qcom/kona.dtsi"
+#include "kona-oem-common.dtsi"
+
+/* DTB: common dtb */
+
+/ {
+	model = "Qualcomm Technologies, Inc. Holi SoC";
+	compatible = "qcom,holi";
+	qcom,board-id = <0 0>;
+	oplus,dtsi_no = <20161>;  //add project here
+};
