@@ -1,0 +1,4 @@
+
+config OPLUS_FEATURE_TP_GESTURE
+	bool "tp_gesturehub for MediaTek package"
+	default n

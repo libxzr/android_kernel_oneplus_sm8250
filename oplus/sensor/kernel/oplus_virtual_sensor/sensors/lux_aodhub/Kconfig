@@ -1,0 +1,4 @@
+
+config OPLUS_FEATURE_LUX_AOD
+	bool "lux_aodhub for MediaTek package"
+	default n

@@ -1,0 +1,18 @@
+# if defined(OPLUS_FEATURE_MEMLEAK_DETECT)
+# Support reclaim process inactive pages only
+config PROCESS_RECLAIM_ENHANCE
+	tristate "Enable process reclaim enchance"
+	depends on PROCESS_RECLAIM
+	default n
+	help
+	 It allows to reclaim different type pages of the process by
+	 /proc/process_reclaim.
+
+	 (echo inactive_file > /proc/PID/reclaim) reclaims inactive file-backed
+		pages only.
+	 (echo inactive_anon > /proc/PID/reclaim) reclaims inactive anonymous
+		pages only.
+	 (echo inactive > /proc/PID/reclaim) reclaims inactive file-backed and
+		anonymous pages only.
+	 Any other vaule, please reference PROCESS_RECLAIM.
+# endif

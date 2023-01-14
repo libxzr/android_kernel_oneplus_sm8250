@@ -1,0 +1,1 @@
+obj-$(CONFIG_OPLUS_FEATURE_SUGOV_POWER_EFFIENCY) += cpufreq_effiency.o

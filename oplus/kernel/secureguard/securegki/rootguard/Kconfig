@@ -1,0 +1,5 @@
+config OPLUS_KERNEL_SECURE_GUARD
+    tristate "oplus kernel secure guard"
+    default n
+    help
+      define this config to enable kernel secure guard .

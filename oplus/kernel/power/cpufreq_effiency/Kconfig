@@ -1,0 +1,5 @@
+config OPLUS_FEATURE_SUGOV_POWER_EFFIENCY
+	tristate "power domain effiency"
+	default n
+	help
+	     Select Left or right frequence point as target frequence base on powerdomain and currenct frequence value
