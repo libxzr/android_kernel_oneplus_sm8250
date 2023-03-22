@@ -1,0 +1,103 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include "../qcom/lagoon-mtp.dtsi"
+#include "lagoon-20669-mtp-common-overlay.dtsi"
+#include "lagoon-20669-mtp-zeus-overlay.dtsi"
+#include "lagoon-20669-audio-zeus-overlay.dtsi"
+#include "display/dsi-panel-oplus20669jdi-nt36672c-1080-2400-120fps.dtsi"
+#include "display/dsi-panel-oplus20669boe-ili7807s-1080-2400-120fps.dtsi"
+#include "charge/oplus_charge_zeus.dtsi"
+#include "sensor/zeus-sensor-20669.dtsi"
+#include "lagoon_nfc/lagoon-20751-nfc-st21-overlay.dtsi"
+#include "storage/zeus-stg.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Lagoon MTP";
+	compatible = "qcom,lagoon-mtp", "qcom,lagoon", "qcom,mtp";
+	qcom,msm-id = <434 0x10000>, <459 0x10000>;
+	qcom,board-id = <8 0>;
+	oplus,dtsi_no = <20669>;
+};
+
+
+/************add for zeus display config begin************************/
+&pm6150l_lcdb {
+    status = "ok";
+};
+
+&pm6150l_wled{
+    status = "ok";
+    qcom,fs-current-limit = <25000>;
+    qcom,en-cabc;
+    qcom,cabc-sel = <1>;
+    qcom,string-cfg = <3>;
+};
+
+&sde_dsi{
+	compatible = "qcom,dsi-display";
+	label = "primary";
+
+	qcom,dsi-ctrl = <&mdss_dsi0>;
+	qcom,dsi-phy = <&mdss_dsi_phy0>;
+
+	clocks = <&mdss_dsi0_pll BYTECLK_MUX_0_CLK>,
+		 <&mdss_dsi0_pll PCLK_MUX_0_CLK>,
+		 <&mdss_dsi0_pll BYTECLK_SRC_0_CLK>,
+		 <&mdss_dsi0_pll PCLK_SRC_0_CLK>,
+		 <&mdss_dsi0_pll SHADOW_BYTECLK_SRC_0_CLK>,
+		 <&mdss_dsi0_pll SHADOW_PCLK_SRC_0_CLK>;
+	clock-names = "mux_byte_clk0", "mux_pixel_clk0",
+			"src_byte_clk0", "src_pixel_clk0",
+			"shadow_byte_clk0", "shadow_pixel_clk0";
+
+	pinctrl-names = "panel_active", "panel_suspend";
+	pinctrl-0 = <&sde_te_active &disp_pins_default>;
+	pinctrl-1 = <&sde_te_suspend>;
+
+	qcom,platform-te-gpio = <&tlmm 23 0>;
+	qcom,panel-te-source = <0>;
+
+	vddio-supply = <&L1E>;
+	/delete-property/ vdd-supply;
+	lab-supply = <&lcdb_ldo_vreg>;
+	ibb-supply = <&lcdb_ncp_vreg>;
+
+	qcom,mdp = <&mdss_mdp>;
+	qcom,dsi-default-panel = <&dsi_oplus20669jdi_nt36672c_1080_2400_120fps_vid>;
+};
+
+/************add for zeus display config begin************************/
+
+/* #ifdef OPLUS_FEATURE_TP_BASIC */
+&soc {
+	gpio_keys {
+		vol_up {
+			//linux,code = <KEY_VOLUMEUP>;
+			linux,code = <KEY_VOLUMEDOWN>;
+		};
+	};
+};
+
+&spmi_bus {
+	qcom,pm6350@0 {
+		qcom,power-on@800 {
+			qcom,pmicwd;
+			qcom,pon_2 {
+				//linux,code = <KEY_VOLUMEDOWN>;
+				linux,code = <KEY_VOLUMEUP>;
+			};
+//add for hard_reset time
+			qcom,pon_3 {
+				qcom,pon-type = <3>;
+				qcom,support-reset = <1>;
+				qcom,s1-timer = <8000>;
+				qcom,s2-timer = <500>;
+				qcom,s2-type = <4>;
+				qcom,pull-up;
+			};
+		};
+	};
+};
+/* #endif OPLUS_FEATURE_TP_BASIC */

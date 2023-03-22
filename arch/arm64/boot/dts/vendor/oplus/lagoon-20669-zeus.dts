@@ -1,0 +1,141 @@
+/dts-v1/;
+
+#include "../qcom/lagoon.dtsi"
+#include "lagoon-20669-oem-common.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Lagoon SoC";
+	compatible = "qcom,lagoon";
+	qcom,board-id = <0 0>;
+	oplus,dtsi_no = <20669>;
+};
+
+//liangyuchen, 2020-12-22, add for zeus touchpanel config
+&tlmm {
+	qupv3_se0_spi_pins: qupv3_se0_spi_pins {
+		qupv3_se0_spi_active: qupv3_se0_spi_active {
+			mux {
+				pins = "gpio0", "gpio1",
+						"gpio2", "gpio3";
+				function = "qup00";
+			};
+
+			config {
+				pins = "gpio0", "gpio1",
+						"gpio2", "gpio3";
+				drive-strength = <6>;
+				bias-disable;
+			};
+		};
+
+		qupv3_se0_spi_sleep: qupv3_se0_spi_sleep {
+			mux {
+				pins = "gpio0", "gpio1",
+						"gpio2", "gpio3";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio0", "gpio1",
+						"gpio2", "gpio3";
+				drive-strength = <6>;
+				bias-disable;
+			};
+		};
+	};
+
+	pmx_ts_active {
+		ts_active: ts_active {
+			mux {
+				pins = "gpio21", "gpio22";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio21", "gpio22";
+				drive-strength = <8>;
+				bias-pull-up;
+			};
+		};
+	};
+
+	ts_int_active {
+		ts_int_active: ts_int_active {
+			mux {
+				pins = "gpio22";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio22";
+				drive-strength = <8>;
+				bias-pull-up;
+			};
+		};
+	};
+
+	pmx_ts_int_suspend {
+		ts_int_suspend: ts_int_suspend {
+			mux {
+				pins = "gpio22";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio22";
+				drive-strength = <2>;
+				bias-pull-down;
+			};
+		};
+	};
+
+	pmx_ts_reset_active {
+		ts_reset_active: ts_reset_active {
+			mux {
+				pins = "gpio21";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio21";
+				drive-strength = <8>;
+				bias-pull-up;
+			};
+		};
+	};
+
+	pmx_ts_reset_suspend {
+		ts_reset_suspend: ts_reset_suspend {
+			mux {
+				pins = "gpio21";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio21";
+				drive-strength = <2>;
+				bias-pull-down;
+			};
+		};
+	};
+
+	pmx_ts_release {
+		pmx_ts_release: pmx_ts_release {
+			mux {
+				pins = "gpio22", "gpio21";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio22", "gpio21";
+				drive-strength = <2>;
+				bias-disable;
+			};
+		};
+	};
+};
+
+&icnss {
+	/delete-property/ vdd-3.3-ch1-supply;
+	/delete-property/ qcom,vdd-3.3-ch1-config;
+};

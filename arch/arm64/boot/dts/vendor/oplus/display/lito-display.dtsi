@@ -1,0 +1,126 @@
+#include "dsi-panel-oplus19015samsung-ams644vk01-1080-2400.dtsi"
+#include "dsi-panel-oplus19015samsung-ams643xf01-1080-2400.dtsi"
+#include "dsi-panel-oplus19101boe-nt37800-1080-2400-90fps.dtsi"
+#include "dsi-panel-oplus19125samsung-ams641rw01-1080-2340.dtsi"
+#include "dsi-panel-oplus19125samsung-ams644va04-1080-2400.dtsi"
+#include "dsi-panel-oplus19125samsung-s6e3fc2x01-1080-2340-61fps.dtsi"
+#include "dsi-panel-oplus20111samsung-ams643ye01-1080-2400.dtsi"
+#include "dsi-panel-oplus20111samsung-ams643ye01-1080-2400-dvt.dtsi"
+#include "dsi-panel-oplus-nt36672c-dsjm-fhd-plus-90fps-video.dtsi"
+#include "dsi-panel-oplus20127samsung-ams643ye01-1080-2400-dsi-cmd.dtsi"
+
+&soc {
+	dsi_panel_pwr_supply {
+		qcom,panel-supply-entry@1 {
+			qcom,supply-enable-load = <857000>;
+			qcom,supply-disable-load = <0>;
+			qcom,supply-post-on-sleep = <0>;
+		};
+	};
+
+	dsi_panel_pwr_supply_vout: dsi_panel_pwr_supply_vout {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		qcom,panel-supply-entry@0 {
+			reg = <0>;
+			qcom,supply-name = "vddio";
+			qcom,supply-min-voltage = <1800000>;
+			qcom,supply-max-voltage = <1800000>;
+			qcom,supply-enable-load = <62000>;
+			qcom,supply-disable-load = <80>;
+			qcom,supply-post-on-sleep = <20>;
+		};
+
+		qcom,panel-supply-entry@1 {
+			reg = <1>;
+			qcom,supply-name = "vdd";
+			qcom,supply-min-voltage = <3000000>;
+			qcom,supply-max-voltage = <3000000>;
+			qcom,supply-enable-load = <857000>;
+			qcom,supply-disable-load = <0>;
+			qcom,supply-post-on-sleep = <0>;
+		};
+
+		qcom,panel-supply-entry@2 {
+			reg = <2>;
+			qcom,supply-name = "vout";
+			qcom,supply-min-voltage = <1500000>;
+			qcom,supply-max-voltage = <1510000>;
+			qcom,supply-enable-load = <857000>;
+			qcom,supply-disable-load = <0>;
+			qcom,supply-post-on-sleep = <0>;
+		};
+	};
+
+	dsi_panel_pwr_supply_labibb: dsi_panel_pwr_supply_labibb {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		qcom,panel-supply-entry@0 {
+			reg = <0>;
+			qcom,supply-name = "vddio";
+			qcom,supply-min-voltage = <1800000>;
+			qcom,supply-max-voltage = <1800000>;
+			qcom,supply-enable-load = <62000>;
+			qcom,supply-disable-load = <80>;
+			qcom,supply-pre-on-sleep = <20>;
+			qcom,supply-post-on-sleep = <20>;
+		};
+
+		qcom,panel-supply-entry@1 {
+			reg = <1>;
+			qcom,supply-name = "lab";
+			qcom,supply-min-voltage = <4600000>;
+			qcom,supply-max-voltage = <6000000>;
+			qcom,supply-enable-load = <100000>;
+			qcom,supply-disable-load = <100>;
+		};
+
+		qcom,panel-supply-entry@2 {
+			reg = <2>;
+			qcom,supply-name = "ibb";
+			qcom,supply-min-voltage = <4600000>;
+			qcom,supply-max-voltage = <6000000>;
+			qcom,supply-enable-load = <100000>;
+			qcom,supply-disable-load = <100>;
+			qcom,supply-post-on-sleep = <20>;
+		};
+	};
+
+	dsi_panel_pwr_supply_vddi: dsi_panel_pwr_supply_vddi {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		qcom,panel-supply-entry@0 {
+			reg = <0>;
+			qcom,supply-name = "vddio";
+			qcom,supply-min-voltage = <1800000>;
+			qcom,supply-max-voltage = <1800000>;
+			qcom,supply-enable-load = <62000>;
+			qcom,supply-disable-load = <80>;
+			qcom,supply-post-on-sleep = <10>;
+		};
+	};
+
+	qcom,dsi-display-primary {
+		vddio-supply = <&L1C>;
+		vdd-supply = <&L16A>;
+		vout-supply = <&L5P>;
+		qcom,dsi-default-panel = <&dsi_oplus20111samsung_ams643ye01_1080_2400_cmd>;
+	};
+
+	qcom,dsi-display-secondary {
+		status = "disable";
+	};
+
+	qcom,dp_display@ae90000 {
+		status = "disable";
+	};
+
+	qcom,mdss_mdp {
+		clock-rate = <0 0 0 0 300000000 19200000 200000000
+						200000000>;
+		connectors = <&sde_wb &sde_dsi &sde_rscc>;
+	};
+};

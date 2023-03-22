@@ -1,0 +1,44 @@
+/**********************************************************************************
+* Copyright (c)  2008-2020  Guangdong oplus Mobile Comm Corp., Ltd
+* VENDOR_EDIT
+* Description: oplus pn557 nfc dtsi
+* 
+* Version: 1.0
+* Date: 2020-09-16
+* Author: Weiwei.Deng
+* 
+* ------------------------------ Revision History: --------------------------------
+* <version>           <date>                <author>                            <desc>
+* Revision 1.0       2020-09-16            Weiwei.Deng           Created for kunlun_EVT pn557 nfc dtsi
+***********************************************************************************/
+&soc {
+	//add for nfc_chipset
+	nfc_chipset {
+		compatible = "oplus-nfc-chipset";
+		chipset-20251 = "PN557";
+	};
+};
+
+&qupv3_se0_i2c {
+    //add for NXP PN557 NFC GPIO
+	status = "ok";
+	//qcom,clk-freq-out = <1000000>;
+	#address-cells = <1>;
+	#size-cells = <0>;
+	nq@28 {
+		compatible = "nxp,pn544";
+		reg = <0x28>;
+		nxp,pn544-irq = <&tlmm 34 0x00>;
+		nxp,pn544-ven = <&tlmm 11 0x00>;
+		nxp,pn544-fw-dwnld = <&tlmm 35 0x00>;
+		qcom,nq-clkreq = <&tlmm 31 0x00>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <34 0>;
+		interrupt-names = "nfc_irq";
+		pinctrl-names = "nfc_active", "nfc_suspend";
+		pinctrl-0 = <&nfc_int_active &nfc_enable_active
+				&nfc_clk_req_active>;
+		pinctrl-1 = <&nfc_int_suspend &nfc_enable_suspend
+				&nfc_clk_req_suspend>;
+	};
+};

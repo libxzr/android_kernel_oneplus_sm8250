@@ -1,0 +1,22 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include "../qcom/lagoon-mtp.dtsi"
+#include "lagoon-mtp-common-overlay.dtsi"
+#include "lagoon-mtp-wudang-overlay.dtsi"
+#include "charge/oplus_charge_wudang.dtsi"
+#include "sensor/wudang-sensor-20057.dtsi"
+#include "fingerprint/wudang-fingerprint-20057.dtsi"
+#include "storage/wudang-stg.dtsi"
+/* #ifdef OPLUS_ARCH_EXTENDS */
+#include "lagoon-audio-wudang-overlay.dtsi"
+/* #endif OPLUS_ARCH_EXTENDS */
+
+/ {
+	model = "Qualcomm Technologies, Inc. Lagoon MTP";
+	compatible = "qcom,lagoon-mtp", "qcom,lagoon", "qcom,mtp";
+	qcom,msm-id = <434 0x10000>, <459 0x10000>;
+	qcom,board-id = <8 0>;
+	oplus,dtsi_no = <20057>;
+};

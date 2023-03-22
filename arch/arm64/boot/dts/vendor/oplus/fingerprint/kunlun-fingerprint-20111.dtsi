@@ -1,0 +1,86 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+
+&soc {
+
+    //#ifdef OPLUS_FEATURE_FINGERPRINT /*OPLUS_FEATURE_FINGERPRINT*/
+    oplus_fp_common {
+        compatible = "oplus,fp_common";
+        oplus,fp_gpio_num = <1>; /* the gpio number of fingerprint id used */
+        oplus,fp_gpio_0 = <&tlmm 65 0x0>;
+        pinctrl-names = "default";
+        pinctrl-0 = <&gpio_id2_default>;
+        goodix_optical_G3S {
+            oplus,fp-id = <1>; /* fp id mapping table */
+            vendor-chip = <11>; /* please refer to the struct fp_vendor_t in oplus_fp_commmon.n */
+            eng-menu = "-1,-1"; /* represents SNR, inclination test item in engineer menu, and 0/1 means off/on */
+            chip-name = "G_OPTICAL_G3S";  /* /proc/fp_id, will be displayed in engineer menu  */
+        };
+        jiiov_0302 {
+            oplus,fp-id = <0>; /* fp id mapping table */
+            vendor-chip = <23>; /* please refer to the struct fp_vendor_t in oplus_fp_commmon.n */
+            eng-menu = "-1,-1"; /* represents SNR, inclination test item in engineer menu, and 0/1 means off/on */
+            chip-name = "JIIOV_0302";  /* /proc/fp_id, will be displayed in engineer menu  */
+        };
+    };
+
+    goodix_fp {
+        status = "ok";
+        compatible = "goodix,goodix_fp";
+        interrupt-parent = <&tlmm>;
+        interrupts = <112 0>;
+        power-mode = <1> ; /*please refer to the struct fp_power_mode_t in oplus_fp_commmon.n ,0: power mode not set, 1: ldo power, 2: gpio power, 3: auto power */
+        ldo-supply = <&pm8150a_l9>; // pm660l_l5 for goodix_fp
+        ldo-config = <3300000 3300000 150000>;
+        gpio-power = <&pm8150_gpios 7 GPIO_ACTIVE_LOW>;
+        goodix,gpio_irq = <&tlmm 112 0x1>;
+        goodix,gpio_reset = <&tlmm 63 0x0>;
+        pinctrl-names = "default";
+        pinctrl-0 = <&gpio_goodix_irq_default>;
+        notify_tpinfo_flag = <1>;
+        power-num = <1> ;
+        power_source_1 {
+            power-mode = <1>;   /* 1 = ldo power, refer to oplus_fp_common.h*/
+            power-name = "ldo";
+            power-config = "ldo-config";
+            delay-time = <0>;
+        };
+    };
+    //#endif /*OPLUS_FEATURE_FINGERPRINT*/
+
+    pinctrl@f000000 {
+        //#ifdef /*OPLUS_FEATURE_FINGERPRINT*/
+        oplus_fp_common{
+            gpio_id2_default: gpio_id2_default {
+                mux {
+                    pins = "gpio65";
+                    function = "gpio";
+                };
+                config {
+                    pins = "gpio65";
+                    drive-strength = <2>;
+                    bias-pull-up;
+                    input-enable;
+                };
+            };
+        };
+        goodix_fp{
+            gpio_goodix_irq_default: gpio_goodix_irq_default {
+                mux {
+                    pins = "gpio112";
+                    function = "gpio";
+                };
+                config {
+                    pins = "gpio112";
+                    drive-strength = <2>;
+                    bias-disable;
+                    input-enable;
+                };
+            };
+        };
+        //#endif /*OPLUS_FEATURE_FINGERPRINT*/
+	};
+};
+

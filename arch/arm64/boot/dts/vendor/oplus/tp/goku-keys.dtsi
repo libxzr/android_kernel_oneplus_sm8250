@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+
+&spmi_bus {
+    qcom,pm8150@0 {
+        qcom,power-on@800 {
+            /delete-node/ qcom,pon_2;
+            qcom,pon_2 {
+                qcom,pon-type = <PON_POWER_ON_TYPE_RESIN>;
+                linux,code = <KEY_VOLUMEUP>;
+                qcom,pull-up;
+            };
+        };
+    };
+};
+
+&soc {
+    devinfo {
+        pinctrl-names = "default";
+        pinctrl-0 = <&gpio11_adc_goku_default>;
+
+        main-sub {
+            adc_ranges = <0 1300>;
+            aboard-patterns = <0 0>;
+
+            /*main board*/
+            match-projects = <20267 20268>;
+        };
+    };
+};
+
+&pm7250b_gpios{
+    gpio11_adc_goku {
+        gpio11_adc_goku_default: gpio11_adc_goku_default {
+            pins = "gpio11"; /* GPIO 11 */
+            function = "normal"; /* normal */
+            //bias-high-impedance; /* DISABLE GPIO11 for ADC*/
+            output-low;
+        };
+    };
+};

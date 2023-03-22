@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2018-2020 Oplus. All rights reserved.
+ */
+
+&spmi_bus {
+	qcom,pm8150@0 {
+		qcom,power-on@800 {
+//#ifdef OPLUS_BUG_STABILITY
+//add for hard_reset time
+			qcom,pon_3 {
+				qcom,pon-type = <PON_POWER_ON_TYPE_KPDPWR_RESIN>;
+				qcom,support-reset = <1>;
+				qcom,s1-timer = <10256>;
+				qcom,s2-timer = <500>;
+				qcom,s2-type = <PON_POWER_OFF_TYPE_DVDD_SHUTDOWN>;
+				qcom,pull-up;
+			};
+//#endif
+		};
+	};
+};
