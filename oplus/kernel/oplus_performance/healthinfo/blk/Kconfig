@@ -1,0 +1,7 @@
+#ifdef OPLUS_FEATURE_HEALTHINFO
+config OPLUS_BLK_MONITOR
+	bool "block layer monitor "
+	default n
+	help
+	 block layer monitor.
+#endif /* OPLUS_FEATURE_HEALTHINFO */

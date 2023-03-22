@@ -1,0 +1,10 @@
+config OPLUS_FEATURE_UIFIRST
+	tristate "uifirst"
+	default n
+	help
+	  turning sched for ui, render and so on to improve UX
+config CAMERA_OPT
+	bool "config camera opt"
+	default n
+	help
+	  reduce camera provider task runnable time

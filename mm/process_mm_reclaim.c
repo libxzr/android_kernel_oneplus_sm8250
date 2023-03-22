@@ -1,1 +1,1 @@
-../../../vendor/oplus/kernel/oplus_performance/process_reclaim/process_mm_reclaim.c
+../oplus/kernel/oplus_performance/process_reclaim/process_mm_reclaim.c

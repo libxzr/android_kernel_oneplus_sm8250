@@ -1,0 +1,4 @@
+
+config OPLUS_FEATURE_ELEVATOR_DETECT
+    bool "elevator_detect for MediaTek package"
+    default n

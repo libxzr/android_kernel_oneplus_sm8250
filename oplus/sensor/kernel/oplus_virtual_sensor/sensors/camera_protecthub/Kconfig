@@ -1,0 +1,4 @@
+
+config OPLUS_FEATURE_CAMERA_PROTECT
+	bool "camera_protecthub for MediaTek package"
+	default n

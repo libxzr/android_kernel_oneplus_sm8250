@@ -1,0 +1,4 @@
+
+config OPLUS_FEATURE_FREE_FALL
+	bool "free_fallhub for MediaTek package"
+	default n

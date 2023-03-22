@@ -1,0 +1,23 @@
+config OPLUS_ROOT_CHECK
+    tristate "oplus root check"
+    default n
+    help
+      define this config to enable oplus root check .
+
+config OPLUS_EXECVE_BLOCK
+    tristate "oplus execve"
+    default n
+    help
+      define this config to enable oplus execve block .
+
+config OPLUS_MOUNT_BLOCK
+    tristate "oplus mount block"
+    default n
+    help
+      define this config to enable oplus mount block .
+
+config OPLUS_SECURE_GUARD
+    tristate "oplus secure guard"
+    default n
+    help
+      define this config to enable oplus secure guard .

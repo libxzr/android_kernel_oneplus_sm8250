@@ -1,0 +1,15 @@
+config OPLUS_SENSOR_CONSUMER_IR_CORE
+	tristate "sensor consumer ir config for core"
+	help
+	  To compile this driver as a module, set m in kernel build config
+	  module will be called oplus_ir_core.
+config OPLUS_SENSOR_CONSUMER_IR_QC
+	tristate "sensor consumer ir config for qcom"
+	help
+	  To compile this driver as a module, set m in kernel build config
+	  module will be called oplus_ir_spi.
+config OPLUS_SENSOR_CONSUMER_IR_MTK
+	tristate "sensor consumer ir config for MediaTek"
+	help
+	  To compile this driver as a module, set m in kernel build config
+	  module will be called oplus_ir_pwm.

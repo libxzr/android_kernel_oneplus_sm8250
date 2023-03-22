@@ -1,1 +1,1 @@
-../../../../vendor/oplus/kernel/misc/oplus_rf_cable_monitor.c
+../../oplus/kernel/misc/oplus_rf_cable_monitor.c

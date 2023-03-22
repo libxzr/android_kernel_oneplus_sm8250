@@ -1,0 +1,6 @@
+
+config OPLUS_FEATURE_SENSOR_MONITOR
+	tristate "sensor_monitor for MediaTek package"
+	help
+	  To compile this driver as a module, set M in kernel build config
+	  module will be called sensor_monitor.

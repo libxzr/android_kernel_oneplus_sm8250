@@ -1,0 +1,4 @@
+
+config OPLUS_FEATURE_FP_DISPLAY
+	bool "fp_displayhub for MediaTek package"
+	default n
