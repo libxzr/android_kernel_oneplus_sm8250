@@ -626,21 +626,6 @@ static int log_store(int facility, int level,
 	u32 size, pad_len;
 	u16 trunc_msg_len = 0;
 
-#ifdef VENDOR_EDIT
-	//part 1/2: add for add cpu number and current id and current comm to kmsg
-	int this_cpu = smp_processor_id();
-	char tbuf[64];
-	unsigned tlen;
-
-	if (console_suspended == 0) {
-		tlen = snprintf(tbuf, sizeof(tbuf), " (%x)[%d:%s]",
-			this_cpu, current->pid, current->comm);
-	} else {
-		tlen = snprintf(tbuf, sizeof(tbuf), " %x)", this_cpu);
-	}
-	text_len += tlen;
-#endif //add end part 1/3
-
 	/* number of '\0' padding bytes to next message */
 	size = msg_used_size(text_len, dict_len, &pad_len);
 
@@ -665,13 +650,7 @@ static int log_store(int facility, int level,
 
 	/* fill message */
 	msg = (struct printk_log *)(log_buf + log_next_idx);
-#ifndef VENDOR_EDIT
-//part 2/2: add for add cpu number and current id and current comm to kmsg
 	memcpy(log_text(msg), text, text_len);
-#else
-	memcpy(log_text(msg), tbuf, tlen);
-	memcpy(log_text(msg) + tlen, text, text_len-tlen);
-#endif //add end part 3/3
 	msg->text_len = text_len;
 	if (trunc_msg_len) {
 		memcpy(log_text(msg) + text_len, trunc_msg, trunc_msg_len);
