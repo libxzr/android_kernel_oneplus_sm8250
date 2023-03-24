@@ -16,6 +16,8 @@ obj-y     = fork.o exec_domain.o panic.o \
 obj-y += panic_flush.o
 #endif
 
+obj-y += panic_logstore.o
+
 obj-$(CONFIG_MODULES) += kmod.o
 obj-$(CONFIG_MULTIUSER) += groups.o
 
