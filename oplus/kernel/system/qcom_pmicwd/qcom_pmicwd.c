@@ -457,13 +457,6 @@ void pmicwd_init(struct platform_device *pdev, struct qpnp_pon *pon, bool sys_re
 	u32 pon_rt_sts = 0;
 	int rc;
 
-	oplus_ke_proc_dir = proc_mkdir("oplus_ke", NULL);
-	if (oplus_ke_proc_dir == NULL) {
-		pr_info("oplus_ke proc_mkdir failed\n");
-	}
-
-	OPLUS_KE_PROC_ENTRY(force_shutdown, force_shutdown, 0600);
-
 	if (!pon){
 		return;
 	}
@@ -635,4 +628,16 @@ const struct dev_pm_ops qpnp_pm_ops = {
 };
 EXPORT_SYMBOL(qpnp_pm_ops);
 
+static __init int pmicwd_init_once(void)
+{
+	oplus_ke_proc_dir = proc_mkdir("oplus_ke", NULL);
+	if (oplus_ke_proc_dir == NULL) {
+		pr_info("oplus_ke proc_mkdir failed\n");
+	}
+	OPLUS_KE_PROC_ENTRY(force_shutdown, force_shutdown, 0600);
+
+	return 0;
+}
+
+module_init(pmicwd_init_once);
 MODULE_LICENSE("GPL v2");
