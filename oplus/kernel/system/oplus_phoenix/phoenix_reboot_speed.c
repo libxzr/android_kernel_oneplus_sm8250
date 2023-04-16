@@ -288,7 +288,7 @@ void bootprof_initcall(initcall_t fn, unsigned long long ts)
 }
 
 /*  initcalls tracepoint cb while initcall_debug=1 */
-static __init_or_module void
+static void
 tp_initcall_start_cb(void *data, initcall_t fn)
 {
 	struct initcall_list_t *obj;
@@ -331,7 +331,7 @@ tp_initcall_start_cb(void *data, initcall_t fn)
 	}
 }
 
-static __init_or_module void
+static void
 tp_initcall_finish_cb(void *data, initcall_t fn, int ret)
 {
 	struct initcall_list_t *pos, *next;
