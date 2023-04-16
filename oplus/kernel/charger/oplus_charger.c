@@ -3351,6 +3351,16 @@ int oplus_chg_init(struct oplus_chg_chip *chip)
 		dev_err(chip->dev, "charger operations cannot be NULL\n");
 		return -1;
 	}
+
+	INIT_DELAYED_WORK(&chip->update_work, oplus_chg_update_work);
+	INIT_DELAYED_WORK(&chip->aging_check_work, oplus_aging_check_work);
+	INIT_DELAYED_WORK(&chip->ui_soc_decimal_work, oplus_chg_show_ui_soc_decimal);
+	INIT_DELAYED_WORK(&chip->reset_adapter_work, oplus_chg_reset_adapter_work);
+	INIT_DELAYED_WORK(&chip->turn_on_charging_work, oplus_chg_turn_on_charging_work);
+	INIT_DELAYED_WORK(&chip->parallel_chg_mos_test_work, oplus_parallel_chg_mos_test_work);
+	INIT_DELAYED_WORK(&chip->fg_soft_reset_work, oplus_fg_soft_reset_work);
+	INIT_DELAYED_WORK(&chip->parallel_batt_chg_check_work, oplus_parallel_batt_chg_check_work);
+
 	oplus_chg_track_init(chip);
 	oplus_chg_variables_init(chip);
 	oplus_get_smooth_soc_switch(chip);
@@ -3388,14 +3398,6 @@ int oplus_chg_init(struct oplus_chg_chip *chip)
 	chip->flash_led_status = false;
 	g_charger_chip = chip;
 	oplus_chg_awake_init(chip);
-	INIT_DELAYED_WORK(&chip->update_work, oplus_chg_update_work);
-	INIT_DELAYED_WORK(&chip->aging_check_work, oplus_aging_check_work);
-	INIT_DELAYED_WORK(&chip->ui_soc_decimal_work, oplus_chg_show_ui_soc_decimal);
-	INIT_DELAYED_WORK(&chip->reset_adapter_work, oplus_chg_reset_adapter_work);
-	INIT_DELAYED_WORK(&chip->turn_on_charging_work, oplus_chg_turn_on_charging_work);
-	INIT_DELAYED_WORK(&chip->parallel_chg_mos_test_work, oplus_parallel_chg_mos_test_work);
-	INIT_DELAYED_WORK(&chip->fg_soft_reset_work, oplus_fg_soft_reset_work);
-	INIT_DELAYED_WORK(&chip->parallel_batt_chg_check_work, oplus_parallel_batt_chg_check_work);
 	chip->shortc_thread = kthread_create(shortc_thread_main, (void *)chip, thread_name);
 	if (!chip->shortc_thread) {
 		chg_err("Can't create shortc_thread\n");
