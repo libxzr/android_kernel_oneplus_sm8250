@@ -593,7 +593,6 @@ static irqreturn_t ist8801_down_irq_handler(int irq, void *dev_id)
 		return -EINVAL;
 	}
 
-	disable_irq_nosync(g_ist8801_data->irq);
 	__pm_wakeup_event(&g_ist8801_data->source, 2000);
 	oplus_hall_irq_handler(1);
 

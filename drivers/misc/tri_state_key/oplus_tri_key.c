@@ -816,8 +816,11 @@ int oplus_hall_irq_handler(unsigned int id)
 	TRI_KEY_LOG("%d tri_key:call :%s\n", id, __func__);
 	if (!g_the_chip)
 		TRI_KEY_LOG("g_the_chip null\n ");
-	else
+	else {
+		g_the_chip->dhall_up_ops->enable_irq(false);
+		g_the_chip->dhall_down_ops->enable_irq(false);
 		schedule_work(&g_the_chip->dwork);
+	}
 	return IRQ_HANDLED;
 }
 EXPORT_SYMBOL(oplus_hall_irq_handler);
