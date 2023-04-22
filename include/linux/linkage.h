@@ -94,10 +94,10 @@
 #define SYM_A_ALIGN				ALIGN
 #define SYM_A_NONE				/* nothing */
 
-/* SYM_V_* -- visibility of symbols */
-#define SYM_V_GLOBAL(name)			.globl name
-#define SYM_V_WEAK(name)			.weak name
-#define SYM_V_LOCAL(name)			/* nothing */
+/* SYM_L_* -- linkage of symbols */
+#define SYM_L_GLOBAL(name)			.globl name
+#define SYM_L_WEAK(name)			.weak name
+#define SYM_L_LOCAL(name)			/* nothing */
 
 #ifndef LINKER_SCRIPT
 #define ALIGN __ALIGN
@@ -176,7 +176,7 @@
  */
 #ifndef SYM_FUNC_START_LOCAL_ALIAS
 #define SYM_FUNC_START_LOCAL_ALIAS(name)		\
-	SYM_START(name, SYM_V_LOCAL, SYM_A_ALIGN)
+	SYM_START(name, SYM_L_LOCAL, SYM_A_ALIGN)
 #endif
 
 /*
@@ -185,7 +185,7 @@
  */
 #ifndef SYM_FUNC_START_ALIAS
 #define SYM_FUNC_START_ALIAS(name)			\
-	SYM_START(name, SYM_V_GLOBAL, SYM_A_ALIGN)
+	SYM_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)
 #endif
 
 /* SYM_FUNC_START -- use for global functions */
@@ -195,38 +195,38 @@
  * later.
  */
 #define SYM_FUNC_START(name)				\
-	SYM_START(name, SYM_V_GLOBAL, SYM_A_ALIGN)
+	SYM_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)
 #endif
 
 /* SYM_FUNC_START_NOALIGN -- use for global functions, w/o alignment */
 #ifndef SYM_FUNC_START_NOALIGN
 #define SYM_FUNC_START_NOALIGN(name)			\
-	SYM_START(name, SYM_V_GLOBAL, SYM_A_NONE)
+	SYM_START(name, SYM_L_GLOBAL, SYM_A_NONE)
 #endif
 
 /* SYM_FUNC_START_LOCAL -- use for local functions */
 #ifndef SYM_FUNC_START_LOCAL
 /* the same as SYM_FUNC_START_LOCAL_ALIAS, see comment near SYM_FUNC_START */
 #define SYM_FUNC_START_LOCAL(name)			\
-	SYM_START(name, SYM_V_LOCAL, SYM_A_ALIGN)
+	SYM_START(name, SYM_L_LOCAL, SYM_A_ALIGN)
 #endif
 
 /* SYM_FUNC_START_LOCAL_NOALIGN -- use for local functions, w/o alignment */
 #ifndef SYM_FUNC_START_LOCAL_NOALIGN
 #define SYM_FUNC_START_LOCAL_NOALIGN(name)		\
-	SYM_START(name, SYM_V_LOCAL, SYM_A_NONE)
+	SYM_START(name, SYM_L_LOCAL, SYM_A_NONE)
 #endif
 
 /* SYM_FUNC_START_WEAK -- use for weak functions */
 #ifndef SYM_FUNC_START_WEAK
 #define SYM_FUNC_START_WEAK(name)			\
-	SYM_START(name, SYM_V_WEAK, SYM_A_ALIGN)
+	SYM_START(name, SYM_L_WEAK, SYM_A_ALIGN)
 #endif
 
 /* SYM_FUNC_START_WEAK_NOALIGN -- use for weak functions, w/o alignment */
 #ifndef SYM_FUNC_START_WEAK_NOALIGN
 #define SYM_FUNC_START_WEAK_NOALIGN(name)		\
-	SYM_START(name, SYM_V_WEAK, SYM_A_NONE)
+	SYM_START(name, SYM_L_WEAK, SYM_A_NONE)
 #endif
 
 /* SYM_FUNC_END_ALIAS -- the end of LOCAL_ALIASed or ALIASed function */
@@ -262,19 +262,19 @@
 /* SYM_CODE_START -- use for non-C (special) functions */
 #ifndef SYM_CODE_START
 #define SYM_CODE_START(name)				\
-	SYM_START(name, SYM_V_GLOBAL, SYM_A_ALIGN)
+	SYM_START(name, SYM_L_GLOBAL, SYM_A_ALIGN)
 #endif
 
 /* SYM_CODE_START_NOALIGN -- use for non-C (special) functions, w/o alignment */
 #ifndef SYM_CODE_START_NOALIGN
 #define SYM_CODE_START_NOALIGN(name)			\
-	SYM_START(name, SYM_V_GLOBAL, SYM_A_NONE)
+	SYM_START(name, SYM_L_GLOBAL, SYM_A_NONE)
 #endif
 
 /* SYM_CODE_START_LOCAL -- use for local non-C (special) functions */
 #ifndef SYM_CODE_START_LOCAL
 #define SYM_CODE_START_LOCAL(name)			\
-	SYM_START(name, SYM_V_LOCAL, SYM_A_ALIGN)
+	SYM_START(name, SYM_L_LOCAL, SYM_A_ALIGN)
 #endif
 
 /*
@@ -283,7 +283,7 @@
  */
 #ifndef SYM_CODE_START_LOCAL_NOALIGN
 #define SYM_CODE_START_LOCAL_NOALIGN(name)		\
-	SYM_START(name, SYM_V_LOCAL, SYM_A_NONE)
+	SYM_START(name, SYM_L_LOCAL, SYM_A_NONE)
 #endif
 
 /* SYM_CODE_END -- the end of SYM_CODE_START_LOCAL, SYM_CODE_START, ... */
@@ -311,13 +311,13 @@
 /* SYM_DATA_START -- global data symbol */
 #ifndef SYM_DATA_START
 #define SYM_DATA_START(name)				\
-	SYM_START(name, SYM_V_GLOBAL, SYM_A_NONE)
+	SYM_START(name, SYM_L_GLOBAL, SYM_A_NONE)
 #endif
 
 /* SYM_DATA_START -- local data symbol */
 #ifndef SYM_DATA_START_LOCAL
 #define SYM_DATA_START_LOCAL(name)			\
-	SYM_START(name, SYM_V_LOCAL, SYM_A_NONE)
+	SYM_START(name, SYM_L_LOCAL, SYM_A_NONE)
 #endif
 
 /* SYM_DATA_END -- the end of SYM_DATA_START symbol */

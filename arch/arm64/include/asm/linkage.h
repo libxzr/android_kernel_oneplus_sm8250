@@ -12,7 +12,7 @@
 		SYM_FUNC_START_ALIAS(__pi_##x) ASM_NL \
 		SYM_FUNC_START(x)
 
-#define SYM_FUNC_START_PI_WEAK(x) \
+#define SYM_FUNC_START_WEAK_PI(x) \
 		SYM_FUNC_START_ALIAS(__pi_##x) ASM_NL \
 		SYM_FUNC_START_WEAK(x)
 

@@ -60,7 +60,7 @@ pos		.req	x11
 limit_wd	.req	x12
 mask		.req	x13
 
-SYM_FUNC_START_PI_WEAK(memcmp)
+SYM_FUNC_START_WEAK_PI(memcmp)
 	cbz	limit, .Lret0
 	eor	tmp1, src1, src2
 	tst	tmp1, #7
