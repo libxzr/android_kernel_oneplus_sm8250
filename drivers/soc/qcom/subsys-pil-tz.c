@@ -855,9 +855,6 @@ static void log_failure_reason(const struct pil_tz_data *d)
 {
 	size_t size;
 	char *smem_reason, reason[MAX_SSR_REASON_LEN];
-	#ifdef OPLUS_FEATURE_AGINGTEST
-	char *function_name;
-	#endif /*OPLUS_FEATURE_AGINGTEST*/
 	const char *name = d->subsys_desc.name;
 
 	if (d->smem_id == -1)
@@ -897,11 +894,6 @@ static void log_failure_reason(const struct pil_tz_data *d)
 		wlan_subsystem_send_uevent(d->subsys, reason, name);
 	}
 	#endif /* OPLUS_FEATURE_WIFI_DCS_SWITCH */
-
-	#ifdef OPLUS_FEATURE_AGINGTEST
-	function_name = parse_function_builtin_return_address((unsigned long)__builtin_return_address(0));
-	save_dump_reason_to_smem(reason, function_name);
-	#endif /*OPLUS_FEATURE_AGINGTEST*/
 
 	//#ifdef OPLUS_FEATURE_SENSOR
 	set_subsys_crash_cause(reason);

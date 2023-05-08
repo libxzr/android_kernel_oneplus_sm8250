@@ -606,22 +606,6 @@ static void msm_restart_prepare(const char *cmd)
 			qpnp_pon_set_restart_reason(
 				PON_RESTART_REASON_KEYS_CLEAR);
 			__raw_writel(0x7766550a, restart_reason);
-		#ifdef OPLUS_FEATURE_AGINGTEST
-		} else if(!strcmp(cmd, "sbllowmemtest")){
-			qpnp_pon_set_restart_reason(
-					PON_RESTART_REASON_SBL_DDR_CUS);
-			__raw_writel(0x7766550b, restart_reason);
-		}else if (!strcmp(cmd, "sblmemtest")){//factory aging test
-			printk("[%s:%d] lunch ddr test!!\n", current->comm, current->pid);
-			qpnp_pon_set_restart_reason(
-					PON_RESTART_REASON_SBL_DDRTEST);
-			__raw_writel(0x7766550b, restart_reason);
-		} else if(!strcmp(cmd, "usermemaging")){
-			printk("[%s:%d] lunch user memory test!!\n", current->comm, current->pid);
-			qpnp_pon_set_restart_reason(
-					PON_RESTART_REASON_MEM_AGING);
-			__raw_writel(0x7766550b, restart_reason);
-		#endif
 		} else if (!strncmp(cmd, "oem-", 4)) {
 			unsigned long code;
 			int ret;
