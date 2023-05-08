@@ -167,20 +167,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
 		}
 	}
 
-#if defined(OPLUS_FEATURE_MEMLEAK_DETECT) && defined(CONFIG_DUMP_TASKS_MEM)
-	/* upate ion buffer informaction
-	 * of the task.
-	 */
-	buffer->tsk = current->group_leader;
-	get_task_struct(buffer->tsk);
-	atomic64_add(buffer->size, &buffer->tsk->ions);
-#endif
-#if defined(OPLUS_FEATURE_MEMLEAK_DETECT) && defined(CONFIG_MEMLEAK_DETECT_THREAD)
-	/* add record the buffer
-	 * create time and calc the buffer age on dump.
-	 */
-	buffer->jiffies = jiffies;
-#endif
 	mutex_lock(&dev->buffer_lock);
 	ion_buffer_add(dev, buffer);
 	mutex_unlock(&dev->buffer_lock);
@@ -209,13 +195,6 @@ void ion_buffer_destroy(struct ion_buffer *buffer)
 	if (ion_cnt_enable)
 		atomic_long_sub(buffer->size, &ion_total_size);
 #endif /* OPLUS_FEATURE_HEALTHINFO */
-#if defined(OPLUS_FEATURE_MEMLEAK_DETECT) && defined(CONFIG_DUMP_TASKS_MEM)
-	if (buffer->tsk) {
-		atomic64_sub(buffer->size, &buffer->tsk->ions);
-		put_task_struct(buffer->tsk);
-		buffer->tsk = NULL;
-	}
-#endif /* OPLUS_FEATURE_MEMLEAK_DETECT && CONFIG_MEMLEAK_DETECT_THREAD */
 	buffer->heap->ops->free(buffer);
 	kfree(buffer);
 }
@@ -1486,9 +1465,3 @@ err_reg:
 	return ERR_PTR(ret);
 }
 EXPORT_SYMBOL(ion_device_create);
-#if defined(OPLUS_FEATURE_MEMLEAK_DETECT) && defined(CONFIG_MEMLEAK_DETECT_THREAD) && defined(CONFIG_SVELTE)
-/* add ion memleak detect dameon,
- * need CONFIG_DUMP_TASKS_MEM first.
- */
-#include "ion_track/ion_track.c"
-#endif

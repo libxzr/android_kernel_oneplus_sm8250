@@ -94,9 +94,6 @@ static void __unhash_process(struct task_struct *p, bool group_dead)
 		detach_pid(p, PIDTYPE_SID);
 
 		list_del_rcu(&p->tasks);
-#if defined(OPLUS_FEATURE_MEMLEAK_DETECT) && defined(CONFIG_ION) && defined(CONFIG_DUMP_TASKS_MEM)
-		list_del_rcu(&p->user_tasks);
-#endif
 		list_del_init(&p->sibling);
 		__this_cpu_dec(process_counts);
 	}

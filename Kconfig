@@ -20,10 +20,6 @@ config OPLUS_SYSTEM_KERNEL_MTK
   help
 	define this config to Distinguish between qcom and mtk platform
 
-config OPLUS_SLUB_TEST
-	string
-	default "$(OPLUS_SLUB_TEST)"
-
 config OPLUS_KASAN_TEST
 	string
 	default "$(OPLUS_KASAN_TEST)"
@@ -67,14 +63,6 @@ config OPLUS_KMEMLEAK_DEBUG
 	select SLUB_DEBUG
 	select SLABTRACE_DEBUG
 	default y if OPLUS_KMEMLEAK_TEST = "true"
-	default n
-
-config OPLUS_SLUB_DEBUG
-	bool "oplus slub debug"
-	select SLUB_DEBUG
-	select SLUB_DEBUG_ON
-	select SLUB_DEBUG_PANIC_ON
-	default y if OPLUS_SLUB_TEST = "true"
 	default n
 
 config OPLUS_PAGEOWNER_DEBUG

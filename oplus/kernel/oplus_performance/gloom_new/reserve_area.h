@@ -35,13 +35,6 @@ extern unsigned long get_unmmaped_area_from_reserved(struct mm_struct *mm,
 		struct vm_unmapped_area_info *info);
 extern int get_va_feature_value(unsigned int feature);
 extern void trigger_svm_oom_event(struct mm_struct *mm, bool brk_risk, bool is_locked);
-#ifdef CONFIG_DUMP_MM_INFO
-void dump_mm_info(unsigned long len, unsigned long flags, int dump_vma);
-#else /* CONFIG_DUMP_MM_INFO */
-static inline void dump_mm_info(unsigned long len, unsigned long flags, int dump_vma)
-{
-}
-#endif/* CONFIG_DUMP_MM_INFO */
 
 #define GET_UNMMAPED_AREA_FIRST_TIME(info) do {    \
 	if (mm->va_feature & RESERVE_AREA)                  \
@@ -73,7 +66,6 @@ static inline void update_oom_pid_and_time(unsigned long len, unsigned long val,
 		unsigned long flags)
 {
 	static DEFINE_RATELIMIT_STATE(svm_log_limit, 1*HZ, 1);
-	static DEFINE_RATELIMIT_STATE(dump_mm, 300*HZ, 1);
 
 	if (!IS_ERR_VALUE(val))
 		return;
@@ -82,10 +74,5 @@ static inline void update_oom_pid_and_time(unsigned long len, unsigned long val,
 		svm_oom_pid = current->tgid;
 		svm_oom_jiffies = jiffies;
 	}
-
-	if (__ratelimit(&dump_mm))
-		dump_mm_info(len, flags, 1);
-	else
-		dump_mm_info(len, flags, 0);
 }
 #endif
