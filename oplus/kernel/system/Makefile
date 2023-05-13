@@ -6,7 +6,6 @@ obj-$(CONFIG_OPLUS_FEATURE_FEEDBACK) 	+= feedback/
 obj-$(CONFIG_OPLUS_FEATURE_UBOOT_LOG) 	+= uboot_log/
 obj-$(CONFIG_OPLUS_FEATURE_SHUTDOWN_DETECT)    += shutdown_detect/
 obj-$(CONFIG_OPLUS_FEATURE_OPROJECT) 	+= oplus_project/
-obj-$(CONFIG_OPLUS_FEATURE_QCOM_MINIDUMP_ENHANCE) 	+= qcom_minidump/
 obj-$(CONFIG_OPLUS_FEATURE_HUNG_TASK_ENHANCE) += hung_task_enhance/
 obj-$(CONFIG_OPLUS_FEATURE_PHOENIX)     += oplus_phoenix/
 obj-$(CONFIG_OPLUS_FEATURE_PMIC_MONITOR)     += oplus_pmic_monitor/
