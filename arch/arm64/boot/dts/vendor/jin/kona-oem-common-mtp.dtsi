@@ -1,7 +1,0 @@
-#include "../qcom/kona-mtp.dtsi"
-/* DTBO: Platform common generic overlay */
-
-/ {
-
-};
-

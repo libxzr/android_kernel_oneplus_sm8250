@@ -1,8 +1,0 @@
-#include <dt-bindings/interrupt-controller/arm-gic.h>
-#include "kona-oem-common-mtp.dtsi"
-
-
-/* DTBO: project common generic overlay */
-/ {
-
-};
