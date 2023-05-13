@@ -8,6 +8,8 @@
 
 #include "kona-mtp.dtsi"
 #include "camera/kona-oem-camera-lemonades_t0.dtsi"
+#include "../common-overlay.dtsi"
+
 / {
 	model = "Qualcomm Technologies, Inc. kona MTP 20809";
 	compatible = "qcom,kona-mtp", "qcom,kona", "qcom,mtp";

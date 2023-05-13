@@ -9,6 +9,8 @@
 #include "kona-mtp.dtsi"
 #include "instantnoodlep.dtsi"
 #include "camera/kona-oem-camera-instantnoodlep_t0.dtsi"
+#include "../common-overlay.dtsi"
+
 / {
 	model = "Qualcomm Technologies, Inc. kona MTP 19811";
 	compatible = "qcom,kona-mtp", "qcom,kona", "qcom,mtp";

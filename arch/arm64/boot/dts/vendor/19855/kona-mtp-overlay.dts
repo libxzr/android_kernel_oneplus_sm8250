@@ -8,6 +8,7 @@
 
 #include "kona-mtp.dtsi"
 #include "camera/kona-oem-camera-instantnoodle.dtsi"
+#include "../common-overlay.dtsi"
 
 / {
 	model = "Qualcomm Technologies, Inc. kona MTP 19855";
