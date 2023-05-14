@@ -4269,8 +4269,10 @@ unlock:
 
 	clk_prepare_unlock();
 
+#ifdef CONFIG_DEBUG_FS
 	if (!ret)
 		clk_debug_register(core);
+#endif
 
 	return ret;
 }
@@ -4507,7 +4509,9 @@ void clk_unregister(struct clk *clk)
 	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
 		return;
 
+#ifdef CONFIG_DEBUG_FS
 	clk_debug_unregister(clk->core);
+#endif
 
 	clk_prepare_lock();
 

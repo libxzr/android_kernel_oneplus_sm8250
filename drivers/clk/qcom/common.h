@@ -7,6 +7,7 @@
 #define __QCOM_CLK_COMMON_H__
 
 #include <linux/reset-controller.h>
+#include "../clk.h"
 
 struct platform_device;
 struct regmap_config;
@@ -72,8 +73,6 @@ extern int qcom_cc_really_probe(struct platform_device *pdev,
 extern int qcom_cc_probe(struct platform_device *pdev,
 			 const struct qcom_cc_desc *desc);
 extern const struct clk_ops clk_dummy_ops;
-
-extern void clk_debug_print_hw(struct clk_core *clk, struct seq_file *f);
 
 #define WARN_CLK(core, name, cond, fmt, ...) do {	\
 	clk_debug_print_hw(core, NULL);			\

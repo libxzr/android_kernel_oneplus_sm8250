@@ -9,6 +9,9 @@
  * published by the Free Software Foundation.
  */
 
+#ifndef __CLK_H__
+#define __CLK_H__
+
 struct clk_hw;
 struct clk_core;
 
@@ -24,9 +27,18 @@ void __clk_free_clk(struct clk *clk);
 int __clk_get(struct clk *clk);
 void __clk_put(struct clk *clk);
 
+#ifdef CONFIG_DEBUG_FS
 /* Debugfs API to print the enabled clocks */
 void clock_debug_print_enabled(void);
 void clk_debug_print_hw(struct clk_core *clk, struct seq_file *f);
+#else
+static inline void clock_debug_print_enabled(void)
+{
+}
+static inline void clk_debug_print_hw(struct clk_core *clk, struct seq_file *f)
+{
+}
+#endif /* CONFIG_DEBUG_FS */
 
 #else
 /* All these casts to avoid ifdefs in clkdev... */
@@ -44,3 +56,4 @@ static inline int __clk_get(struct clk *clk) { return 1; }
 static inline void __clk_put(struct clk *clk) { }
 
 #endif
+#endif /* __CLK_H__ */
