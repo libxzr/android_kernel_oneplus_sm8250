@@ -5266,16 +5266,6 @@ void regulator_debug_print_enabled(void)
 }
 EXPORT_SYMBOL(regulator_debug_print_enabled);
 
-#ifdef OPLUS_FEATURE_POWERINFO_RPMH
-void oplus_show_regulator_list(void)
-{
-	pr_info("oplus_show_regulator_list:Enabled regulators\n");
-	class_for_each_device(&regulator_class, NULL, NULL,
-			     _regulator_debug_print_enabled);
-}
-EXPORT_SYMBOL(oplus_show_regulator_list);
-#endif
-
 static int __init regulator_init(void)
 {
 	int ret;
