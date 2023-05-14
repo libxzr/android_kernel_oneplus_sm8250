@@ -37,7 +37,6 @@ config OPLUS_FEATURE_DETAILHEAD
 
 
 source "drivers/soc/oplus/system/feedback/Kconfig"
-source "drivers/soc/oplus/system/uboot_log/Kconfig"
 source "drivers/soc/oplus/system/shutdown_detect/Kconfig"
 source "drivers/soc/oplus/system/oplus_project/Kconfig"
 source "drivers/soc/oplus/system/hung_task_enhance/Kconfig"

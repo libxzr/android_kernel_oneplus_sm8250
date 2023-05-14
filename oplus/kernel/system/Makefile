@@ -3,7 +3,6 @@
 
 obj-y 	+= platform.o
 obj-$(CONFIG_OPLUS_FEATURE_FEEDBACK) 	+= feedback/
-obj-$(CONFIG_OPLUS_FEATURE_UBOOT_LOG) 	+= uboot_log/
 obj-$(CONFIG_OPLUS_FEATURE_SHUTDOWN_DETECT)    += shutdown_detect/
 obj-$(CONFIG_OPLUS_FEATURE_OPROJECT) 	+= oplus_project/
 obj-$(CONFIG_OPLUS_FEATURE_HUNG_TASK_ENHANCE) += hung_task_enhance/
