@@ -66,12 +66,6 @@ enum migratetype {
 	 */
 	MIGRATE_CMA,
 #endif
-#if defined(OPLUS_FEATURE_MEMORY_ISOLATE) && defined(CONFIG_OPLUS_MEMORY_ISOLATE)
-/*
- * Add a migrate type to manage special page alloc/free
- */
-        MIGRATE_OPLUS2,
-#endif /* OPLUS_FEATURE_MEMORY_ISOLATE */
 	MIGRATE_PCPTYPES, /* the number of types on the pcp lists */
 	MIGRATE_HIGHATOMIC = MIGRATE_PCPTYPES,
 #ifdef CONFIG_MEMORY_ISOLATION
@@ -169,12 +163,6 @@ enum zone_stat_item {
 	NR_ZSPAGES,		/* allocated in zsmalloc */
 #endif
 	NR_FREE_CMA_PAGES,
-#if defined(OPLUS_FEATURE_MEMORY_ISOLATE) && defined(CONFIG_OPLUS_MEMORY_ISOLATE)
-/*
- * Account free pages for MIGRATE_OPLUS
- */
-	NR_FREE_OPLUS2_PAGES,
-#endif /* OPLUS_FEATURE_MEMORY_ISOLATE */
 #ifdef OPLUS_FEATURE_HEALTHINFO
         NR_IONCACHE_PAGES,
 #endif /* OPLUS_FEATURE_HEALTHINFO */
@@ -635,12 +623,6 @@ struct zone {
 	unsigned long watermark_boost;
 
 	unsigned long nr_reserved_highatomic;
-#if defined(OPLUS_FEATURE_MEMORY_ISOLATE) && defined(CONFIG_OPLUS_MEMORY_ISOLATE)
-/*
- * Number of MIGRATE_OPLUS page block.
- */
-	unsigned long nr_migrate_oplus2_block;
-#endif /* OPLUS_FEATURE_MEMORY_ISOLATE */
 	/*
 	 * We don't know if the memory that we're going to allocate will be
 	 * freeable or/and it will be released eventually, so to avoid totally

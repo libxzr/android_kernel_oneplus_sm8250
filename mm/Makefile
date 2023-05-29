@@ -114,10 +114,6 @@ obj-$(CONFIG_PROCESS_RECLAIM)	+= process_reclaim.o
 obj-y += healthinfo/
 #endif /* OPLUS_FEATURE_HEALTHINFO */
 
-#ifdef OPLUS_FEATURE_MEMORY_ISOLATE
-obj-$(CONFIG_OPLUS_MEMORY_ISOLATE) += memory_isolate/
-#endif /*OPLUS_FEATURE_MEMORY_ISOLATE*/
-
 #ifdef OPLUS_FEATURE_MULTI_KSWAPD
 obj-$(CONFIG_OPLUS_MULTI_KSWAPD) += multi_kswapd/
 #endif /*OPLUS_FEATURE_MULTI_KSWAPD*/

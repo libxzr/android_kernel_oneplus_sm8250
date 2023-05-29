@@ -1142,9 +1142,6 @@ const char * const vmstat_text[] = {
 	"nr_zspages",
 #endif
 	"nr_free_cma",
-#if defined(OPLUS_FEATURE_MEMORY_ISOLATE) && defined(CONFIG_OPLUS_MEMORY_ISOLATE)
-	"nr_free_oplus2",
-#endif /*OPLUS_FEATURE_MEMORY_ISOLATE*/
 #ifdef OPLUS_FEATURE_HEALTHINFO
         "nr_ioncache_pages",
 #endif /* OPLUS_FEATURE_HEALTHINFO */

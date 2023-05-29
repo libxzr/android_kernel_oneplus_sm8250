@@ -157,11 +157,6 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
 		    global_zone_page_state(NR_FREE_CMA_PAGES));
 #endif
 
-#if defined(OPLUS_FEATURE_MEMORY_ISOLATE) && defined(CONFIG_OPLUS_MEMORY_ISOLATE)
-	show_val_kb(m, "Oplus2Free:      ",
-		    global_zone_page_state(NR_FREE_OPLUS2_PAGES));
-#endif /* OPLUS_FEATURE_MEMORY_ISOLATE */
-
 #ifdef OPLUS_FEATURE_HEALTHINFO
 #ifdef CONFIG_ION
 	show_val_kb(m, "IonTotalCache:   ", global_zone_page_state(NR_IONCACHE_PAGES));;

@@ -900,10 +900,6 @@ config PROCESS_RECLAIM
 source "mm/healthinfo/Kconfig"
 #endif /* OPLUS_FEATURE_HEALTHINFO */
 
-#ifdef OPLUS_FEATURE_MEMORY_ISOLATE
-source "mm/memory_isolate/Kconfig"
-#endif /*OPLUS_FEATURE_MEMORY_ISOLATE*/
-
 #ifdef OPLUS_FEATURE_MULTI_KSWAPD
 source "mm/multi_kswapd/Kconfig"
 #endif /*OPLUS_FEATURE_MULTI_KSWAPD*/
