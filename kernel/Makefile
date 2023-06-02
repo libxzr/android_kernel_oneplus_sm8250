@@ -142,10 +142,6 @@ obj-$(CONFIG_RSEQ) += rseq.o
 obj-y += sched_assist/
 #endif /* OPLUS_FEATURE_SCHED_ASSIST */
 
-#ifdef OPLUS_FEATURE_INPUT_BOOST_V4
-obj-$(CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4) += tuning/
-#endif /* OPLUS_FEATURE_INPUT_BOOST_V4 */
-
 #ifdef OPLUS_FEATURE_SCHED_ASSIST
 obj-y += special_opt/
 #endif /* OPLUS_FEATURE_SCHED_ASSIST */

@@ -43,10 +43,6 @@ extern void show_regs(struct pt_regs *);
 #include <linux/sched_assist/sched_assist_status.h>
 #endif
 
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-#include <linux/tuning/frame_boost_group.h>
-#endif /* CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4 */
-
 /* task_struct member predeclarations (sorted alphabetically): */
 struct audit_context;
 struct backing_dev_info;
@@ -672,12 +668,6 @@ struct ravg {
 	u16 pred_demand_scaled;
 	u64 active_time;
 	u64 last_win_size;
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-	u64 curr_window_exec;
-	u64 prev_window_exec;
-	u64 curr_window_scale;
-	u64 prev_window_scale;
-#endif /* CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4 */
 };
 #else
 static inline void sched_exit(struct task_struct *p) { }
@@ -1619,11 +1609,6 @@ struct task_struct {
 	int dtpdg; /* dynamic tpd task group */
 	int tpd_st; /* affinity decision from im */
 #endif
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-	struct frame_boost_group *fbg;
-	struct list_head fbg_list;
-	int fbg_depth;
-#endif /* CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4 */
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_FDLEAK_CHECK)
 	unsigned int fdleak_flag;
 #endif

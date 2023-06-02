@@ -28,9 +28,6 @@
 #else
 #include <../kernel/sched/walt.h>
 #endif
-#if defined(CONFIG_OPLUS_FEATURE_INPUT_BOOST) && defined(CONFIG_OPLUS_FEATURE_IM)
-extern bool is_webview(struct task_struct *p);
-#endif
 
 #define CREATE_TRACE_POINTS
 #include <sched_assist_trace.h>
@@ -772,10 +769,6 @@ inline int get_ux_state_type(struct task_struct *task)
 
 inline bool test_list_pick_ux(struct task_struct *task)
 {
-#if defined(CONFIG_OPLUS_FEATURE_INPUT_BOOST) && defined(CONFIG_OPLUS_FEATURE_IM)
-	if (is_webview(task))
-		return true;
-#endif
 	return (task->ux_state & SA_TYPE_LISTPICK) || (task->ux_state & SA_TYPE_ONCE_UX) ||
 		test_task_identify_ux(task, SA_TYPE_ID_ALLOCATOR_SER);
 }
@@ -1423,22 +1416,10 @@ bool should_ux_preempt_wakeup(struct task_struct *wake_task, struct task_struct 
 {
 	bool wake_ux = false;
 	bool curr_ux = false;
-#if defined(CONFIG_OPLUS_FEATURE_INPUT_BOOST) && defined(CONFIG_OPLUS_FEATURE_IM)
-	bool wake_web = false;
-	bool curr_web = false;
-#endif
 
 	if (!sysctl_sched_assist_enabled)
 		return false;
 
-#if defined(CONFIG_OPLUS_FEATURE_INPUT_BOOST) && defined(CONFIG_OPLUS_FEATURE_IM)
-	wake_web = is_webview(wake_task);
-	curr_web = is_webview(curr_task);
-	if (wake_web && !curr_web)
-		return true;
-	if (!wake_web && curr_web)
-		return false;
-#endif
 	wake_ux = test_task_ux(wake_task) || test_list_pick_ux(wake_task) || test_task_identify_ux(wake_task, SA_TYPE_ID_CAMERA_PROVIDER);
 	curr_ux = test_task_ux(curr_task) || test_list_pick_ux(curr_task) || test_task_identify_ux(curr_task, SA_TYPE_ID_CAMERA_PROVIDER);
 

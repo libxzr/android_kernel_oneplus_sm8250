@@ -24,9 +24,6 @@ enum {
 	IM_ID_HWUI_EX,             // Hwui task (render enhancement feature)
 	IM_ID_BMT,                 // Bitmap thread
 	IM_ID_CRENDER,             // Chrome render
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST
-	IM_ID_WEBVIEW,             // WEBVIEW
-#endif
 	IM_ID_MAX
 };
 
@@ -49,9 +46,6 @@ enum {
 #define IM_HWUI_EX        (1 << IM_ID_HWUI_EX)
 #define IM_BMT            (1 << IM_ID_BMT)
 #define IM_CRENDER        (1 << IM_ID_CRENDER)
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST
-#define IM_WEBVIEW        (1 << IM_ID_WEBVIEW)
-#endif
 
 /* ignore list */
 enum {

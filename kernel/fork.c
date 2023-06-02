@@ -119,10 +119,6 @@
 #include <linux/im/im.h>
 #endif
 
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-#include <linux/tuning/frame_init.h>
-#endif /* CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4 */
-
 /*
  * Minimum number of threads to boot the kernel
  */
@@ -2090,10 +2086,6 @@ static __latent_entropy struct task_struct *copy_process(
 	p->wake_tid = 0;
 	p->running_start_time = 0;
 #endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
-
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-	init_task_frame(p);
-#endif
 
 	/* Perform scheduler related setup. Assign this task to a CPU. */
 	retval = sched_fork(clone_flags, p);

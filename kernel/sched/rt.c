@@ -1874,10 +1874,6 @@ static int find_lowest_rq(struct task_struct *task)
 	struct cpumask *lowest_mask = this_cpu_cpumask_var_ptr(local_cpu_mask);
 	int this_cpu = smp_processor_id();
 	int cpu = -1;
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-	int fbg_best_cpu = -1;
-	struct cpumask *fbg_target = NULL;
-#endif /* CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4 */
 
 	/* Make sure the mask is initialized first */
 	if (unlikely(!lowest_mask))
@@ -1891,17 +1887,6 @@ static int find_lowest_rq(struct task_struct *task)
 
 	if (static_branch_unlikely(&sched_energy_present))
 		cpu = rt_energy_aware_wake_cpu(task);
-
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-	fbg_target = find_rtg_target(task);
-	if(fbg_target) {
-		fbg_best_cpu = find_fbg_cpu(task);
-		if (fbg_best_cpu >= 0) {
-			trace_sched_fbg_rt(task, cpu, fbg_best_cpu, cpumask_bits(lowest_mask)[0]);
-			cpu = fbg_best_cpu;
-		}
-	}
-#endif /* CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4 */
 
 	if (cpu == -1)
 		cpu = task_cpu(task);

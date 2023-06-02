@@ -88,10 +88,6 @@
 #include <linux/sched_assist/sched_assist_binder.h>
 #endif /* OPLUS_FEATURE_SCHED_ASSIST */
 
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-#include <linux/tuning/frame_boost_group.h>
-#endif /* CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4 */
-
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
 #include <linux/cpu_jankinfo/jank_tasktrack.h>
 #endif
@@ -3361,11 +3357,6 @@ static bool binder_proc_transaction(struct binder_transaction *t,
 				binder_set_inherit_ux(thread->task, current);
 		}
 #endif /* OPLUS_FEATURE_SCHED_ASSIST */
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-		if (t->from) {
-			binder_thread_set_fbg(thread->task, t->from->task, oneway);
-		}
-#endif /* CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4 */
 	} else if (!pending_async) {
 #if defined(CONFIG_OPLUS_FEATURE_BINDER_STATS_ENABLE)
 		if (NULL != proc && NULL != proc->tsk) {
@@ -4075,9 +4066,6 @@ static void binder_transaction(struct binder_proc *proc,
 	t->work.type = BINDER_WORK_TRANSACTION;
 
 	if (reply) {
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-		bool oneway = !!(t->flags & TF_ONE_WAY);
-#endif /* CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4 */
 		binder_enqueue_thread_work(thread, tcomplete);
 		binder_inner_proc_lock(target_proc);
 		if (target_thread->is_dead) {
@@ -4095,9 +4083,6 @@ static void binder_transaction(struct binder_proc *proc,
 			binder_unset_inherit_ux(thread->task);
 		}
 #endif /* OPLUS_FEATURE_SCHED_ASSIST */
-#ifdef CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4
-		binder_thread_remove_fbg(thread->task, oneway);
-#endif /* CONFIG_OPLUS_FEATURE_INPUT_BOOST_V4 */
 #ifdef CONFIG_OPLUS_BINDER_STRATEGY
 		binder_inner_proc_lock(proc);
 		obwork_check_restrict_off(proc);
