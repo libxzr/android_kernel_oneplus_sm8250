@@ -34,12 +34,6 @@
 #define BUFFER_SIZE_S 256
 #define BUFFER_SIZE_M 512
 #define BUFFER_SIZE_L 2048
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-extern bool test_task_ux(struct task_struct *task);
-#endif
-#ifdef CONFIG_OPLUS_JANK
-extern u32 get_cpu_load(u32 win_cnt, struct cpumask *mask);
-#endif
 
 struct sched_stat_para sched_para[OHM_SCHED_TOTAL];
 static char *sched_list[OHM_TYPE_TOTAL] = {
@@ -169,9 +163,6 @@ static inline void ohm_sched_stat_record_common(struct sched_stat_para *sched_st
         }
 }
 
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-extern bool test_task_ux(struct task_struct *task);
-#endif
 void ohm_schedstats_record(int sched_type, struct task_struct *task, u64 delta_ms)
 {
     struct sched_stat_para *sched_stat = &sched_para[sched_type];
@@ -198,11 +189,6 @@ void ohm_schedstats_record(int sched_type, struct task_struct *task, u64 delta_m
                 ohm_action_trig(sched_type);
         }
     }
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	if (test_task_ux(task)){
-        ohm_sched_stat_record_common(sched_stat, &sched_stat->ux, delta_ms);
-    }
-#endif
 	if (unlikely(delta_ms >= sched_stat->low_thresh_ms)) {
 		index = (u32)atomic_inc_return(&sched_stat->lwr_index);
 		plwr = &sched_stat->last_n_lwr[index & LWR_MASK];

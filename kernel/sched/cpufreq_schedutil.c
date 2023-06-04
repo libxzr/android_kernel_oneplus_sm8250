@@ -93,9 +93,6 @@ struct sugov_policy {
 	unsigned int		min_freq;
 	bool			after_limits_changed;
 #endif
-#if defined(OPLUS_FEATURE_SCHED_ASSIST)
-	unsigned int flags;
-#endif
 };
 
 struct sugov_cpu {
@@ -162,10 +159,6 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
 	 * to the separate rate limits.
 	 */
 
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	if (sg_policy->flags & SCHED_CPUFREQ_BOOST)
-		return true;
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
 	delta_ns = time - sg_policy->last_freq_update_time;
 	return delta_ns >= sg_policy->min_rate_limit_ns;
 }
@@ -194,11 +187,6 @@ static bool sugov_up_down_rate_limit(struct sugov_policy *sg_policy, u64 time,
 	s64 delta_ns;
 
 	delta_ns = time - sg_policy->last_freq_update_time;
-
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	if (sg_policy->flags & SCHED_CPUFREQ_BOOST)
-		return false;
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
 
 	if (next_freq > sg_policy->next_freq &&
 	    delta_ns < sg_policy->up_rate_delay_ns)
@@ -452,10 +440,6 @@ static bool sugov_time_limit(struct sugov_policy *sg_policy,
 	bool skip_hispeed_delay = false;
 	unsigned int delay;
 
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	if((flags & SCHED_CPUFREQ_BOOST) || (flags & SCHED_CPUFREQ_RESET))
-		return false;
-#endif
 	if (flags & SCHED_CPUFREQ_EARLY_DET ||
 	    flags & SCHED_CPUFREQ_MIGRATION ||
 	    flags & SCHED_CPUFREQ_INTERCLUSTER_MIG)
@@ -895,9 +879,6 @@ static void sugov_update_single(struct update_util_data *hook, u64 time,
 
 	ignore_dl_rate_limit(sg_cpu, sg_policy);
 
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	sg_policy->flags = flags;
-#endif
 	if (!sugov_should_update_freq(sg_policy, time))
 		return;
 
@@ -1043,9 +1024,6 @@ sugov_update_shared(struct update_util_data *hook, u64 time, unsigned int flags)
 				sg_cpu->walt_load.pl,
 				sg_cpu->walt_load.rtgb_active, flags);
 
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	sg_policy->flags = flags;
-#endif
 	if (sugov_should_update_freq(sg_policy, time) &&
 	    !(flags & SCHED_CPUFREQ_CONTINUE)) {
 		next_f = sugov_next_freq_shared(sg_cpu, time);
@@ -1737,9 +1715,6 @@ static int sugov_start(struct cpufreq_policy *policy)
 	sg_policy->freq_locked			= false;
 	sg_policy->min_freq			= policy->min;
 	sg_policy->after_limits_changed		= false;
-#endif
-#if defined(OPLUS_FEATURE_SCHED_ASSIST)
-	sg_policy->flags	= 0;
 #endif
 	sg_policy->prev_cached_raw_freq		= 0;
 

@@ -42,9 +42,6 @@
 #include "blk.h"
 #include "blk-mq-sched.h"
 #include "blk-wbt.h"
-#if defined(OPLUS_FEATURE_SCHED_ASSIST) && defined(CONFIG_OPLUS_FEATURE_UXIO_FIRST)
-#include "uxio_first/uxio_first_opt.h"
-#endif
 
 static DEFINE_SPINLOCK(elv_list_lock);
 static LIST_HEAD(elv_list);
@@ -397,9 +394,6 @@ void elv_dispatch_sort(struct request_queue *q, struct request *rq)
 	}
 
 	list_add(&rq->queuelist, entry);
-#if defined(OPLUS_FEATURE_SCHED_ASSIST) && defined(CONFIG_OPLUS_FEATURE_UXIO_FIRST)
-	queue_throtl_add_request(q, rq, false);
-#endif
 }
 EXPORT_SYMBOL(elv_dispatch_sort);
 
@@ -420,9 +414,6 @@ void elv_dispatch_add_tail(struct request_queue *q, struct request *rq)
 	q->end_sector = rq_end_sector(rq);
 	q->boundary_rq = rq;
 	list_add_tail(&rq->queuelist, &q->queue_head);
-#if defined(OPLUS_FEATURE_SCHED_ASSIST) && defined(CONFIG_OPLUS_FEATURE_UXIO_FIRST)
-	queue_throtl_add_request(q, rq, false);
-#endif
 }
 EXPORT_SYMBOL(elv_dispatch_add_tail);
 
@@ -666,18 +657,12 @@ void __elv_add_request(struct request_queue *q, struct request *rq, int where)
 	case ELEVATOR_INSERT_FRONT:
 		rq->rq_flags |= RQF_SOFTBARRIER;
 		list_add(&rq->queuelist, &q->queue_head);
-#if defined(OPLUS_FEATURE_SCHED_ASSIST) && defined(CONFIG_OPLUS_FEATURE_UXIO_FIRST)
-		queue_throtl_add_request(q, rq, true);
-#endif
 		break;
 
 	case ELEVATOR_INSERT_BACK:
 		rq->rq_flags |= RQF_SOFTBARRIER;
 		elv_drain_elevator(q);
 		list_add_tail(&rq->queuelist, &q->queue_head);
-#if defined(OPLUS_FEATURE_SCHED_ASSIST) && defined(CONFIG_OPLUS_FEATURE_UXIO_FIRST)
-		queue_throtl_add_request(q, rq, false);
-#endif
 		/*
 		 * We kick the queue here for the following reasons.
 		 * - The elevator might have returned NULL previously

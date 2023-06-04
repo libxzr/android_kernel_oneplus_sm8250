@@ -409,45 +409,6 @@ static ssize_t queue_show_ohm_inflight(struct request_queue *q, char *page)
 }
 #endif
 #endif /* OPLUS_FEATURE_HEALTHINFO */
-#if defined(OPLUS_FEATURE_SCHED_ASSIST) && defined(CONFIG_OPLUS_FEATURE_UXIO_FIRST)
-static ssize_t queue_bg_max_depth_show(struct request_queue *q, char *page)
-{
-	ssize_t ret;
-
-	if (!q->queue_tags)
-		return -EINVAL;
-
-	ret = sprintf(page, "%d\n", q->queue_tags->bg_max_depth);
-
-	return ret;
-}
-
-static ssize_t queue_bg_max_depth_store(struct request_queue *q,
-					const char *page, size_t count)
-{
-	unsigned long val;
-	int ret;
-
-	if (!q->queue_tags)
-		return -EINVAL;
-
-	ret = queue_var_store(&val, page, count);
-	if (ret < 0)
-		return ret;
-
-	if (val > q->queue_tags->max_depth)
-		return -EINVAL;
-
-	q->queue_tags->bg_max_depth = val;
-	return (ssize_t)count;
-}
-
-static struct queue_sysfs_entry queue_bg_max_depth_entry = {
-	.attr = {.name = "bg_max_depth", .mode = S_IRUGO | S_IWUSR },
-	.show = queue_bg_max_depth_show,
-	.store = queue_bg_max_depth_store,
-};
-#endif
 
 static ssize_t queue_poll_show(struct request_queue *q, char *page)
 {
@@ -797,10 +758,6 @@ static struct attribute *default_attrs[] = {
 // Add for ioqueue
 	&queue_ohm_inflight_entry.attr,
 #endif /* OPLUS_FEATURE_HEALTHINFO */
-
-#if defined(OPLUS_FEATURE_SCHED_ASSIST) && defined(CONFIG_OPLUS_FEATURE_UXIO_FIRST)
-	&queue_bg_max_depth_entry.attr,
-#endif
 	&queue_random_entry.attr,
 	&queue_poll_entry.attr,
 	&queue_wc_entry.attr,

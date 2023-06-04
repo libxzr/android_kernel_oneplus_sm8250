@@ -369,9 +369,6 @@ void iomonitor_update_fs_stats(enum fs_event_type type, long delta)
 }
 EXPORT_SYMBOL(iomonitor_update_fs_stats);
 
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-extern bool test_task_ux(struct task_struct *task);
-#endif
 void iomonitor_record_iowait(struct task_struct *tsk, u64 delta_ms)
 {
 	if (delta_ms > IO_WAIT_HIGH)
@@ -381,16 +378,8 @@ void iomonitor_record_iowait(struct task_struct *tsk, u64 delta_ms)
 		if (iomonitor_rt_need_record())
 			rt_record_handle();
 	}
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	/* first decide ux iowait */
-	if (test_task_ux(tsk) && delta_ms > UX_IO_WAIT_TIMEOUT)
-		abnormal_handle(UX_IO_WAIT, tsk->pid, delta_ms);
-	else if (delta_ms > IO_WAIT_TIMEOUT)
-		abnormal_handle(IO_WAIT, tsk->pid, delta_ms);
-#else
 	if (delta_ms > IO_WAIT_TIMEOUT)
 		abnormal_handle(IO_WAIT, tsk->pid, delta_ms);
-#endif
 
 	iomonitor_iowait_segment_statistics(delta_ms);
 }
@@ -685,13 +674,6 @@ void iomonitor_record_io_history(const struct request *rq)
 	}
 }
 
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-static inline bool rq_is_ux(struct request *rq)
-{
-	return (rq->cmd_flags & REQ_UX);
-}
-#endif
-
 void reqstats_init(void)
 {
 	memset(&req_para, 0, sizeof(struct req_delay_data));
@@ -702,9 +684,6 @@ void reqstats_record(struct request *req, unsigned int nr_bytes)
 {
 	u64 tg2d = 0, td2c = 0;
 	int index, rw, sync;
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	int isux;
-#endif
 	if (!req)
 		return;
 
@@ -712,37 +691,6 @@ void reqstats_record(struct request *req, unsigned int nr_bytes)
 	tg2d = ktime_us_delta(req->req_td, req->req_tg) / 1000;
 	sync = rq_is_sync(req) ? 0 : 1;
 	index = sync;
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	isux = rq_is_ux(req);
-	/* UX req */
-	if (!sync && isux) {
-		req_para.uxreq_block_para.cnt++;
-		req_para.uxreq_block_para.total_delay += tg2d;
-		if (tg2d >= block_delay_range[index][9])
-			req_para.uxreq_block_para.stage_ten++;
-		else if (tg2d >= block_delay_range[index][8])
-			req_para.uxreq_block_para.stage_nin++;
-		else if (tg2d >= block_delay_range[index][7])
-			req_para.uxreq_block_para.stage_eig++;
-		else if (tg2d >= block_delay_range[index][6])
-			req_para.uxreq_block_para.stage_sev++;
-		else if (tg2d >= block_delay_range[index][5])
-			req_para.uxreq_block_para.stage_six++;
-		else if (tg2d >= block_delay_range[index][4])
-			req_para.uxreq_block_para.stage_fiv++;
-		else if (tg2d >= block_delay_range[index][3])
-			req_para.uxreq_block_para.stage_fou++;
-		else if (tg2d >= block_delay_range[index][2])
-			req_para.uxreq_block_para.stage_thr++;
-		else if (tg2d >= block_delay_range[index][1])
-			req_para.uxreq_block_para.stage_two++;
-		else if (tg2d >= block_delay_range[index][0])
-			req_para.uxreq_block_para.stage_one++;
-		req_para.uxreq_block_para.max_delay =
-		    (req_para.uxreq_block_para.max_delay >=
-		     tg2d) ? req_para.uxreq_block_para.max_delay : tg2d;
-	}
-#endif
 	/* ALL req */
 	req_para.req_block_para.cnt[sync]++;
 	req_para.req_block_para.total_delay[sync] += tg2d;

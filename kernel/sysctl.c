@@ -141,12 +141,6 @@ extern int sysctl_nr_trim_pages;
 static int sixty = 60;
 #endif
 
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-//#ifdef CONFIG_UXCHAIN_V2
-int sysctl_uxchain_v2 = 1;
-u64 sysctl_mmapsem_uninterruptable_time;
-#endif
-
 static int __maybe_unused neg_one = -1;
 static int __maybe_unused neg_three = -3;
 
@@ -168,10 +162,6 @@ static int two_hundred = 200;
 int sysctl_ed_task_enabled = 1;
 #endif /* OPLUS_FEATURE_EDTASK_IMPROVE */
 static int one_thousand = 1000;
-#if defined(OPLUS_FEATURE_SCHED_ASSIST) && defined(CONFIG_OPLUS_FEATURE_UXIO_FIRST)
-unsigned int sysctl_uxio_io_opt = true;
-bool sysctl_wbt_enable = true;
-#endif
 #ifdef CONFIG_PRINTK
 static int ten_thousand = 10000;
 #endif
@@ -370,33 +360,6 @@ static int max_sched_tunable_scaling = SCHED_TUNABLESCALING_END-1;
 #endif /* CONFIG_SMP */
 #endif /* CONFIG_SCHED_DEBUG */
 
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-int sysctl_sched_assist_enabled = 1;
-int sysctl_sched_assist_scene = 0;
-int sysctl_prefer_silver = 0;
-int sysctl_heavy_task_thresh = 50;
-int sysctl_cpu_util_thresh = 85;
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-int sysctl_cpu_multi_thread = 0;
-#endif
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-int sysctl_slide_boost_enabled = 0;
-int sysctl_boost_task_threshold = 51;
-int sysctl_frame_rate = 60;
-int sched_frame_rate_handler(struct ctl_table *table, int write, void __user *buffer, size_t *lenp, loff_t *ppos)
-{
-	int ret;
-
-	if (write && *ppos)
-		*ppos = 0;
-
-	ret = proc_dointvec(table, write, buffer, lenp, ppos);
-
-	return ret;
-}
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
-
 #ifdef CONFIG_COMPACTION
 static int min_extfrag_threshold;
 static int max_extfrag_threshold = 1000;
@@ -544,22 +507,6 @@ static struct ctl_table kern_table[] = {
 		.extra1		= &zero,
 		.extra2		= &one,
 	},
-#endif
-#if defined(OPLUS_FEATURE_SCHED_ASSIST) && defined(CONFIG_OPLUS_FEATURE_UXIO_FIRST)
-{
-		.procname	= "uxio_first_opt",
-		.data		= &sysctl_uxio_io_opt,
-		.maxlen		= sizeof(int),
-		.mode		= 0644,
-		.proc_handler	= proc_dointvec,
-},
-{
-		.procname	= "wbt_enable",
-		.data		= &sysctl_wbt_enable,
-		.maxlen		= sizeof(int),
-		.mode		= 0644,
-		.proc_handler	= proc_dointvec,
-},
 #endif
 	{
 		.procname	= "sched_coloc_downmigrate_ns",
@@ -1733,75 +1680,6 @@ static struct ctl_table kern_table[] = {
 		.proc_handler	= proc_dointvec,
 	},
 #endif
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	{
-		.procname	= "sched_assist_enabled",
-		.data		= &sysctl_sched_assist_enabled,
-		.maxlen		= sizeof(int),
-		.mode		= 0666,
-		.proc_handler	= proc_dointvec,
-	},
-	{
-		.procname	= "sched_assist_scene",
-		.data		= &sysctl_sched_assist_scene,
-		.maxlen		= sizeof(int),
-		.mode		= 0666,
-		.proc_handler = sysctl_sched_assist_scene_handler,
-	},
-	{
-		.procname	= "prefer_silver_enabled",
-		.data		= &sysctl_prefer_silver,
-		.maxlen		= sizeof(int),
-		.mode		= 0666,
-		.proc_handler = proc_dointvec,
-	},
-	{
-		.procname	= "heavy_task_thresh",
-		.data		= &sysctl_heavy_task_thresh,
-		.maxlen		= sizeof(int),
-		.mode		= 0666,
-		.proc_handler = proc_dointvec,
-	},
-	{
-		.procname	= "cpu_util_thresh",
-		.data		= &sysctl_cpu_util_thresh,
-		.maxlen		= sizeof(int),
-		.mode		= 0666,
-		.proc_handler = proc_dointvec,
-	},
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	{
-		.procname	= "cpu_multi_thread",
-		.data		= &sysctl_cpu_multi_thread,
-		.maxlen 	= sizeof(int),
-		.mode		= 0666,
-		.proc_handler = proc_dointvec,
-	},
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	{
-		.procname	= "slide_boost_enabled",
-		.data		= &sysctl_slide_boost_enabled,
-		.maxlen 	= sizeof(int),
-		.mode		= 0666,
-		.proc_handler = proc_dointvec,
-	},
-	{
-		.procname	= "boost_task_threshold",
-		.data		= &sysctl_boost_task_threshold,
-		.maxlen 	= sizeof(int),
-		.mode		= 0666,
-		.proc_handler = proc_dointvec,
-	},
-	{
-		.procname	= "frame_rate",
-		.data		= &sysctl_frame_rate,
-		.maxlen 	= sizeof(int),
-		.mode		= 0666,
-		.proc_handler = sched_frame_rate_handler,
-	},
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
 #ifdef OPLUS_FEATURE_TASK_CPUSTATS
 /* stat cpu usage on each tick. */
 	{
@@ -1814,24 +1692,6 @@ static struct ctl_table kern_table[] = {
 		.extra2		= &one,
 	},
 #endif /* OPLUS_FEATURE_TASK_CPUSTATS */
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-//#ifdef CONFIG_UXCHAIN_V2
-	{
-		.procname	= "uxchain_v2",
-		.data		= &sysctl_uxchain_v2,
-		.maxlen = sizeof(int),
-		.mode		= 0666,
-		.proc_handler = proc_dointvec,
-	},
-	{
-		.procname	= "mmapsem_uninterruptable_time",
-		.data		= &sysctl_mmapsem_uninterruptable_time,
-		.maxlen = sizeof(u64),
-		.mode		= 0666,
-		.proc_handler = proc_dointvec,
-	},
-#endif
-
 	{ }
 };
 

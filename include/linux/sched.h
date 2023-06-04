@@ -39,10 +39,6 @@
 extern void show_regs(struct pt_regs *);
 #endif /* VENDOR_EDIT */
 
-#ifdef CONFIG_OPLUS_FEATURE_AUDIO_OPT
-#include <linux/sched_assist/sched_assist_status.h>
-#endif
-
 /* task_struct member predeclarations (sorted alphabetically): */
 struct audit_context;
 struct backing_dev_info;
@@ -239,22 +235,6 @@ enum fps {
 
 #endif
 
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-extern int sysctl_sched_assist_enabled;
-extern int sysctl_sched_assist_scene;
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-extern int sysctl_cpu_multi_thread;
-#endif
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-extern int sysctl_slide_boost_enabled;
-extern int sysctl_boost_task_threshold;
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-extern int sysctl_prefer_silver;
-extern int sysctl_heavy_task_thresh;
-extern int sysctl_cpu_util_thresh;
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
 /* Task command name length: */
 #define TASK_COMM_LEN			16
 
@@ -1555,27 +1535,6 @@ struct task_struct {
 #ifdef CONFIG_SECURITY
 	/* Used by LSM modules for access restriction: */
 	void				*security;
-#endif
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-	int ux_state;
-	atomic64_t inherit_ux;
-	struct list_head ux_entry;
-	int ux_depth;
-	u64 enqueue_time;
-	u64 inherit_ux_start;
-#ifdef CONFIG_OPLUS_FEATURE_SCHED_SPREAD
-        int lb_state;
-        int ld_flag;
-#endif
-#endif /* OPLUS_FEATURE_SCHED_ASSIST */
-#ifdef OPLUS_FEATURE_SCHED_ASSIST
-//#ifdef CONFIG_UXCHAIN_V2
-	int ux_once;
-	u64 get_mmlock_ts;
-	int get_mmlock;
-#endif
-#ifdef CONFIG_OPLUS_FEATURE_AUDIO_OPT
-	struct task_info oplus_task_info;
 #endif
 
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
