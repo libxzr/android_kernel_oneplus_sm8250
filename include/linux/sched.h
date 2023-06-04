@@ -820,17 +820,6 @@ struct wake_q_node {
 	struct wake_q_node *next;
 };
 
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-#define OPLUS_NR_CPUS (8)
-/* hot-thread */
-struct task_record {
-#define RECOED_WINSIZE			(1 << 8)
-#define RECOED_WINIDX_MASK		(RECOED_WINSIZE - 1)
-	u8 winidx;
-	u8 count;
-};
-#endif
-
 #if defined(OPLUS_FEATURE_PROCESS_RECLAIM) && defined(CONFIG_PROCESS_RECLAIM_ENHANCE)
 union reclaim_limit {
 	unsigned long stop_jiffies;
@@ -1530,10 +1519,6 @@ struct task_struct {
 #ifdef CONFIG_SECURITY
 	/* Used by LSM modules for access restriction: */
 	void				*security;
-#endif
-
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-	struct task_record record[OPLUS_NR_CPUS];	/* 2*u64 */
 #endif
 
 #ifdef OPLUS_FEATURE_HEALTHINFO

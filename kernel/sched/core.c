@@ -32,10 +32,6 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/sched.h>
 
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-#include <linux/cpu_jankinfo/sa_jankinfo.h>
-#endif
-
 DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
 
 #ifdef CONFIG_SCHED_DEBUG
@@ -1334,9 +1330,6 @@ static inline void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
 	}
 
 	uclamp_rq_inc(rq, p);
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-	jankinfo_android_rvh_enqueue_task_handler(NULL, rq, p, flags);
-#endif
 	p->sched_class->enqueue_task(rq, p, flags);
 	walt_update_last_enqueue(p);
 	trace_sched_enq_deq_task(p, 1, cpumask_bits(&p->cpus_allowed)[0]);
@@ -4280,9 +4273,6 @@ static void __sched notrace __schedule(bool preempt)
 	clear_preempt_need_resched();
 
 	wallclock = sched_ktime_clock();
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-	jankinfo_android_rvh_schedule_handler(NULL, prev, next, rq);
-#endif
 	if (likely(prev != next)) {
 		if (!prev->on_rq)
 			prev->last_sleep_ts = wallclock;

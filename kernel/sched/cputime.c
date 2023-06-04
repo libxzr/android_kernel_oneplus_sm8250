@@ -4,9 +4,6 @@
 #include <linux/cpufreq_times.h>
 #include "sched.h"
 #include "walt.h"
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-#include <linux/cpu_jankinfo/jank_cpuload.h>
-#endif
 
 #ifdef CONFIG_IRQ_TIME_ACCOUNTING
 
@@ -414,9 +411,6 @@ static void irqtime_account_process_tick(struct task_struct *p, int user_tick,
 	} else {
 		account_system_index_time(p, cputime, CPUTIME_SYSTEM);
 	}
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-	jankinfo_update_time_info(rq, p, ticks*TICK_NSEC);
-#endif
 }
 
 static void irqtime_account_idle_ticks(int ticks)

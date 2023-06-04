@@ -33,10 +33,6 @@
 #endif
 #endif /* OPLUS_FEATURE_HEALTHINFO */
 
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-#include <linux/cpu_jankinfo/jank_tasktrack.h>
-#endif
-
 #ifdef CONFIG_SMP
 static inline bool task_fits_max(struct task_struct *p, int cpu);
 #endif /* CONFIG_SMP */
@@ -929,9 +925,6 @@ static void update_curr(struct cfs_rq *cfs_rq)
 	if (entity_is_task(curr)) {
 		struct task_struct *curtask = task_of(curr);
 		trace_sched_stat_runtime(curtask, delta_exec, curr->vruntime);
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-		jankinfo_tasktrack_update_time(curtask, TRACE_RUNNING, delta_exec);
-#endif
 		cgroup_account_cputime(curtask, delta_exec);
 		account_group_exec_runtime(curtask, delta_exec);
 #ifdef OPLUS_FEATURE_HEALTHINFO
@@ -990,9 +983,6 @@ update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
 			return;
 		}
 		trace_sched_stat_wait(p, delta);
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-		jankinfo_tasktrack_update_time(p, TRACE_RUNNABLE, delta);
-#endif
 
 #ifdef OPLUS_FEATURE_HEALTHINFO
 // Add for get sched latency stat
@@ -1044,9 +1034,6 @@ update_stats_enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 		if (tsk) {
 			account_scheduler_latency(tsk, delta >> 10, 1);
 			trace_sched_stat_sleep(tsk, delta);
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-			jankinfo_tasktrack_update_time(tsk, TRACE_SLEEPING, delta);
-#endif
 
 #ifdef OPLUS_FEATURE_HEALTHINFO
 #ifdef CONFIG_OPLUS_JANK_INFO
@@ -1072,9 +1059,6 @@ update_stats_enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 				__schedstat_add(se->statistics.iowait_sum, delta);
 				__schedstat_inc(se->statistics.iowait_count);
 				trace_sched_stat_iowait(tsk, delta);
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-				jankinfo_tasktrack_update_time(tsk, TRACE_DISKSLEEP_INIOWAIT, delta);
-#endif
 #ifdef OPLUS_FEATURE_HEALTHINFO
 // Add for get iowait
 #ifdef CONFIG_OPLUS_HEALTHINFO
@@ -1095,9 +1079,6 @@ update_stats_enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 #endif
 #endif /* OPLUS_FEATURE_HEALTHINFO */
 			trace_sched_stat_blocked(tsk, delta);
-#if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
-			jankinfo_tasktrack_update_time(tsk, TRACE_DISKSLEEP, delta);
-#endif
 			trace_sched_blocked_reason(tsk);
 
 			/*
