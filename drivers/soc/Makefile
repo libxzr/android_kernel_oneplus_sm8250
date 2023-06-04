@@ -30,10 +30,6 @@ obj-y                           += oplus/
 obj-$(CONFIG_OPLUS_SYSTEM_KERNEL)	+= oplus/system/
 #endif /* VENDOR_EDIT */
 
-#ifdef OPLUS_FEATURE_IOMONITOR
-obj-$(CONFIG_IOMONITOR)    +=  oplus/iomonitor/
-#endif /*OPLUS_FEATURE_IOMONITOR*/
-
 #ifdef OPLUS_FEATURE_SENSOR_SMEM
 obj-y						+= oplus/sensor/
 #endif

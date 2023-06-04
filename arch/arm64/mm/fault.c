@@ -49,9 +49,6 @@
 #include <soc/qcom/scm.h>
 
 #include <acpi/ghes.h>
-#if defined(OPLUS_FEATURE_IOMONITOR) && defined(CONFIG_IOMONITOR)
-#include <linux/iomonitor/iomonitor.h>
-#endif /*OPLUS_FEATURE_IOMONITOR*/
 
 struct fault_info {
 	int	(*fn)(unsigned long addr, unsigned int esr,
@@ -603,9 +600,6 @@ done:
 		 */
 		if (major) {
 			tsk->maj_flt++;
-#if defined(OPLUS_FEATURE_IOMONITOR) && defined(CONFIG_IOMONITOR)
-			iomonitor_update_fs_stats(FS_MAJOR_FAULT, 1);
-#endif /*OPLUS_FEATURE_IOMONITOR*/
 			perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS_MAJ, 1, regs,
 				      addr);
 		} else {

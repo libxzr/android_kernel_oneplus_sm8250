@@ -29,9 +29,6 @@
 #include <linux/device.h>
 #include <linux/memcontrol.h>
 #include "internal.h"
-#if defined(OPLUS_FEATURE_IOMONITOR) && defined(CONFIG_IOMONITOR)
-#include <linux/iomonitor/iomonitor.h>
-#endif /*OPLUS_FEATURE_IOMONITOR*/
 
 /*
  * 4MB minimal write chunk size
@@ -2012,9 +2009,6 @@ void wb_workfn(struct work_struct *work)
 						    WB_REASON_FORKER_THREAD);
 		trace_writeback_pages_written(pages_written);
 	}
-#if defined(OPLUS_FEATURE_IOMONITOR) && defined(CONFIG_IOMONITOR)
-	iomonitor_update_fs_stats(FS_DIRTY_PAGES, pages_written);
-#endif /*OPLUS_FEATURE_IOMONITOR*/
 	if (!list_empty(&wb->work_list))
 		wb_wakeup(wb);
 	else if (wb_has_dirty_io(wb) && dirty_writeback_interval)

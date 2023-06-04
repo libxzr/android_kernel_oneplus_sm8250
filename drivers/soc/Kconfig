@@ -19,9 +19,6 @@ source "drivers/soc/versatile/Kconfig"
 source "drivers/soc/xilinx/Kconfig"
 source "drivers/soc/zte/Kconfig"
 source "drivers/soc/oplus/Kconfig"
-#ifdef OPLUS_FEATURE_IOMONITOR
-source "drivers/soc/oplus/iomonitor/Kconfig"
-#endif /*OPLUS_FEATURE_IOMONITOR*/
 #ifdef VENDOR_EDIT
 source "drivers/soc/oplus/system/Kconfig"
 #endif /* VENDOR_EDIT */
