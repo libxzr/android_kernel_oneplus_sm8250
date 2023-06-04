@@ -2648,17 +2648,7 @@ static void futex_wait_queue_me(struct futex_hash_bucket *hb, struct futex_q *q,
 		 * is no timeout, or if it has yet to expire.
 		 */
 		if (!timeout || timeout->task) {
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_JANK_INFO
-			current->in_futex = 1;
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 			freezable_schedule();
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_JANK_INFO
-			current->in_futex = 0;
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 		}
 	}
 	__set_current_state(TASK_RUNNING);

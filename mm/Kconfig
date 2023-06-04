@@ -896,10 +896,6 @@ config PROCESS_RECLAIM
 
 	 Any other value is ignored.
 
-#ifdef OPLUS_FEATURE_HEALTHINFO
-source "mm/healthinfo/Kconfig"
-#endif /* OPLUS_FEATURE_HEALTHINFO */
-
 #ifdef OPLUS_FEATURE_MULTI_KSWAPD
 source "mm/multi_kswapd/Kconfig"
 #endif /*OPLUS_FEATURE_MULTI_KSWAPD*/

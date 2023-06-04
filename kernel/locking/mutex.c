@@ -1019,21 +1019,7 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
 				goto err;
 		}
 		spin_unlock(&lock->wait_lock);
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_JANK_INFO
-		if (state & TASK_UNINTERRUPTIBLE) {
-			current->in_mutex = 1;
-		}
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 		schedule_preempt_disabled();
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_JANK_INFO
-		if (state & TASK_UNINTERRUPTIBLE) {
-			current->in_mutex = 0;
-		}
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 
 		/*
 		 * ww_mutex needs to always recheck its position since its waiter

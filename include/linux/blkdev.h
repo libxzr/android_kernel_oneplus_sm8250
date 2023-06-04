@@ -567,12 +567,7 @@ struct request_queue {
 	struct blk_queue_tag	*queue_tags;
 
 	unsigned int		nr_sorted;
-#if !defined (OPLUS_FEATURE_HEALTHINFO) && !defined (CONFIG_OPLUS_HEALTHINFO)
-// Modify for ioqueue
 	unsigned int		in_flight[2];
-#else /* OPLUS_FEATURE_HEALTHINFO && CONFIG_OPLUS_HEALTHINFO */
-	unsigned int		in_flight[5];
-#endif /* OPLUS_FEATURE_HEALTHINFO && CONFIG_OPLUS_HEALTHINFO*/
 	/*
 	 * Number of active block driver functions for which blk_drain_queue()
 	 * must wait. Must be incremented around functions that unlock the

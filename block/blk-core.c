@@ -3000,18 +3000,8 @@ static void blk_dequeue_request(struct request *rq)
 	 * and to it is freed is accounted as io that is in progress at
 	 * the driver side.
 	 */
-#ifdef OPLUS_FEATURE_HEALTHINFO
-// Add for ioqueue
-#ifdef CONFIG_OPLUS_HEALTHINFO
-		if (blk_account_rq(rq)) {
-			q->in_flight[rq_is_sync(rq)]++;
-			ohm_ioqueue_add_inflight(q, rq);
-		}
-#else
-		if (blk_account_rq(rq))
-			q->in_flight[rq_is_sync(rq)]++;
-#endif
-#endif
+	if (blk_account_rq(rq))
+		q->in_flight[rq_is_sync(rq)]++;
 }
 
 /**

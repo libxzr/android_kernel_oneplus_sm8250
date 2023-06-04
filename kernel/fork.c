@@ -107,11 +107,6 @@
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/task.h>
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_JANK_INFO
-#include <linux/healthinfo/jank_monitor.h>
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 #ifdef CONFIG_OPLUS_FEATURE_IM
 #include <linux/im/im.h>
 #endif
@@ -938,12 +933,6 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
 	tsk->active_memcg = NULL;
 #endif
 
-#ifdef CONFIG_OPLUS_FEATURE_TPD
-	tsk->tpd = 0;
-	tsk->dtpd = 0;
-	tsk->dtpdg = -1;
-	tsk->tpd_st = 0; /* for system thread affinity */
-#endif
 	return tsk;
 
 free_stack:
@@ -2068,13 +2057,6 @@ static __latent_entropy struct task_struct *copy_process(
 	p->sequential_io	= 0;
 	p->sequential_io_avg	= 0;
 #endif
-
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_JANK_INFO
-	p->jank_trace = 0;
-	memset(&p->jank_info, 0, sizeof(struct jank_monitor_info));
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 
 	/* Perform scheduler related setup. Assign this task to a CPU. */
 	retval = sched_fork(clone_flags, p);

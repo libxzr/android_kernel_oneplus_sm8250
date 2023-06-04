@@ -26,13 +26,6 @@
 
 #include "walt.h"
 
-#ifdef OPLUS_FEATURE_HEALTHINFO
-// Add for get cpu load
-#ifdef CONFIG_OPLUS_HEALTHINFO
-#include <soc/oplus/healthinfo.h>
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
-
 #ifdef CONFIG_SMP
 static inline bool task_fits_max(struct task_struct *p, int cpu);
 #endif /* CONFIG_SMP */
@@ -66,10 +59,6 @@ walt_dec_cfs_rq_stats(struct cfs_rq *cfs_rq, struct task_struct *p) {}
 #define walt_inc_throttled_cfs_rq_stats(...)
 #define walt_dec_throttled_cfs_rq_stats(...)
 
-#endif
-
-#ifdef CONFIG_OPLUS_FEATURE_TPD
-#include <linux/tpd/tpd.h>
 #endif
 
 /*
@@ -885,11 +874,6 @@ static void update_tg_load_avg(struct cfs_rq *cfs_rq, int force)
 {
 }
 #endif /* CONFIG_SMP */
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_JANK_INFO
-extern void  update_jank_trace_info(struct task_struct *tsk, int trace_type, unsigned int cpu, u64 delta);
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 
 #ifdef CONFIG_OPLUS_FEATURE_TPP
 #include <linux/tpp/tpp.h>
@@ -927,11 +911,6 @@ static void update_curr(struct cfs_rq *cfs_rq)
 		trace_sched_stat_runtime(curtask, delta_exec, curr->vruntime);
 		cgroup_account_cputime(curtask, delta_exec);
 		account_group_exec_runtime(curtask, delta_exec);
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_JANK_INFO
-		update_jank_trace_info(curtask, JANK_TRACE_RUNNING, cpu_of(rq_of(cfs_rq)), delta_exec);
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 	}
 
 	account_cfs_rq_runtime(cfs_rq, delta_exec);
@@ -983,18 +962,6 @@ update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
 			return;
 		}
 		trace_sched_stat_wait(p, delta);
-
-#ifdef OPLUS_FEATURE_HEALTHINFO
-// Add for get sched latency stat
-#ifdef CONFIG_OPLUS_HEALTHINFO
-		ohm_schedstats_record(OHM_SCHED_SCHEDLATENCY, p, (delta >> 20));
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_JANK_INFO
-		update_jank_trace_info(p, JANK_TRACE_RUNNABLE, 0, delta);
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 	}
 
 	__schedstat_set(se->statistics.wait_max,
@@ -1034,12 +1001,6 @@ update_stats_enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 		if (tsk) {
 			account_scheduler_latency(tsk, delta >> 10, 1);
 			trace_sched_stat_sleep(tsk, delta);
-
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_JANK_INFO
-			update_jank_trace_info(tsk, JANK_TRACE_SSTATE, 0, delta);
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 		}
 	}
 	if (block_start) {
@@ -1059,25 +1020,7 @@ update_stats_enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 				__schedstat_add(se->statistics.iowait_sum, delta);
 				__schedstat_inc(se->statistics.iowait_count);
 				trace_sched_stat_iowait(tsk, delta);
-#ifdef OPLUS_FEATURE_HEALTHINFO
-// Add for get iowait
-#ifdef CONFIG_OPLUS_HEALTHINFO
-				ohm_schedstats_record(OHM_SCHED_IOWAIT, tsk, (delta >> 20));
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 			}
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLUS_HEALTHINFO
-			if(!tsk->in_iowait) {
-				 ohm_schedstats_record(OHM_SCHED_DSTATE, tsk, (delta >> 20));
-			}
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
-#ifdef OPLUS_FEATURE_HEALTHINFO
-#ifdef CONFIG_OPLuS_JANK_INFO
-			update_jank_trace_info(tsk, JANK_TRACE_DSTATE, 0, delta);
-#endif
-#endif /* OPLUS_FEATURE_HEALTHINFO */
 			trace_sched_stat_blocked(tsk, delta);
 			trace_sched_blocked_reason(tsk);
 
@@ -3988,17 +3931,6 @@ bias_to_this_cpu(struct task_struct *p, int cpu, int start_cpu)
 			cpu_active(cpu);
 	bool start_cap_test = (capacity_orig_of(cpu) >=
 					capacity_orig_of(start_cpu));
-
-#ifdef CONFIG_OPLUS_FEATURE_TPD
-	cpumask_t mask = CPU_MASK_ALL;
-
-	if ((is_tpd_enable() && is_tpd_task(p)) ||
-			(is_st_tpd_enable() && is_st_tpd_task(p))) {
-		tpd_mask(p, &mask);
-
-		base_test = cpumask_test_cpu(cpu, &mask) && cpu_active(cpu);
-	}
-#endif
 	return base_test && start_cap_test;
 }
 
@@ -6982,12 +6914,6 @@ static int get_start_cpu(struct task_struct *p)
 			!task_demand_fits(p, start_cpu))
 		start_cpu = rd->max_cap_orig_cpu;
 
-#ifdef CONFIG_OPLUS_FEATURE_TPD
-        if ((is_dynamic_tpd_task(p) || is_tpd_task(p)) && is_tpd_enable()) {
-                start_cpu = tpd_suggested(p, start_cpu);
-        }
-#endif
-
 	return start_cpu;
 }
 
@@ -7069,12 +6995,6 @@ static void find_best_target(struct sched_domain *sd, cpumask_t *cpus,
 	sg = start_sd->groups;
 
 	cpumask_copy(&new_allowed_cpus, &p->cpus_allowed);
-#ifdef CONFIG_OPLUS_FEATURE_TPD
-		if ((is_tpd_enable() && is_tpd_task(p)) ||
-			(is_st_tpd_enable() && is_st_tpd_task(p))) {
-			tpd_mask(p, &new_allowed_cpus);
-		}
-#endif
 #ifdef CONFIG_OPLUS_FEATURE_TPP
 	if (tpp_task(p)) {
 		cpumask_setall(&new_allowed_cpus);
@@ -7936,13 +7856,6 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu,
 		goto unlock;
 	}
 
-#ifdef CONFIG_OPLUS_FEATURE_TPD
-	if (is_tpd_enable() && is_tpd_task(p)) {
-		best_energy_cpu = cpu;
-		goto unlock;
-	}
-#endif
-
 	if (cpumask_test_cpu(prev_cpu, &p->cpus_allowed))
 		prev_energy = best_energy = compute_energy(p, prev_cpu, pd);
 	else
@@ -8798,15 +8711,6 @@ static inline int migrate_degrades_locality(struct task_struct *p,
 static inline bool can_migrate_boosted_task(struct task_struct *p,
 			int src_cpu, int dst_cpu)
 {
-#ifdef CONFIG_OPLUS_FEATURE_TPD
-
-	if ((is_tpd_enable() && is_tpd_task(p)) ||
-			(is_st_tpd_enable() && is_st_tpd_task(p))) {
-		/*avoid task migrate to wrong tpd suggested cpu*/
-		if (tpd_check(p, dst_cpu))
-			return false;
-	}
-#endif
 	if (per_task_boost(p) == TASK_BOOST_STRICT_MAX &&
 		task_in_related_thread_group(p) &&
 		(capacity_orig_of(dst_cpu) < capacity_orig_of(src_cpu)))
