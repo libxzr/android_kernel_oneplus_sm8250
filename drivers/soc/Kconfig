@@ -58,8 +58,4 @@ source "drivers/soc/oplus/tpd/Kconfig"
 #Add for NandSwap
 source "drivers/soc/oplus/oplus_nandswap/Kconfig"
 
-#ifdef OPLUS_FEATURE_GAME_OPT
-source "drivers/soc/oplus/game_opt/Kconfig"
-#endif /* OPLUS_FEATURE_GAME_OPT */
-
 endmenu

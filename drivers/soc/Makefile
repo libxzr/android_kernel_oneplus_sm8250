@@ -70,7 +70,3 @@ obj-$(CONFIG_OPLUS_FEATURE_TPD)     +=  oplus/tpd/
 
 #Add for NandSwap
 obj-$(CONFIG_NANDSWAP)		+= oplus/oplus_nandswap/
-
-#ifdef OPLUS_FEATURE_GAME_OPT
-obj-$(CONFIG_OPLUS_FEATURE_GAME_OPT) += oplus/game_opt/
-#endif /* OPLUS_FEATURE_GAME_OPT */

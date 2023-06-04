@@ -26,10 +26,6 @@
 
 #include "walt.h"
 
-#ifdef CONFIG_OPLUS_FEATURE_GAME_OPT
-#include "../../drivers/soc/oplus/game_opt/game_ctrl.h"
-#endif
-
 #ifdef OPLUS_FEATURE_HEALTHINFO
 // Add for get cpu load
 #ifdef CONFIG_OPLUS_HEALTHINFO
@@ -938,9 +934,6 @@ static void update_curr(struct cfs_rq *cfs_rq)
 
 	if (entity_is_task(curr)) {
 		struct task_struct *curtask = task_of(curr);
-#ifdef CONFIG_OPLUS_FEATURE_GAME_OPT
-		g_update_task_runtime(curtask, delta_exec);
-#endif
 		trace_sched_stat_runtime(curtask, delta_exec, curr->vruntime);
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
 		jankinfo_tasktrack_update_time(curtask, TRACE_RUNNING, delta_exec);
@@ -1125,9 +1118,6 @@ update_stats_enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 			update_jank_trace_info(tsk, JANK_TRACE_DSTATE, 0, delta);
 #endif
 #endif /* OPLUS_FEATURE_HEALTHINFO */
-#ifdef CONFIG_OPLUS_FEATURE_GAME_OPT
-			g_sched_stat_blocked(tsk, delta);
-#endif
 			trace_sched_stat_blocked(tsk, delta);
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
 			jankinfo_tasktrack_update_time(tsk, TRACE_DISKSLEEP, delta);

@@ -1664,26 +1664,6 @@ TRACE_EVENT(sched_isolate,
 		__entry->time, __entry->isolate)
 );
 
-#ifdef CONFIG_OPLUS_FEATURE_GAME_OPT
-TRACE_EVENT(game_opt_info,
-	TP_PROTO(char * str, unsigned long frame_util),
-
-	TP_ARGS(str, frame_util),
-
-	TP_STRUCT__entry(
-                __array(char, name, TASK_COMM_LEN)
-		__field(unsigned long,            frame_util)
-	),
-
-	TP_fast_assign(
-		__entry->frame_util           = frame_util;
-                memcpy(__entry->name, str, strlen(str));
-	),
-
-	TP_printk("name = %s, val =%lu",__entry->name, __entry->frame_util)
-);
-#endif
-
 #include "walt.h"
 #endif /* CONFIG_SMP */
 #endif /* _TRACE_SCHED_H */
