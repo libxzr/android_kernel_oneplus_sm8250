@@ -72,11 +72,6 @@
 #include <linux/uaccess.h>
 #include <asm/processor.h>
 
-#ifdef OPLUS_FEATURE_TASK_CPUSTATS
-/* stat cpu usage on each tick. */
-#include <linux/task_cpustats.h>
-#endif /* OPLUS_FEATURE_TASK_CPUSTATS */
-
 #ifdef CONFIG_X86
 #include <asm/nmi.h>
 #include <asm/stacktrace.h>
@@ -1680,18 +1675,6 @@ static struct ctl_table kern_table[] = {
 		.proc_handler	= proc_dointvec,
 	},
 #endif
-#ifdef OPLUS_FEATURE_TASK_CPUSTATS
-/* stat cpu usage on each tick. */
-	{
-		.procname	= "task_cpustats_enable",
-		.data		= &sysctl_task_cpustats_enable,
-		.maxlen		= sizeof(unsigned int),
-		.mode		= 0666,
-		.proc_handler	= proc_dointvec_minmax,
-		.extra1		= &zero,
-		.extra2		= &one,
-	},
-#endif /* OPLUS_FEATURE_TASK_CPUSTATS */
 	{ }
 };
 

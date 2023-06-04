@@ -107,9 +107,6 @@ config PROC_UID
 #ifdef OPLUS_FEATURE_CPU_JANKINFO
 source "fs/proc/cpu_jankinfo/Kconfig"
 #endif /* OPLUS_FEATURE_CPU_JANKINFO */
-#ifdef OPLUS_FEATURE_TASK_CPUSTATS
-source "fs/proc/task_cpustats/Kconfig"
-#endif /* OPLUS_FEATURE_TASK_CPUSTATS */
 
 #ifdef OPLUS_FEATURE_HEALTHINFO
 source fs/proc/healthinfo/Kconfig

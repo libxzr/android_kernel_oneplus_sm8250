@@ -2076,11 +2076,6 @@ static __latent_entropy struct task_struct *copy_process(
 #endif
 #endif /* OPLUS_FEATURE_HEALTHINFO */
 
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-	p->wake_tid = 0;
-	p->running_start_time = 0;
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
-
 	/* Perform scheduler related setup. Assign this task to a CPU. */
 	retval = sched_fork(clone_flags, p);
 	if (retval)

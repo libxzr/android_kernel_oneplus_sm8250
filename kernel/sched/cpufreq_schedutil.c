@@ -17,10 +17,6 @@
 #include <trace/events/power.h>
 #include <linux/sched/sysctl.h>
 
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-#include <linux/task_sched_info.h>
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
-
 #ifdef OPLUS_FEATURE_POWER_CPUFREQ
 /* Target load.  Lower values result in higher CPU speeds. */
 #define DEFAULT_TARGET_LOAD 80
@@ -288,10 +284,6 @@ static void sugov_fast_switch(struct sugov_policy *sg_policy, u64 time,
 		return;
 
 	policy->cur = next_freq;
-
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-	update_freq_info(policy);
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
 
 	if (trace_cpu_frequency_enabled()) {
 		for_each_cpu(cpu, policy->cpus)

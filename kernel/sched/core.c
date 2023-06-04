@@ -32,10 +32,6 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/sched.h>
 
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-#include <linux/task_sched_info.h>
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
-
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
 #include <linux/cpu_jankinfo/sa_jankinfo.h>
 #endif
@@ -2684,10 +2680,6 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags,
 
 	trace_sched_waking(p);
 
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-	update_wake_tid(p, current, other_runnable);
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
-
 #ifdef CONFIG_OPLUS_FEATURE_RT_INFO
     if (rt_handler != NULL)
         rt_handler(p);
@@ -2833,10 +2825,6 @@ static void try_to_wake_up_local(struct task_struct *p, struct rq_flags *rf)
 		goto out;
 
 	trace_sched_waking(p);
-
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-	update_wake_tid(p, current, other_runnable);
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
 
 	if (!task_on_rq_queued(p)) {
 		u64 wallclock = sched_ktime_clock();
@@ -4320,11 +4308,6 @@ static void __sched notrace __schedule(bool preempt)
 		++*switch_count;
 
 		trace_sched_switch(preempt, prev, next);
-
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-		update_wake_tid(prev, next, running_runnable);
-		update_running_start_time(prev, next);
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
 
 		/* Also unlocks the rq: */
 		rq = context_switch(rq, prev, next, &rf);
@@ -6864,10 +6847,6 @@ out:
 	trace_sched_isolate(cpu, cpumask_bits(cpu_isolated_mask)[0],
 			    start_time, 1);
 
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-	update_cpu_isolate_info(cpu, cpu_isolate);
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
-
 	return ret_code;
 }
 
@@ -6912,9 +6891,6 @@ int sched_unisolate_cpu_unlocked(int cpu)
 out:
 	trace_sched_isolate(cpu, cpumask_bits(cpu_isolated_mask)[0],
 			    start_time, 0);
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-	update_cpu_isolate_info(cpu, cpu_unisolate);
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
 	return ret_code;
 }
 

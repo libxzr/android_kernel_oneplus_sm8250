@@ -41,9 +41,6 @@
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
 #include <linux/cpu_jankinfo/jank_freq.h>
 #endif
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-#include <linux/task_sched_info.h>
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
 
 static LIST_HEAD(cpufreq_policy_list);
 
@@ -379,9 +376,6 @@ static void cpufreq_notify_transition(struct cpufreq_policy *policy,
 		cpufreq_stats_record_transition(policy, freqs->new);
 		cpufreq_times_record_transition(policy, freqs->new);
 		policy->cur = freqs->new;
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-		update_freq_info(policy);
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
 	}
 }
 
@@ -2360,10 +2354,6 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
 	strncpy(policy->change_comm, current->comm, TASK_COMM_LEN);
 #endif
 #endif /* OPLUS_FEATURE_HEALTHINFO */
-
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-	update_freq_limit_info(policy);
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
 
 	arch_set_max_freq_scale(policy->cpus, policy->max);
 

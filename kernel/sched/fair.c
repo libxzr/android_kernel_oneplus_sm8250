@@ -36,9 +36,6 @@
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
 #include <linux/cpu_jankinfo/jank_tasktrack.h>
 #endif
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-#include <linux/task_sched_info.h>
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
 
 #ifdef CONFIG_SMP
 static inline bool task_fits_max(struct task_struct *p, int cpu);
@@ -997,10 +994,6 @@ update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
 		jankinfo_tasktrack_update_time(p, TRACE_RUNNABLE, delta);
 #endif
 
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-	update_task_sched_info(p, delta, task_sched_info_runnable, cpu_of(rq_of(cfs_rq)));
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
-
 #ifdef OPLUS_FEATURE_HEALTHINFO
 // Add for get sched latency stat
 #ifdef CONFIG_OPLUS_HEALTHINFO
@@ -1055,10 +1048,6 @@ update_stats_enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 			jankinfo_tasktrack_update_time(tsk, TRACE_SLEEPING, delta);
 #endif
 
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-			update_task_sched_info(tsk, delta, task_sched_info_S, task_cpu(tsk));
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
-
 #ifdef OPLUS_FEATURE_HEALTHINFO
 #ifdef CONFIG_OPLUS_JANK_INFO
 			update_jank_trace_info(tsk, JANK_TRACE_SSTATE, 0, delta);
@@ -1074,13 +1063,6 @@ update_stats_enqueue_sleeper(struct cfs_rq *cfs_rq, struct sched_entity *se)
 
 		if (unlikely(delta > schedstat_val(se->statistics.block_max)))
 			__schedstat_set(se->statistics.block_max, delta);
-
-#if defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED)
-		if (tsk->in_iowait)
-			update_task_sched_info(tsk, delta, task_sched_info_IO, task_cpu(tsk));
-		else
-			update_task_sched_info(tsk, delta, task_sched_info_D, task_cpu(tsk));
-#endif /* defined(OPLUS_FEATURE_TASK_CPUSTATS) && defined(CONFIG_OPLUS_SCHED) */
 
 		__schedstat_set(se->statistics.block_start, 0);
 		__schedstat_add(se->statistics.sum_sleep_runtime, delta);
