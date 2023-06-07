@@ -661,11 +661,6 @@ new_measure:
 	tp->rcvq_space.time = tp->tcp_mstamp;
 }
 
-#ifdef OPLUS_FEATURE_APP_MONITOR
-/* Add code for push detect function */
-extern void oplus_app_monitor_update_app_info(struct sock *sk, const struct sk_buff *skb, int send, int retrans);
-#endif /* OPLUS_FEATURE_APP_MONITOR */
-
 /* There is something which you must keep in mind when you analyze the
  * behavior of the tp->ato delayed ack timeout interval.  When a
  * connection starts up, we want to ack as quickly as possible.  The
@@ -720,11 +715,6 @@ static void tcp_event_data_recv(struct sock *sk, struct sk_buff *skb)
 
 	if (skb->len >= 128)
 		tcp_grow_window(sk, skb);
-
-	#ifdef OPLUS_FEATURE_APP_MONITOR
-	/* Add code for push detect function */
-	oplus_app_monitor_update_app_info(sk, skb, 0, 0);
-	#endif /* OPLUS_FEATURE_APP_MONITOR */
 }
 
 /* Called to compute a smoothed rtt estimate. The data fed to this

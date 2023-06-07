@@ -55,11 +55,6 @@
 static bool tcp_write_xmit(struct sock *sk, unsigned int mss_now, int nonagle,
 			   int push_one, gfp_t gfp);
 
-#ifdef OPLUS_FEATURE_APP_MONITOR
-/* Add code for push detect function */
-extern void oplus_app_monitor_update_app_info(struct sock *sk, const struct sk_buff *skb, int send, int retrans);
-#endif /* OPLUS_FEATURE_APP_MONITOR */
-
 /* Account for new data that has been sent to the network. */
 static void tcp_event_new_data_sent(struct sock *sk, struct sk_buff *skb)
 {
@@ -1157,11 +1152,6 @@ static int __tcp_transmit_skb(struct sock *sk, struct sk_buff *skb,
 	/* Cleanup our debris for IP stacks */
 	memset(skb->cb, 0, max(sizeof(struct inet_skb_parm),
 			       sizeof(struct inet6_skb_parm)));
-
-	#ifdef OPLUS_FEATURE_APP_MONITOR
-	/* Add code for push detect function */
-	oplus_app_monitor_update_app_info(sk, skb, 1, 0);
-	#endif /* OPLUS_FEATURE_APP_MONITOR */
 
 	err = icsk->icsk_af_ops->queue_xmit(sk, skb, &inet->cork.fl);
 
@@ -2957,11 +2947,6 @@ int __tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb, int segs)
 
 	if (likely(!err)) {
 		TCP_SKB_CB(skb)->sacked |= TCPCB_EVER_RETRANS;
-
-		#ifdef OPLUS_FEATURE_APP_MONITOR
-		/* Add code for push detect function */
-		oplus_app_monitor_update_app_info(sk, skb, 1, 1);
-		#endif /* OPLUS_FEATURE_APP_MONITOR */
 
 		//#ifdef OPLUS_FEATURE_NWPOWER
 		oplus_match_tcp_output_retrans(sk);
