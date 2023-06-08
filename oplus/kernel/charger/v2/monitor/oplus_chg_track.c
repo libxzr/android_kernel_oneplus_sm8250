@@ -23,8 +23,6 @@
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) ||	\
 	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 #include <soc/oplus/system/kernel_fb.h>
-#elif defined(CONFIG_OPLUS_KEVENT_UPLOAD)
-#include <linux/oplus_kevent.h>
 #endif
 
 #include <oplus_chg.h>
@@ -385,8 +383,7 @@ struct oplus_chg_track {
 
 	struct workqueue_struct *trigger_upload_wq;
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) || \
-	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE) || \
-	defined(CONFIG_OPLUS_KEVENT_UPLOAD)
+	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 	struct kernel_packet_info *dcs_info;
 #endif
 	struct delayed_work upload_info_dwork;
@@ -452,8 +449,7 @@ static struct dentry *track_debugfs_root;
 static DEFINE_MUTEX(debugfs_root_mutex);
 
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) || \
-	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE) || \
-	defined(CONFIG_OPLUS_KEVENT_UPLOAD)
+	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 static int oplus_chg_track_pack_dcs_info(struct oplus_chg_track *chip);
 #endif
 static int
@@ -465,8 +461,7 @@ static int oplus_chg_track_obtain_wls_break_sub_crux_info(
 static int oplus_chg_track_upload_trigger_data(oplus_chg_track_trigger data);
 
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) || \
-	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE) || \
-	defined(CONFIG_OPLUS_KEVENT_UPLOAD)
+	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 static struct type_reason_table track_type_reason_table[] = {
 	{ TRACK_NOTIFY_TYPE_DEFAULT, "default" },
 	{ TRACK_NOTIFY_TYPE_SOC_JUMP, "soc_error" },
@@ -1828,8 +1823,7 @@ static int oplus_chg_track_init(struct oplus_chg_track *track_dev)
 }
 
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) || \
-	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE) || \
-	defined(CONFIG_OPLUS_KEVENT_UPLOAD)
+	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 static int oplus_chg_track_get_type_tag(int type_reason, char *type_reason_tag)
 {
 	int i = 0;
@@ -2010,8 +2004,7 @@ static int oplus_chg_track_thread(void *data)
 		mutex_lock(&chip->trigger_data_lock);
 		chip->trigger_data_ok = false;
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) || \
-	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE) || \
-	defined(CONFIG_OPLUS_KEVENT_UPLOAD)
+	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 		oplus_chg_track_pack_dcs_info(chip);
 #endif
 		chip->dwork_retry_cnt = OPLUS_CHG_TRACK_DWORK_RETRY_CNT;
@@ -2067,8 +2060,7 @@ static int oplus_chg_track_get_local_time_s(void)
 #define TRACK_VERSION	"3.1"
 
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) || \
-	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE) || \
-	defined(CONFIG_OPLUS_KEVENT_UPLOAD)
+	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 static int oplus_chg_track_pack_dcs_info(struct oplus_chg_track *chip)
 {
 	int ret = 0;
@@ -2138,8 +2130,6 @@ static void oplus_chg_track_upload_info_dwork(struct work_struct *work)
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) ||	\
 	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 	ret = fb_kevent_send_to_user(chip->dcs_info);
-#elif defined(CONFIG_OPLUS_KEVENT_UPLOAD)
-	ret = kevent_send_to_user(chip->dcs_info);
 #endif
 	mutex_unlock(&chip->dcs_info_lock);
 	if (!ret)
@@ -4462,8 +4452,7 @@ int oplus_chg_track_driver_init(struct oplus_monitor *monitor)
 	track_dev->monitor = monitor;
 
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) || \
-	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE) || \
-	defined(CONFIG_OPLUS_KEVENT_UPLOAD)
+	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 	track_dev->dcs_info = (struct kernel_packet_info *)kmalloc(
 		sizeof(char) * OPLUS_CHG_TRIGGER_MSG_LEN, GFP_KERNEL);
 	if (track_dev->dcs_info == NULL) {
@@ -4514,8 +4503,7 @@ parse_dt_err:
 		debugfs_remove_recursive(track_debugfs_root);
 debugfs_create_fail:
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) || \
-	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE) || \
-	defined(CONFIG_OPLUS_KEVENT_UPLOAD)
+	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 	kfree(track_dev->dcs_info);
 dcs_info_kmalloc_fail:
 #endif
@@ -4544,8 +4532,7 @@ int oplus_chg_track_driver_exit(struct oplus_monitor *monitor)
 	if (track_debugfs_root)
 		debugfs_remove_recursive(track_debugfs_root);
 #if defined(CONFIG_OPLUS_FEATURE_FEEDBACK) || \
-	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE) || \
-	defined(CONFIG_OPLUS_KEVENT_UPLOAD)
+	defined(CONFIG_OPLUS_FEATURE_FEEDBACK_MODULE)
 	kfree(track_dev->dcs_info);
 #endif
 	devm_kfree(monitor->dev, track_dev);

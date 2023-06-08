@@ -12,15 +12,7 @@
 #include <linux/err.h>
 #include <linux/string.h>
 #include <linux/sysfs.h>
-/*
-#ifdef CONFIG_OPLUS_KEVENT_UPLOAD
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
-#include <../../../arch/arm64/kernel/secureguard/rootguard/oplus_kevent.h>
-#else
-#include <linux/oplus_kevent.h>
-#endif
-#endif
-*/
+
 #include <soc/oplus/system/kernel_fb.h>
 #include <linux/delay.h>
 #include <linux/mutex.h>
@@ -178,12 +170,6 @@ static const struct genl_ops oplus_fb_kevent_upload_ops[] = {
 		/*.policy		= taskstats_cmd_get_policy,*/
 	},
 };
-
-#ifdef CONFIG_OPLUS_KEVENT_UPLOAD
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)) && !IS_ENABLED(CONFIG_OPLUS_KERNEL_SECURE_GUARD)
-int kevent_send_to_user(struct kernel_packet_info *userinfo) {return 0;}
-#endif
-#endif
 
 static struct genl_family oplus_fb_kevent_family __ro_after_init = {
 	.name		= OPLUS_FB_GUARD_PROTOCAL_NAME,

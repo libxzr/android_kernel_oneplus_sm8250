@@ -7357,15 +7357,6 @@ void selinux_complete_init(void)
 	iterate_supers(delayed_superblock_init, NULL);
 }
 
-
-#ifdef CONFIG_OPLUS_SECURE_GUARD
-int get_current_security_context(char **context, u32 *context_len)
-{
-	u32 sid = current_sid();
-	return security_sid_to_context(&selinux_state, sid, context, context_len);
-}
-#endif /* CONFIG_OPLUS_SECURE_GUARD */
-
 /* SELinux requires early initialization in order to label
    all processes and objects when they are created. */
 security_initcall(selinux_init);

@@ -1,4 +1,0 @@
-config OPLUS_KERNEL_SECURE_KEVENTUPLOAD
-	tristate "oplus kernel secure keventupload"
-    help
-      define this config to enable kernel secure secure keventupload .

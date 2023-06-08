@@ -2190,11 +2190,6 @@ static int ___sys_sendmsg(struct socket *sock, struct user_msghdr __user *msg,
 
 out_freectl:
 	if (ctl_buf != ctl){
-#ifdef CONFIG_OPLUS_SECURE_GUARD
-#ifdef CONFIG_OPLUS_ROOT_CHECK
-		memset(ctl_buf, 0, ctl_len);
-#endif /* CONFIG_OPLUS_ROOT_CHECK */
-#endif /* CONFIG_OPLUS_SECURE_GUARD */
 		sock_kfree_s(sock->sk, ctl_buf, ctl_len);
 	}
 out_freeiov:

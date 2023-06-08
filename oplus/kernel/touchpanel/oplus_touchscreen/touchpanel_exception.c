@@ -119,7 +119,7 @@ static  int tp_olc_raise_exception(tp_excep_type excep_tpye, void *summary, unsi
 {
 	return 0;
 }
-#endif /* CONFIG_OPLUS_KEVENT_UPLOAD_DELETE */
+#endif /* CONFIG_OPLUS_FEATURE_LOG_CORE */
 
 
 int tp_exception_report(void *tp_exception_data, tp_excep_type excep_tpye, void *summary, unsigned int summary_size)
