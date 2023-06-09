@@ -74,10 +74,6 @@ source "drivers/soc/oplus/system/misc/Kconfig"
 source "drivers/soc/oplus/system/mdmfeature/Kconfig"
 #endif /*OPLUS_FEATURE_MDMFEATURE*/
 
-#ifdef OPLUS_FEATURE_LOG_CORE
-source "drivers/soc/oplus/system/olc/Kconfig"
-#endif /* OPLUS_FEATURE_LOG_CORE */
-
 #ifdef CONFIG_OPLUS_FEATURE_FDLEAK_CHECK
 source "drivers/soc/oplus/system/oplus_fdleak/Kconfig"
 #endif /*CONFIG_OPLUS_FEATURE_FDLEAK_CHECK*/
