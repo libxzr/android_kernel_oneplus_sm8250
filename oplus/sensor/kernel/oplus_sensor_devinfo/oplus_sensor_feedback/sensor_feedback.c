@@ -23,9 +23,6 @@
 #include <linux/vmalloc.h>
 #include "scp_helper.h"
 #include "sensor_feedback.h"
-#ifdef CONFIG_OPLUS_FEATURE_FEEDBACK
-#include <soc/oplus/system/kernel_fb.h>
-#endif
 
 #define SENSOR_DEVICE_TYPE      "10002"
 #define SENSOR_POWER_TYPE       "10003"
@@ -243,9 +240,6 @@ static ssize_t hal_info_store(struct device *dev,
         strbuf);
     pr_info("payload =%s\n", payload);
 
-#ifdef CONFIG_OPLUS_FEATURE_FEEDBACK
-    oplus_kevent_fb(FB_SENSOR, g_fb_conf[index].fb_event_id, payload);
-#endif
     return count;
 }
 
@@ -393,9 +387,6 @@ static int parse_shr_info(struct sensor_fb_cxt *sensor_fb_cxt)
                 sensor_fb_cxt->fb_smem.event[count].count,
                 detail_buff);
         pr_info("payload =%s\n", payload);
-#ifdef CONFIG_OPLUS_FEATURE_FEEDBACK
-        oplus_kevent_fb(FB_SENSOR, g_fb_conf[index].fb_event_id, payload);
-#endif
     }
 
     return ret;

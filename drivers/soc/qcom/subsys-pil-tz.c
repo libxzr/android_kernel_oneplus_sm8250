@@ -26,13 +26,6 @@
 #include <linux/soc/qcom/smem_state.h>
 
 #include "peripheral-loader.h"
-//#ifdef OPLUS_FEATURE_SENSOR
-#include <soc/oplus/system/kernel_fb.h>
-//#endif
-
-#ifdef OPLUS_FEATURE_MM_FEEDBACK
-#include <soc/oplus/system/oplus_mm_kevent_fb.h>
-#endif
 
 #define XO_FREQ			19200000
 #define PROXY_TIMEOUT_MS	10000
@@ -849,22 +842,6 @@ static void log_failure_reason(const struct pil_tz_data *d)
 	}
 	#endif /* OPLUS_FEATURE_WIFI_DCS_SWITCH */
 
-	//#ifdef OPLUS_FEATURE_SENSOR
-	set_subsys_crash_cause(reason);
-	if((strncmp(name, "slpi", strlen("slpi")) == 0)
-		|| (strncmp(name, "cdsp", strlen("cdsp")) == 0)
-		|| (strncmp(name, "adsp", strlen("adsp")) == 0)){
-		strcat(reason, "$$module@@");
-		strcat(reason, name);
-		oplus_kevent_fb_str(FB_SENSOR, FB_SENSOR_ID_CRASH, reason);
-	}
-	//#endif
-	#ifdef OPLUS_FEATURE_MM_FEEDBACK
-	if(strncmp(name, "adsp", strlen("adsp")) == 0){
-		mm_fb_audio_kevent_named(OPLUS_AUDIO_EVENTID_ADSP_CRASH, \
-				MM_FB_KEY_RATELIMIT_5MIN, "payload@@%s$$fid@@123456", reason);
-	}
-	#endif
 	pr_err("%s subsystem failure reason: %s.\n", name, reason);
 }
 

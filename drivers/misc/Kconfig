@@ -645,10 +645,6 @@ config SIM_DETECT
 	default n
 	help
 	  Say Y here to enable sim detect system support
-config HAPTIC_FEEDBACK
-    tristate "Haptic driver feedback for awinic aw8697 series"
-    help
-      This option enables support for aw8697 series Haptic Driver Feedback.
 #endif /* OPLUS_FEATURE_SIM_DETECT */
 
 #ifdef OPLUS_FEATURE_SIM_DETECT

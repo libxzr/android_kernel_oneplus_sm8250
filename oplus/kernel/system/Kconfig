@@ -36,7 +36,6 @@ config OPLUS_FEATURE_DETAILHEAD
 	define this config to add cpu number and current id and current comm to kmsg
 
 
-source "drivers/soc/oplus/system/feedback/Kconfig"
 source "drivers/soc/oplus/system/shutdown_detect/Kconfig"
 source "drivers/soc/oplus/system/oplus_project/Kconfig"
 source "drivers/soc/oplus/system/hung_task_enhance/Kconfig"
@@ -53,10 +52,6 @@ source "drivers/soc/oplus/system/qcom_pmicwd/Kconfig"
 #ifdef OPLUS_FEATURE_DUMP_REASON
 source "drivers/soc/oplus/system/dump_reason/Kconfig"
 #endif /* OPLUS_FEATURE_DUMP_REASON */
-
-#ifdef OPLUS_FEATURE_MM_FEEDBACK
-source "drivers/soc/oplus/system/oplus_mm_fb/Kconfig"
-#endif /* OPLUS_FEATURE_MM_FEEDBACK */
 
 #ifdef OPLUS_FEATURE_QCOM_WATCHDOG
 source "drivers/soc/oplus/system/qcom_watchdog/Kconfig"
