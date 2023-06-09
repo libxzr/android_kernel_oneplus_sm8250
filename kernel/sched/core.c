@@ -2512,13 +2512,6 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
 	rq_unlock(rq, &rf);
 }
 
-#ifdef CONFIG_OPLUS_FEATURE_RT_INFO
-rt_info_handler rt_handler = NULL;
-void register_rt_info_handler(rt_info_handler h) {
-    rt_handler = h;
-    pr_info("Add a rt_info handler\n");
-}
-#endif
 /*
  * Notes on Program-Order guarantees on SMP systems.
  *
@@ -2672,11 +2665,6 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags,
 		goto out;
 
 	trace_sched_waking(p);
-
-#ifdef CONFIG_OPLUS_FEATURE_RT_INFO
-    if (rt_handler != NULL)
-        rt_handler(p);
-#endif
 
 	/* We're going to change ->state: */
 	success = 1;

@@ -798,11 +798,6 @@ union rcu_special {
 	u32 s; /* Set of bits. */
 };
 
-#ifdef CONFIG_OPLUS_FEATURE_RT_INFO
-typedef void (*rt_info_handler)(void *task);
-extern void register_rt_info_handler(rt_info_handler func);
-#endif
-
 enum perf_event_task_context {
 	perf_invalid_context = -1,
 	perf_hw_context = 0,
