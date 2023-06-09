@@ -101,10 +101,6 @@
 
 #include "../../lib/kstrtox.h"
 
-#ifdef CONFIG_OPLUS_FEATURE_IM
-#include <linux/im/im.h>
-#endif
-
 /* NOTE:
  *	Implementing inode permission operations in /proc is almost
  *	certainly an error.  Permission checks need to happen during
@@ -3353,23 +3349,6 @@ static int proc_pid_patch_state(struct seq_file *m, struct pid_namespace *ns,
 }
 #endif /* CONFIG_LIVEPATCH */
 
-#ifdef CONFIG_OPLUS_FEATURE_IM
-static int proc_im_flag(struct seq_file *m, struct pid_namespace *ns,
-				struct pid *pid, struct task_struct *task)
-{
-#define IM_TAG_DESC_LEN (128)
-	char desc[IM_TAG_DESC_LEN] = {0};
-	int arg = 0;
-
-	im_to_str(task->im_flag, desc, IM_TAG_DESC_LEN);
-	desc[IM_TAG_DESC_LEN - 1] = '\0';
-	seq_printf(m, "%d %s (%d)",
-		task->im_flag, desc, arg);
-	return 0;
-}
-
-#endif /* CONFIG_OPLUS_FEATURE_IM */
-
 /*
  * Thread groups
  */
@@ -3500,9 +3479,6 @@ static const struct pid_entry tgid_base_stuff[] = {
 #endif
 #if defined(OPLUS_FEATURE_VIRTUAL_RESERVE_MEMORY) && defined(CONFIG_VIRTUAL_RESERVE_MEMORY)
 	REG("va_feature", 0666, proc_va_feature_operations),
-#endif
-#ifdef CONFIG_OPLUS_FEATURE_IM
-	ONE("im_flag", 0444, proc_im_flag),
 #endif
 };
 
@@ -3900,9 +3876,6 @@ static const struct pid_entry tid_base_stuff[] = {
 #endif
 #ifdef CONFIG_CPU_FREQ_TIMES
 	ONE("time_in_state", 0444, proc_time_in_state_show),
-#endif
-#ifdef CONFIG_OPLUS_FEATURE_IM
-	ONE("im_flag", 0444, proc_im_flag),
 #endif
 };
 

@@ -107,9 +107,6 @@
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/task.h>
-#ifdef CONFIG_OPLUS_FEATURE_IM
-#include <linux/im/im.h>
-#endif
 
 /*
  * Minimum number of threads to boot the kernel
@@ -2307,9 +2304,6 @@ static __latent_entropy struct task_struct *copy_process(
 	uprobe_copy_process(p, clone_flags);
 	copy_oom_score_adj(clone_flags, p);
 	if (!IS_ERR(p)) {
-#ifdef CONFIG_OPLUS_FEATURE_IM
-		im_tsk_init_flag((void *) p);
-#endif
 	}
 
 #ifdef CONFIG_OPLUS_FEATURE_UID_PERF

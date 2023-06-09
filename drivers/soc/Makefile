@@ -45,10 +45,5 @@ obj-$(CONFIG_OPLUS_WAKELOCK_PROFILER) += oplus/owakelock/
 obj-y += oplus/misc/
 #endif /* OPLUS_FEATURE_ESIM */
 
-#ifdef OPLUS_FEATURE_IM
-#ted.lin@optimization add for im module
-obj-$(CONFIG_OPLUS_FEATURE_IM) += oplus/im/
-#endif /* OPLUS_FEATURE_IM */
-
 #Add for NandSwap
 obj-$(CONFIG_NANDSWAP)		+= oplus/oplus_nandswap/

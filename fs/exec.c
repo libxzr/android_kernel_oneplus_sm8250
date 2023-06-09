@@ -72,10 +72,6 @@
 
 #include <trace/events/sched.h>
 
-#ifdef CONFIG_OPLUS_FEATURE_IM
-#include <linux/im/im.h>
-#endif
-
 int suid_dumpable = 0;
 
 static LIST_HEAD(formats);
@@ -1258,9 +1254,6 @@ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
 	task_lock(tsk);
 	trace_task_rename(tsk, buf);
 	strlcpy(tsk->comm, buf, sizeof(tsk->comm));
-#ifdef CONFIG_OPLUS_FEATURE_IM
-	im_wmi(tsk);
-#endif
 	task_unlock(tsk);
 	perf_event_comm(tsk, exec);
 }

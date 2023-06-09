@@ -1515,10 +1515,6 @@ struct task_struct {
 	void				*security;
 #endif
 
-#ifdef CONFIG_OPLUS_FEATURE_IM
-	int im_flag;
-#endif
-
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_FDLEAK_CHECK)
 	unsigned int fdleak_flag;
 #endif
