@@ -1515,10 +1515,6 @@ struct task_struct {
 	void				*security;
 #endif
 
-#ifdef CONFIG_OPLUS_FEATURE_TPP
-	int tpp_flag;
-#endif /* CONFIG_OPLUS_FEATURE_TPP */
-
 #ifdef CONFIG_OPLUS_FEATURE_IM
 	int im_flag;
 #endif

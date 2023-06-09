@@ -45,11 +45,6 @@ obj-$(CONFIG_OPLUS_WAKELOCK_PROFILER) += oplus/owakelock/
 obj-y += oplus/misc/
 #endif /* OPLUS_FEATURE_ESIM */
 
-#ifdef OPLUS_FEATURE_TPP
-#jacky.ho@optimization add for tpp module
-obj-$(CONFIG_OPLUS_FEATURE_TPP) += oplus/tpp/
-#endif /* OPLUS_FEATURE_TPP */
-
 #ifdef OPLUS_FEATURE_IM
 #ted.lin@optimization add for im module
 obj-$(CONFIG_OPLUS_FEATURE_IM) += oplus/im/

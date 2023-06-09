@@ -35,11 +35,6 @@ source "drivers/soc/oplus/sensor/Kconfig"
 source "drivers/soc/oplus/misc/Kconfig"
 #endif /* OPLUS_FEATURE_ESIM */
 
-#ifdef OPLUS_FEATURE_TPP
-#jacky.ho@optimization add for tpp module
-source "drivers/soc/oplus/tpp/Kconfig"
-#endif /* OPLUS_FEATURE_IM */
-
 #ifdef OPLUS_FEATURE_IM
 #ted.lin@optimization add for im module
 source "drivers/soc/oplus/im/Kconfig"
