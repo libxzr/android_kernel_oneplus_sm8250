@@ -63,9 +63,6 @@ source "drivers/soc/oplus/system/acm/Kconfig"
 #ifdef OPLUS_FEATURE_THEIA
 source "drivers/soc/oplus/system/theia/Kconfig"
 #endif /* OPLUS_FEATURE_THEIA */
-#ifdef OPLUS_FEATURE_SELINUX_CONTROL_LOG
-source "drivers/soc/oplus/system/selinux/Kconfig"
-#endif /* OPLUS_FEATURE_SELINUX_CONTROL_LOG */
 #ifdef OPLUS_FEATURE_MISC
 source "drivers/soc/oplus/system/misc/Kconfig"
 #endif /* OPLUS_FEATURE_MISC */
